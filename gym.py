@@ -15,7 +15,7 @@ class Gym():
         self.load_action()
 
     def load_action(self):
-        
+
 
     def load_trajair(self):
 
@@ -31,7 +31,7 @@ class Gym():
         
         return  np.eye(num_goals)[np.random.choice(num_goals, 1)]
 
-    def getNextState(self):
+    def getNextState(self,curr_position,action):
 
         pass
 
