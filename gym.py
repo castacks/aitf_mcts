@@ -1,8 +1,9 @@
 
-from utils import TrajectoryDataset, seq_collate
-
+from dataset_loader import TrajectoryDataset
+from dataset_utils import seq_collate
+from utils import populate_traj_lib
 from torch.utils.data import DataLoader
-
+import torch
 import numpy as np
 from scipy.spatial.transform import Rotation as R
 
@@ -40,8 +41,6 @@ class Gym():
 
 	def get_random_start_position(self):
 
-    def load_action(self):
-
 		obs_traj , pred_traj, obs_traj_rel, pred_traj_rel, context, seq_start,goal_position,full_l2 = next(iter(self.loader_train)) 
 		return obs_traj
 
@@ -69,6 +68,8 @@ class Gym():
 			trajs[i,0]+=obs_traj[-1,0]
 			trajs[i,1]+=obs_traj[-1,1]
 			trajs[i,2]=self.traj_lib[traj_lib_choice,2,i]+obs_traj[-1,2]
+        
+        return trajs
 
     def getNextState(self,curr_position,action):
 		# trajs is a numpy array
