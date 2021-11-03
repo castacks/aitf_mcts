@@ -1,4 +1,5 @@
 from utils import get_hash
+import numpy as np
 import math
 EPS = 1e-8
 
@@ -9,7 +10,7 @@ class MCTS():
 
     def __init__(self, gym, nnet):
         self.gym = gym
-        # self.nnet = nnet
+        self.nnet = nnet
         self.Qsa = {}  # stores Q values for s,a (as defined in the paper)
         self.Nsa = {}  # stores #times edge s,a was visited
         self.Ns = {}  # stores #times board s was visited
@@ -20,6 +21,8 @@ class MCTS():
 
 
     def getActionProbs(self,curr_position,goal_postion):
+
+        # return np.eye(self.gym.getActionSize())[np.random.choice(self.gym.getActionSize(), 1)]
 
         self.search(curr_position,goal_postion)
 

@@ -6,6 +6,7 @@ import os
 import numpy as np
 from gym import Gym
 from mcts import MCTS
+from net import Policy
 
 class Train():
 
@@ -13,21 +14,29 @@ class Train():
         
 
         self.gym = Gym(datapath,args)
-        self.mcts = MCTS(self.gym,None)
+        self.net = Policy(args)
+        self.mcts = MCTS(self.gym,self.net)
         self.executeEpisode()
 
     def executeEpisode(self):
 
         curr_position = self.gym.get_random_start_position()
+        self.gym.plot_env(curr_position)
+
         curr_goal = self.gym.get_random_goal_location()
-        print(curr_position,curr_goal)
+        # print(curr_position,curr_goal)
         
 
-        # while True:
-        # pi = self.mcts.getActionProbs(curr_position)
-        # action = np.random.choice(len(pi),p=pi)
-        # curr_position = self.gym.get_next_position(curr_position,action)
+        while True:
+            pi = np.squeeze(self.mcts.getActionProbs(curr_position,curr_goal))
+            action = np.random.choice(len(pi),p=pi)
+            print(action)
+            curr_position = self.gym.getNextState(curr_position,action)
+            self.gym.plot_env(curr_position)
+            # break
 
+    def train(self):
+        pass
 
 if __name__ == '__main__':
     parser=argparse.ArgumentParser(description='Train MCTS model')
@@ -39,8 +48,15 @@ if __name__ == '__main__':
     parser.add_argument('--preds_step',type=int,default=10)
     parser.add_argument('--delim',type=str,default=' ')
 
+    parser.add_argument('--input_size',type=int,default=3)
+    parser.add_argument('--num_channels',type=int,default=2)
+    parser.add_argument('--channel_size',type=int,default=256)
+    parser.add_argument('--kernel_size',type=int,default=4)
+    parser.add_argument('--dropout',type=float,default=0.05)
+
+
+
     args=parser.parse_args()
 
     datapath = os.getcwd() + args.dataset_folder + args.dataset_name + "/processed_data/"
-    actionpath = os.getcwd()
     Train(datapath,args)

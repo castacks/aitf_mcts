@@ -1,10 +1,19 @@
 import torch.nn.functional as F
-from utils import TemporalConvNet
+from tcn import TemporalConvNet
+import torch
+from torch import nn
+from dataset_utils import direction_detect
 
+class Policy(nn.Module):
+	def __init__(self, args):
+		super(Policy, self).__init__()
 
-class TCN(nn.Module):
-	def __init__(self, input_size, output_size, num_channels, kernel_size, dropout,context=True):
-		super(TCN, self).__init__()
+		
+		input_size = args.input_size
+		num_channels = args.num_channels*[args.channel_size]
+		kernel_size = args.kernal_size
+		dropout = args.dropout
+		
 		self.tcn_encoder_x = TemporalConvNet(input_size, num_channels, kernel_size=kernel_size, dropout=dropout)
 
 		self.multi_head_layer = nn.Linear(259,256)
@@ -32,9 +41,7 @@ class TCN(nn.Module):
 		softmax_out =torch.zeros([x.shape[2],252]).to(device)
 		latent_space_ =torch.zeros([x.shape[2],259]).to(device)
 		
-		encoded_trajectories_x = []
 		encoded_appended_trajectories_x = []
-		encoded_trajectories_y = []
 		x1 = torch.transpose(x, 0, 2)
 
 		if x.shape[2] <batch_size:
@@ -62,7 +69,6 @@ class TCN(nn.Module):
 		final_input = torch.squeeze(torch.stack(encoded_appended_trajectories_x))
 
 
-		latent_space = final_input         
 		H_x = final_input
 		decoded1 = (self.linear_decoder_x(H_x))
 		decoded2 = (self.linear_x(decoded1))
@@ -71,9 +77,6 @@ class TCN(nn.Module):
 
 		output = torch.squeeze(decoded2,dim=0)
 
-		if int(x.shape[2]) == 1:
-			softmax_out = F.softmax(decoded2, dim = 0)
+		softmax_out = F.softmax(decoded2, dim = 0)
 
-		else:
-			softmax_out = F.softmax(decoded2, dim = 1)
 		return softmax_out, output,latent_space_, multi_head    
