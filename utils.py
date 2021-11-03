@@ -151,10 +151,6 @@ class TrajectoryDataset(Dataset):
         return out
 
 
-def get_hash(curr_position):
-	
-    return str(curr_position[-1,0])+str(curr_position[-1,1])
-
 def populate_traj_lib():
 	
     # note position of motion prim library text files

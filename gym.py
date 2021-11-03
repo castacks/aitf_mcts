@@ -27,17 +27,6 @@ class Gym():
         
         self.traj_lib, self.index_lib = populate_traj_lib()
 
-		# to load model here
-		# model = TCN(input_channels, output_size, channel_sizes, kernel_size=kernel_size, dropout=dropout)
-		# model.to(device)
-
-		# checkpoint = torch.load('goalGAIL2_60.pt',map_location=torch.device('cpu'))
-		# model.load_state_dict(checkpoint['model_state_dict'], strict=False)
-
-		# softmax_out, output, latent_space_, multi_head = model(torch.transpose(obs_traj_all,1,2),torch.transpose(pred_traj_all,1,2),goal_position,torch.transpose(context,1,2),sort=True)
-
-		# traj_lib_choice = torch.argmax(recon_x,dim=0) # dim = 0 if single traj in a batch
-		# return traj_lib_choice
     def load_trajair(self):
         
         dataset_train = TrajectoryDataset(self.datapath + "test", obs_len=self.args.obs,
@@ -46,6 +35,7 @@ class Gym():
 		    dataset_train, batch_size=1, num_workers=4, shuffle=True, collate_fn=seq_collate_old)
     
     def get_random_start_position(self):
+       
         # obs_traj, pred_traj, obs_traj_rel, pred_traj_rel, context, seq_start, goal_position, full_l2 = next(iter(self.loader_train))
         obs_traj , pred_traj, obs_traj_rel, pred_traj_rel, context, seq_start = next(iter(self.loader_train))
 
@@ -53,7 +43,7 @@ class Gym():
         
     def get_random_goal_location(self, num_goals=10):
 
-        return np.eye(num_goals)[np.random.choice(num_goals, 1)]
+        return torch.from_numpy(np.eye(num_goals)[np.random.choice(num_goals, 1)]).float()
     
     def getActionSize(self):
 
@@ -62,7 +52,7 @@ class Gym():
 
     def getGameEnded(self,curr_position,goal_position):
 
-        pass
+        return 0
 
     def getNextState(self, curr_position, action_choice):
 		# rotate and translate action choice to end of previous executed traj
@@ -81,7 +71,11 @@ class Gym():
             trajs[i, 1] += curr_position[-1, 1]
             trajs[i, 2] = self.traj_lib[action_choice, 2, i]+curr_position[-1, 2]
 
-        return torch.from_numpy(trajs)
+        return torch.from_numpy(trajs).float()
+
+    def get_hash(self,curr_position):
+	
+        return str(curr_position[-1,0])+str(curr_position[-1,1])
     
     def plot_env(self,curr_position):
         self.sp.grid(True)
@@ -94,7 +88,7 @@ class Gym():
         plt.grid(True)
         plt.xlim([-5,5])
         self.fig.show()
-        plt.pause(1)
+        plt.pause(0.1)
 
 
 

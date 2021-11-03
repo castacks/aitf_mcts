@@ -5,78 +5,67 @@ from torch import nn
 from dataset_utils import direction_detect
 
 class Policy(nn.Module):
-	def __init__(self, args):
+	def __init__(self, args, device = 'cpu'):
 		super(Policy, self).__init__()
 
 		
 		input_size = args.input_size
 		num_channels = args.num_channels*[args.channel_size]
-		kernel_size = args.kernal_size
+		kernel_size = args.kernel_size
 		dropout = args.dropout
-		
+		self.device = device
 		self.tcn_encoder_x = TemporalConvNet(input_size, num_channels, kernel_size=kernel_size, dropout=dropout)
 
-		self.multi_head_layer = nn.Linear(259,256)
-
-		self.linear_decoder_x = nn.Linear(259,256)
+		self.linear_decoder_x = nn.Linear(640,256)
 		self.linear_x = nn.Linear(256,252)
+		self.linear_decoder_v = nn.Linear(640,256)
+		self.linear_v = nn.Linear(256,256)
+		self.output_v = nn.Linear(256,1)
 		self.goal_expand = nn.Linear(10,128)
 
 		self.context_conv = nn.Conv1d(in_channels=2, out_channels=1, kernel_size=3,padding=1)
 		self.context_linear = nn.Linear(15,7)
 		self.relu = nn.ReLU()
+		self.tanh = nn.Tanh()
+
 		self.output_relu = nn.ReLU()
 		self.init_weights()
 
+
 	def init_weights(self):
 
-		self.linear_decoder_x.weight.data.normal_(0, 0.05)
-		self.context_linear.weight.data.normal_(0, 0.05)
-		self.context_conv.weight.data.normal_(0, 0.1)
+		self.linear_decoder_v.weight.data.normal_(0, 0.05)
+		self.linear_v.weight.data.normal_(0, 0.05)
+		self.output_v.weight.data.normal_(0, 0.05)
 
 
-	def forward(self, x, y, goal_position,context,sort=False):       
-
-		output = torch.zeros([x.shape[2],252]).to(device)
-		softmax_out =torch.zeros([x.shape[2],252]).to(device)
-		latent_space_ =torch.zeros([x.shape[2],259]).to(device)
 		
-		encoded_appended_trajectories_x = []
-		x1 = torch.transpose(x, 0, 2)
 
-		if x.shape[2] <batch_size:
-			input_pos =torch.reshape(x1[:,:,0], (x.shape[2],3))
-		input_pos =torch.reshape(x1[:,:,0], (x.shape[2],3))
+	def forward(self, x1, goal):       
 
-		if goal_position[0,0].cpu()<800 and goal_position[0,0].cpu()> -10 and abs(goal_position[0,1].cpu())<300: #1
-			goal_position[0,0],goal_position[0,1] =0.0, 0.0
+		x1 = torch.unsqueeze(x1,2)
+		x1 = torch.transpose(x1, 0, 2)
 
-		elif goal_position[0,0].cpu()<1500 and goal_position[0,0].cpu()> 1000 and abs(goal_position[0,1].cpu())<300:  #2,
-			goal_position[0,0],goal_position[0,1] =1450.0, 0.0
-
-		goal_vector = direction_detect(input_pos.cpu(), goal_position.cpu())
-
-		goal_vector= goal_vector.to(device)
+		goal_vector= goal.to(self.device)
 		goal_expanded =self.goal_expand(goal_vector)
 
-		x1=x1/1000.0
 		encoded_x = self.tcn_encoder_x(x1)
 
 		encoded_x =encoded_x[:,:,-1]
-		full_encoded_x = torch.cat((encoded_x,goal_expanded,goal_position/1000.0),1)
-		encoded_appended_trajectories_x.append(full_encoded_x)
-
-		final_input = torch.squeeze(torch.stack(encoded_appended_trajectories_x))
+		H_x = torch.cat((encoded_x,goal_expanded),1)
+		
 
 
-		H_x = final_input
-		decoded1 = (self.linear_decoder_x(H_x))
-		decoded2 = (self.linear_x(decoded1))
+		decoded1_x = self.relu((self.linear_decoder_x(H_x)))
+		decoded2_x = self.linear_x(decoded1_x)
+		
+		decoded1_v = self.relu((self.linear_decoder_v(H_x)))
+		decoded2_v = self.relu((self.linear_v(decoded1_v)))
+		# multi_head = self.multi_head_layer(H_x)
 
-		multi_head = self.multi_head_layer(H_x)
+		# output = torch.squeeze(decoded2,dim=0)
 
-		output = torch.squeeze(decoded2,dim=0)
+		softmax_out = F.softmax(decoded2_x, dim = 1)
 
-		softmax_out = F.softmax(decoded2, dim = 0)
-
-		return softmax_out, output,latent_space_, multi_head    
+		v = self.tanh(self.output_v(decoded2_v))
+		return softmax_out[0], v  
