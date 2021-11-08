@@ -221,4 +221,5 @@ def direction_detect(input_pos, goal):
                 dir_array[b,4] = 1.0
             elif degrees_slope <-112.5 and degrees_slope >-157.5: #SW:
                 dir_array[b,5] = 1.0
+            print("Goal reached",dir_array)
     return dir_array

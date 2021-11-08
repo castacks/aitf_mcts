@@ -27,7 +27,7 @@ class MCTS():
 
         # return np.eye(self.gym.getActionSize())[np.random.choice(self.gym.getActionSize(), 1)]
 
-        for i in tqdm(range(self.args.numMCTS)):
+        for i in tqdm(range(self.args.numMCTS), desc="MCTS Trees"):
             # print("MCTS Tree #" + str(i))
             self.search(curr_position, goal_postion)
 
@@ -51,7 +51,7 @@ class MCTS():
 
         s = self.gym.get_hash(curr_position)
 
-        self.gym.plot_env(curr_position)
+        # self.gym.plot_env(curr_position)
 
         if s not in self.Es:
             self.Es[s] = self.gym.getGameEnded(curr_position, goal_position)
@@ -87,7 +87,7 @@ class MCTS():
         next_position = self.gym.getNextState(curr_position, a)
 
         v = self.search(next_position, goal_position)
-
+        # print("test")
         if (s, a) in self.Qsa:
             self.Qsa[(s, a)] = (self.Nsa[(s, a)] * self.Qsa[(s, a)] + v) / (self.Nsa[(s, a)] + 1)
             self.Nsa[(s, a)] += 1
