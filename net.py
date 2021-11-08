@@ -16,12 +16,12 @@ class Policy(nn.Module):
 		self.device = device
 		self.tcn_encoder_x = TemporalConvNet(input_size, num_channels, kernel_size=kernel_size, dropout=dropout)
 
-		self.linear_decoder_x = nn.Linear(640,256)
-		self.linear_x = nn.Linear(256,252)
-		self.linear_decoder_v = nn.Linear(640,256)
+		self.linear_decoder_x = nn.Linear(96,64)
+		self.linear_x = nn.Linear(64,252)
+		self.linear_decoder_v = nn.Linear(96,256)
 		self.linear_v = nn.Linear(256,256)
 		self.output_v = nn.Linear(256,1)
-		self.goal_expand = nn.Linear(10,128)
+		self.goal_expand = nn.Linear(10,32)
 
 		self.context_conv = nn.Conv1d(in_channels=2, out_channels=1, kernel_size=3,padding=1)
 		self.context_linear = nn.Linear(15,7)
