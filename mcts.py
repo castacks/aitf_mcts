@@ -1,6 +1,8 @@
 import numpy as np
 import math
+from tqdm import tqdm
 EPS = 1e-8
+
 
 class MCTS():
     """
@@ -8,7 +10,7 @@ class MCTS():
     """
 
     def __init__(self, gym, nnet, args):
-        
+
         self.gym = gym
         self.nnet = nnet
         self.args = args
@@ -21,14 +23,13 @@ class MCTS():
         self.Es = {}  # stores game.getGameEnded ended for board s
         self.Vs = {}  # stores game.getValidMoves for board s
 
-
-    def getActionProbs(self,curr_position,goal_postion,temp=1):
+    def getActionProbs(self, curr_position, goal_postion, temp=1):
 
         # return np.eye(self.gym.getActionSize())[np.random.choice(self.gym.getActionSize(), 1)]
 
-        for i in range(self.args.numMCTS):
-            print("MCTS Tree #"+ str(i))
-            self.search(curr_position,goal_postion)
+        for i in tqdm(range(self.args.numMCTS), desc="MCTS Trees"):
+            # print("MCTS Tree #" + str(i))
+            self.search(curr_position, goal_postion)
 
         s = self.gym.get_hash(curr_position)
 
@@ -46,15 +47,14 @@ class MCTS():
         probs = [x / counts_sum for x in counts]
         return probs
 
+    def search(self, curr_position, goal_position):
 
-    def search(self,curr_position,goal_position):
-       
         s = self.gym.get_hash(curr_position)
-        
-        self.gym.plot_env(curr_position)
+
+        # self.gym.plot_env(curr_position)
 
         if s not in self.Es:
-            self.Es[s] = self.gym.getGameEnded(curr_position,goal_position)
+            self.Es[s] = self.gym.getGameEnded(curr_position, goal_position)
         if self.Es[s] != 0:
             # terminal node
             print("Terminal Node")
@@ -63,9 +63,9 @@ class MCTS():
         if s not in self.Ps:
             # leaf node
 
-            self.Ps[s], v = self.nnet.forward(curr_position,goal_position)
+            self.Ps[s], v = self.nnet.forward(curr_position, goal_position)
             self.Ns[s] = 0
-            print("Leaf")
+            # print("Leaf")
             return v
 
         cur_best = -float('inf')
@@ -83,11 +83,11 @@ class MCTS():
                 best_act = a
 
         a = best_act
-        print(a)
+        # print(a)
         next_position = self.gym.getNextState(curr_position, a)
 
-        v = self.search(next_position,goal_position)
-
+        v = self.search(next_position, goal_position)
+        # print("test")
         if (s, a) in self.Qsa:
             self.Qsa[(s, a)] = (self.Nsa[(s, a)] * self.Qsa[(s, a)] + v) / (self.Nsa[(s, a)] + 1)
             self.Nsa[(s, a)] += 1
@@ -97,4 +97,4 @@ class MCTS():
             self.Nsa[(s, a)] = 1
 
         self.Ns[s] += 1
-        return v 
+        return v
