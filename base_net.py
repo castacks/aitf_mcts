@@ -68,3 +68,4 @@ class Policy(nn.Module):
 
         v = self.tanh(self.output_v(decoded2_v))
         return softmax_out[0], v
+
