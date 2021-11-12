@@ -24,6 +24,7 @@ class Net():
 
         checkpoint = torch.load(modelpath, map_location=torch.device('cpu'))
         miss, unex = self.nnet.load_state_dict(checkpoint['model_state_dict'], strict=False)
+        print("miss", miss, "unex", unex)
         print(" Pre-trainined model weights loaded")
 
     def train(self,examples):

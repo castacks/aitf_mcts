@@ -15,14 +15,14 @@ class Chomp1d(nn.Module):
 class TemporalBlock(nn.Module):
 	def __init__(self, n_inputs, n_outputs, kernel_size, stride, dilation, padding, dropout=0.2):
 		super(TemporalBlock, self).__init__()
-		self.conv1 = weight_norm(nn.Conv1d(n_inputs, n_outputs, kernel_size,
+		self.conv1 = (nn.Conv1d(n_inputs, n_outputs, kernel_size,
 										   stride=stride, padding=padding, dilation=dilation))
 		self.chomp1 = Chomp1d(padding)
 		self.bn1 = nn.BatchNorm1d(num_features=n_outputs)
 		self.relu1 = nn.PReLU(num_parameters=n_outputs)
 		self.dropout1 = nn.Dropout(dropout)
 
-		self.conv2 = weight_norm(nn.Conv1d(n_outputs, n_outputs, kernel_size,
+		self.conv2 = (nn.Conv1d(n_outputs, n_outputs, kernel_size,
 										   stride=stride, padding=padding, dilation=dilation))
 		self.chomp2 = Chomp1d(padding)
 		self.bn2 = nn.BatchNorm1d(num_features=n_outputs)
