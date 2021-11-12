@@ -27,7 +27,8 @@ class MCTS():
 
         # return np.eye(self.gym.getActionSize())[np.random.choice(self.gym.getActionSize(), 1)]
 
-        for i in tqdm(range(self.args.numMCTS), desc="MCTS Trees"):
+        # for i in tqdm(range(self.args.numMCTS), desc="MCTS Trees"):
+        for i in range(self.args.numMCTS):
             # print("MCTS Tree #" + str(i))
             self.search(curr_position, goal_postion)
 
@@ -44,20 +45,25 @@ class MCTS():
 
         counts = [x ** (1. / temp) for x in counts]
         counts_sum = float(sum(counts))
-        probs = [x / counts_sum for x in counts]
+        if int(counts_sum) is not 0:
+            probs = [x / counts_sum for x in counts]
+        else:
+            print(self.Nsa)
+            print("All counts zero")
+            probs = np.zeros_like(counts)
         return probs
 
     def search(self, curr_position, goal_position):
 
         s = self.gym.get_hash(curr_position)
 
-        # self.gym.plot_env(curr_position)
+        # self.gym.plot_env(curr_position,'r')
 
         if s not in self.Es:
-            self.Es[s] = self.gym.getGameEnded(curr_position, goal_position)
-        if self.Es[s] != 0:
+            self.Es[s],_ = self.gym.getGameEnded(curr_position, goal_position)
+        if self.Es[s] != 0 and len(self.Nsa) is not 0:
             # terminal node
-            print("Terminal Node")
+            # print("Terminal Node")
             return -self.Es[s]
 
         if s not in self.Ps:
@@ -83,7 +89,6 @@ class MCTS():
                 best_act = a
 
         a = best_act
-        # print(a)
         next_position = self.gym.getNextState(curr_position, a)
 
         v = self.search(next_position, goal_position)

@@ -2,9 +2,10 @@ import argparse
 import os
 from matplotlib import pyplot as plt
 
+# from utils import TrajectoryDataset
 from utils import TrajectoryDataset
 from dataset_utils import seq_collate_old
-from utils import populate_traj_lib, direction_detect
+from utils import populate_traj_lib, direction_goal_detect
 from torch.utils.data import DataLoader
 import torch
 import numpy as np
@@ -19,9 +20,11 @@ class Gym():
         self.args = args
         self.load_action_space()
         self.load_trajair()
-        self.fig = plt.figure()
-        self.sp = self.fig.add_subplot(111)
-        self.fig.show()
+        if self.args.plot:
+            self.fig = plt.figure()
+            self.sp = self.fig.add_subplot(111)
+            self.fig.show()
+        
 
     def load_action_space(self):
 
@@ -32,11 +35,10 @@ class Gym():
         dataset_train = TrajectoryDataset(self.datapath + "test", obs_len=self.args.obs,
                                           pred_len=self.args.preds, step=self.args.preds_step, delim=self.args.delim)
         self.loader_train = DataLoader(
-            dataset_train, batch_size=1, num_workers=4, shuffle=True, collate_fn=seq_collate_old)
+            dataset_train,  batch_size=1, num_workers=4, shuffle=True, collate_fn=seq_collate_old)
 
     def get_random_start_position(self):
 
-        # obs_traj, pred_traj, obs_traj_rel, pred_traj_rel, context, seq_start, goal_position, full_l2 = next(iter(self.loader_train))
         obs_traj, pred_traj, obs_traj_rel, pred_traj_rel, context, seq_start = next(iter(self.loader_train))
 
         return obs_traj[:, 0, :]  ##select one agent
@@ -54,10 +56,13 @@ class Gym():
         for i in range(curr_position.shape[0]):
             current_pos = curr_position[i, :]  # check shape of traj input
             input_pos = torch.zeros(1, 3)
-            dir_array = direction_detect(input_pos, current_pos)
-            if (dir_array == goal_position).all():
-                return 1
-        return 0
+            dir_array = direction_goal_detect(input_pos, current_pos)
+            if (dir_array == goal_position).all(): ##wanted goal
+                return 1,dir_array
+            elif (dir_array.any()): ##unwanted goal
+                return -1, dir_array
+            else:
+                return 0 ,dir_array## no goal
 
     def getNextState(self, curr_position, action_choice):
         # rotate and translate action choice to end of previous executed traj
@@ -82,18 +87,26 @@ class Gym():
 
         return str(curr_position[-1, 0]) + str(curr_position[-1, 1])
 
-    def plot_env(self, curr_position):
+    def reset_plot(self):
+        plt.pause(2)
+        plt.close()
+        self.fig = plt.figure()
+        self.sp = self.fig.add_subplot(111)
+        self.fig.show()
+
+    def plot_env(self, curr_position,color='r'):
+     
         self.sp.grid(True)
-        self.sp.plot(curr_position[:, 0], curr_position[:, 1], color='r')
+        self.sp.plot(curr_position[:, 0], curr_position[:, 1], color=color)
         self.sp.scatter(curr_position[-1, 0], curr_position[-1, 1], color='b')
         self.sp.scatter(0, 0, color='k')
         self.sp.scatter(1.45, 0, color='k')
         plt.plot([0, 1.450], [0, 0], '--', color='k')
         plt.axis("equal")
         plt.grid(True)
-        plt.xlim([-5, 5])
+        plt.xlim([-7, 7])
         self.fig.show()
-        # plt.pause(0.05)
+        plt.pause(0.1)
 
 
 if __name__ == '__main__':

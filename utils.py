@@ -12,7 +12,6 @@ import random
 
 
 ##Dataloader class
-##Dataloader class
 
 class TrajectoryDataset(Dataset):
     """Dataloder for the Trajectory datasets
@@ -187,25 +186,21 @@ def populate_traj_lib():
 
 
     # return one-hot vector of goal position
-def direction_detect(input_pos, goal):
+def direction_goal_detect(input_pos, goal):
     
     dir_array = torch.zeros([input_pos.shape[0],10]) ## [N, NE, E, SE, S, SW, W, NW, R1, R2]
     
     difference = goal-input_pos
+    goal = torch.unsqueeze(goal,0)
 
     if np.linalg.norm(difference) > 5:
         # print("diff",difference,'goal',goal, "input_pos",input_pos)
         for b in range(input_pos.shape[0]):
             planar_slope = torch.atan2(difference[b,1],difference[b,0])
             degrees_slope = planar_slope*180.0/np.pi
-            goal = torch.unsqueeze(goal,0)
-            if goal[b,0]<0.5 and goal[b,0]> -0.01 and abs(goal[b,1])<0.010: #1
-                dir_array[b,9] = 1.0
+          
 
-            elif goal[b,0]<1.5 and goal[b,0]> 1 and abs(goal[b,1])<0.010:  #2,
-                dir_array[b,8] = 1.0
-
-            elif degrees_slope <22.5 and degrees_slope >-22.5: #east
+            if degrees_slope <22.5 and degrees_slope >-22.5: #east
                 dir_array[b,2] = 1.0
             elif degrees_slope <67.5 and degrees_slope >22.5: #NE
                 dir_array[b,1] = 1.0
@@ -215,11 +210,30 @@ def direction_detect(input_pos, goal):
                 dir_array[b,7] = 1.0
             elif degrees_slope <-157.5 or degrees_slope >157.5: # W
                 dir_array[b,6] = 1.0
-            elif degrees_slope <-22.5 and degrees_slope >67.5: #SE
+            elif degrees_slope <-22.5 and degrees_slope >-67.5: #SE
                 dir_array[b,3] = 1.0
             elif degrees_slope <-67.5 and degrees_slope >-112.5: #S
                 dir_array[b,4] = 1.0
             elif degrees_slope <-112.5 and degrees_slope >-157.5: #SW:
                 dir_array[b,5] = 1.0
-            print("Goal reached",dir_array)
+        # print("Outer goal reached",goal_enum(dir_array))
+    else:
+        
+        for b in range(input_pos.shape[0]):
+
+            if goal[b,0]<0.5 and goal[b,0]> -0.5 and abs(goal[b,1])<0.10: #1
+                dir_array[b,9] = 1.0
+                # print("Runway reached",goal_enum(dir_array))
+
+
+            elif goal[b,0]<1.5 and goal[b,0]> 1.3 and abs(goal[b,1])<0.10:  #2,
+                dir_array[b,8] = 1.0
+                # print("Runway reached",goal_enum(dir_array))
+
     return dir_array
+
+def goal_enum(goal):
+    msk = goal.squeeze().numpy().astype(bool)
+    g = ["N","NE","E","SE","S","SW","W","NW","R2","R1"]
+    return [g[i] for i in range(len(g)) if msk[i]]
+
