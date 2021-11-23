@@ -71,6 +71,7 @@ class Play():
                 if states is not None:
                     iterationTrainExamples += states
             print("Number of training samples:",len(iterationTrainExamples))
+            # print(iterationTrainExamples)
             print("Training....")
 
             self.net.train(iterationTrainExamples)
@@ -117,8 +118,8 @@ if __name__ == '__main__':
 
     parser.add_argument('--numEpisodeSteps', type=int, default=20)
     parser.add_argument('--maxlenOfQueue', type=int, default=12800)
-    parser.add_argument('--numEps', type=int, default=10)
-    parser.add_argument('--numIters', type=int, default=2)
+    parser.add_argument('--numEps', type=int, default=1)
+    parser.add_argument('--numIters', type=int, default=5)
 
     parser.add_argument('--epochs', type=int, default=5)
 

@@ -47,8 +47,8 @@ class Policy(nn.Module):
         x1 = torch.unsqueeze(x1, 2)
         x1 = torch.transpose(x1, 0, 2)
 
-        goal_vector = goal.to(self.device)
-        goal_expanded = self.goal_expand(goal_vector)
+        # goal_vector = goal.to(self.device)
+        goal_expanded = self.goal_expand(goal)
 
         encoded_x = self.tcn_encoder_x(x1)
 

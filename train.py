@@ -15,6 +15,7 @@ class Net():
         self.args = args
         self.nnet = Policy(args)
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.nnet.to(self.device)
 
         if args.model_weights is not None:
             modelpath = os.getcwd() + args.models_folder + args.model_weights
@@ -28,7 +29,8 @@ class Net():
         print(" Pre-trainined model weights loaded")
 
     def train(self,examples):
-        
+        print("Device is ",self.device)
+        self.nnet.to(self.device)
         self.nnet.train()
         optimizer = optim.Adam(self.nnet.parameters())
         train_data = ReplayDataLoader(examples)
@@ -54,7 +56,9 @@ class Net():
     def predict(self,curr_position,goal_position):
 
         self.nnet.eval()
-        
+
+        self.nnet.to('cpu')
+
         return self.nnet.forward(curr_position, goal_position)
     
     

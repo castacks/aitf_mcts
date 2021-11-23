@@ -1,5 +1,6 @@
 import numpy as np
 import math
+import torch
 from tqdm import tqdm
 EPS = 1e-8
 
@@ -14,7 +15,7 @@ class MCTS():
         self.gym = gym
         self.nnet = nnet
         self.args = args
-
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.Qsa = {}  # stores Q values for s,a (as defined in the paper)
         self.Nsa = {}  # stores #times edge s,a was visited
         self.Ns = {}  # stores #times board s was visited
@@ -45,7 +46,7 @@ class MCTS():
 
         counts = [x ** (1. / temp) for x in counts]
         counts_sum = float(sum(counts))
-        if int(counts_sum) is not 0:
+        if int(counts_sum) != 0:
             probs = [x / counts_sum for x in counts]
         else:
             print(self.Nsa)
@@ -61,13 +62,16 @@ class MCTS():
 
         if s not in self.Es:
             self.Es[s],_ = self.gym.getGameEnded(curr_position, goal_position)
-        if self.Es[s] != 0 and len(self.Nsa) is not 0:
+        if self.Es[s] != 0 and len(self.Nsa) != 0:
             # terminal node
             # print("Terminal Node")
             return -self.Es[s]
 
         if s not in self.Ps:
             # leaf node
+            # curr_position = curr_position.to(self.device)
+            # goal_position = goal_position.to(self.device)
+
             self.Ps[s], v = self.nnet.predict(curr_position, goal_position)
             # print(self.Ps[s])
             self.Ns[s] = 0
