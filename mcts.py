@@ -28,7 +28,7 @@ class MCTS():
         # return np.eye(self.gym.getActionSize())[np.random.choice(self.gym.getActionSize(), 1)]
 
         # for i in tqdm(range(self.args.numMCTS), desc="MCTS Trees"):
-        for i in tqdm(range(self.args.numMCTS)):
+        for i in (range(self.args.numMCTS)):
             # print("MCTS Tree #" + str(i))
             self.search(curr_position, goal_postion)
 
@@ -68,8 +68,8 @@ class MCTS():
 
         if s not in self.Ps:
             # leaf node
-
             self.Ps[s], v = self.nnet.predict(curr_position, goal_position)
+            # print(self.Ps[s])
             self.Ns[s] = 0
             # print("Leaf")
             return v

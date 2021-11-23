@@ -40,10 +40,12 @@ class Net():
                 
                 batch = [tensor.to(self.device) for tensor in batch]
                 position,goal, target_pis, target_vs = batch
-                out_pi, out_v = self.nnet(position,goal)
-                l_pi = self.loss_pi(target_pis, out_pi)
-                l_v = self.loss_v(target_vs, out_v)
-                total_loss = l_pi + l_v
+                total_loss = 0
+                for i in range(position.shape[0]):
+                    out_pi, out_v = self.nnet(position[i],goal[i])
+                    l_pi = self.loss_pi(target_pis, out_pi)
+                    l_v = self.loss_v(target_vs, out_v)
+                    total_loss += l_pi + l_v
 
                 optimizer.zero_grad()
                 total_loss.backward()

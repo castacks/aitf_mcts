@@ -1,7 +1,7 @@
 import argparse
 import os
 from numpy.lib import utils
-
+from tqdm import tqdm
 import torch
 import numpy as np
 from gym import Gym
@@ -28,7 +28,7 @@ class Play():
         # self.gym.plot_env(curr_position)
 
         curr_goal = self.gym.get_random_goal_location()
-        print("curr goal",goal_enum(curr_goal))
+        # print("curr goal",goal_enum(curr_goal))
         
         trainExamples = []
         episodeStep = 0
@@ -50,30 +50,33 @@ class Play():
                 self.gym.reset_plot()
 
             if r == 1:
-                print("Goal Reached; Exiting")
+                # print("Goal Reached; Exiting")
                 return [(x[0], x[1], x[2], r) for x in trainExamples]
             if r == -1:
-                print("Other Goal Reached; Exiting",goal_enum(g))
+                # print("Other Goal Reached; Exiting",goal_enum(g))
                 return [(x[0], x[1], x[2], r) for x in trainExamples]
             if episodeStep > self.args.numEpisodeSteps:
-                print("Max Steps Reached")
+                # print("Max Steps Reached")
                 if self.args.plot: self.gym.reset_plot()
                 return None
 
     def play(self):
 
-        
-        iterationTrainExamples = deque([], maxlen=self.args.maxlenOfQueue)
+        for _ in range(args.numIters):
+            iterationTrainExamples = deque([], maxlen=self.args.maxlenOfQueue)
+            print("Playing....")
+            for _ in tqdm(range(self.args.numEps)):
+                self.mcts = MCTS(self.gym, self.net, self.args)  # reset search tree
+                states = self.executeEpisode()
+                if states is not None:
+                    iterationTrainExamples += states
+            print("Number of training samples:",len(iterationTrainExamples))
+            print("Training....")
 
-        for _ in range(self.args.numEps):
-            self.mcts = MCTS(self.gym, self.net, self.args)  # reset search tree
-            states = self.executeEpisode()
-            if states is not None:
-                iterationTrainExamples += states
+            self.net.train(iterationTrainExamples)
+            print("Testing....")
 
-        self.net.train(iterationTrainExamples)
-        
-        self.test()
+            self.test()
 
 
     
@@ -113,11 +116,13 @@ if __name__ == '__main__':
     parser.add_argument('--cpuct', type=int, default= 1)
 
     parser.add_argument('--numEpisodeSteps', type=int, default=20)
-    parser.add_argument('--maxlenOfQueue', type=int, default=200)
+    parser.add_argument('--maxlenOfQueue', type=int, default=12800)
     parser.add_argument('--numEps', type=int, default=10)
+    parser.add_argument('--numIters', type=int, default=2)
+
     parser.add_argument('--epochs', type=int, default=5)
 
-    parser.add_argument('--plot', type=bool, default=True)
+    parser.add_argument('--plot', type=bool, default=False)
 
 
 

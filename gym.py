@@ -24,6 +24,7 @@ class Gym():
             self.fig = plt.figure()
             self.sp = self.fig.add_subplot(111)
             self.fig.show()
+            self.fig_count = 0
         
 
     def load_action_space(self):
@@ -94,7 +95,7 @@ class Gym():
         self.sp = self.fig.add_subplot(111)
         self.fig.show()
 
-    def plot_env(self, curr_position,color='r'):
+    def plot_env(self, curr_position,color='r',save=False):
      
         self.sp.grid(True)
         self.sp.plot(curr_position[:, 0], curr_position[:, 1], color=color)
@@ -105,7 +106,12 @@ class Gym():
         plt.axis("equal")
         plt.grid(True)
         plt.xlim([-7, 7])
+        plt.ylim([-7, 7])
+
         self.fig.show()
+        if save:
+            plt.savefig("mcts_"+str(self.fig_count) + ".png")
+            self.fig_count += 1
         plt.pause(0.1)
 
 
