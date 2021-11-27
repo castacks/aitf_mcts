@@ -1,0 +1,10 @@
+/jet/home/jaypat/AITF/aitf_mcts/traj_lib_0SI.txt
+Playing....
+Eps 0.0
+Eps 0.1
+Eps 0.2
+Eps 0.3
+Eps 0.4
+Eps 0.5
+Eps 0.6
+Eps 0.7

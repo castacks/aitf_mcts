@@ -61,11 +61,16 @@ class Play():
                 return None
 
     def play(self):
+        
+        iterationTrainExamples = deque([], maxlen=self.args.maxlenOfQueue)
 
         for _ in range(args.numIters):
-            iterationTrainExamples = deque([], maxlen=self.args.maxlenOfQueue)
+            self.net.nnet.eval()
+
             print("Playing....")
-            for _ in tqdm(range(self.args.numEps)):
+            for ep in tqdm(range(self.args.numEps)):
+                if  (ep%100) == 0:
+                    print("Eps",ep/self.args.numEps)
                 self.mcts = MCTS(self.gym, self.net, self.args)  # reset search tree
                 states = self.executeEpisode()
                 if states is not None:
@@ -76,20 +81,20 @@ class Play():
 
             self.net.train(iterationTrainExamples)
             print("Testing....")
-
+            self.net.nnet.eval()
             self.test()
 
 
     
     def test(self):
         accuracy = 0
-        for _ in range(self.args.numEps):
+        for _ in range(self.args.numEpsTest):
             self.mcts = MCTS(self.gym, self.net, self.args)  # reset search tree
             states = self.executeEpisode()
             if states is not None:
                 if states[0][3]==1:
                     accuracy += 1
-        print("Accuracy = ",accuracy/self.args.numEps)
+        print("Accuracy = ",accuracy/self.args.numEpsTest)
 
 
 
@@ -117,11 +122,13 @@ if __name__ == '__main__':
     parser.add_argument('--cpuct', type=int, default= 1)
 
     parser.add_argument('--numEpisodeSteps', type=int, default=20)
-    parser.add_argument('--maxlenOfQueue', type=int, default=12800)
-    parser.add_argument('--numEps', type=int, default=1)
-    parser.add_argument('--numIters', type=int, default=5)
+    parser.add_argument('--maxlenOfQueue', type=int, default=25600)
+    parser.add_argument('--numEps', type=int, default=1000)
+    parser.add_argument('--numEpsTest', type=int, default=100)
 
-    parser.add_argument('--epochs', type=int, default=5)
+    parser.add_argument('--numIters', type=int, default=20)
+
+    parser.add_argument('--epochs', type=int, default=25)
 
     parser.add_argument('--plot', type=bool, default=False)
 

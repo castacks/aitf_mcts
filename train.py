@@ -30,40 +30,46 @@ class Net():
 
     def train(self,examples):
         print("Device is ",self.device)
-        self.nnet.to(self.device)
+        # self.nnet.to(self.device)
         self.nnet.train()
         optimizer = optim.Adam(self.nnet.parameters())
         train_data = ReplayDataLoader(examples)
         train_dataloader = DataLoader(train_data, batch_size=64, shuffle=True)
 
         for epoch in range(self.args.epochs):
-            print("Epoch #",epoch)
+            loss_pi = 0
+            loss_v = 0
+
             for batch in tqdm(train_dataloader):
-                
+                optimizer.zero_grad()
+
                 batch = [tensor.to(self.device) for tensor in batch]
                 position,goal, target_pis, target_vs = batch
                 total_loss = 0
+                print(position.shape[0])
                 for i in range(position.shape[0]):
                     out_pi, out_v = self.nnet(position[i],goal[i])
                     l_pi = self.loss_pi(target_pis, out_pi)
                     l_v = self.loss_v(target_vs, out_v)
                     total_loss += l_pi + l_v
+                    loss_v += l_v.item()  
+                    loss_pi += l_pi.item() 
 
-                optimizer.zero_grad()
                 total_loss.backward()
                 optimizer.step()
-
+            print("Epoch #",epoch,"Loss_pi", loss_pi, "Loss_v", loss_v)
+        
     def predict(self,curr_position,goal_position):
 
-        self.nnet.eval()
+        # self.nnet.eval()
 
-        self.nnet.to('cpu')
+        # self.nnet.to('cpu')
 
         return self.nnet.forward(curr_position, goal_position)
     
     
     def loss_pi(self, targets, outputs):
-        return -torch.sum(targets * outputs) / targets.size()[0]
+        return -torch.sum(targets * torch.log(outputs)) / targets.size()[0]
 
     def loss_v(self, targets, outputs):
         return torch.sum((targets - outputs.view(-1)) ** 2) / targets.size()[0]

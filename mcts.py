@@ -16,6 +16,7 @@ class MCTS():
         self.nnet = nnet
         self.args = args
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        # print(self.device)
         self.Qsa = {}  # stores Q values for s,a (as defined in the paper)
         self.Nsa = {}  # stores #times edge s,a was visited
         self.Ns = {}  # stores #times board s was visited
@@ -50,8 +51,8 @@ class MCTS():
             probs = [x / counts_sum for x in counts]
         else:
             print(self.Nsa)
-            print("All counts zero")
-            probs = np.zeros_like(counts)
+            print("All counts zero for ",s)
+            probs = np.ones_like(counts)/self.gym.getActionSize()
         return probs
 
     def search(self, curr_position, goal_position):
@@ -69,8 +70,8 @@ class MCTS():
 
         if s not in self.Ps:
             # leaf node
-            # curr_position = curr_position.to(self.device)
-            # goal_position = goal_position.to(self.device)
+            curr_position = curr_position.to(self.device)
+            goal_position = goal_position.to(self.device)
 
             self.Ps[s], v = self.nnet.predict(curr_position, goal_position)
             # print(self.Ps[s])
