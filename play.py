@@ -9,6 +9,8 @@ from mcts import MCTS
 from train import Net
 from collections import deque
 from utils import goal_enum
+from pickle import Pickler, Unpickler
+from glob import glob
 
 class Play():
 
@@ -64,19 +66,29 @@ class Play():
         
         iterationTrainExamples = deque([], maxlen=self.args.maxlenOfQueue)
 
-        for _ in range(args.numIters):
+        for ite in range(args.numIters):
             self.net.nnet.eval()
 
             print("Playing....")
-            for ep in tqdm(range(self.args.numEps)):
-                if  (ep%100) == 0:
-                    print("Eps",ep/self.args.numEps)
-                self.mcts = MCTS(self.gym, self.net, self.args)  # reset search tree
-                states = self.executeEpisode()
-                if states is not None:
-                    iterationTrainExamples += states
-            print("Number of training samples:",len(iterationTrainExamples))
-            # print(iterationTrainExamples)
+            if ite == 0 and self.args.load_episodes:
+                iterationTrainExamples = self.load_episodes()
+            else:     
+                for ep in tqdm(range(self.args.numEps),"Episode"):
+                    if  (ep%100) == 0:
+                        print("Eps",ep/self.args.numEps)
+                        if ite==0:
+                            self.save_episodes(iterationTrainExamples,ep)
+
+
+                    self.mcts = MCTS(self.gym, self.net, self.args)  # reset search tree
+                    states = self.executeEpisode()
+                    if states is not None:
+                        iterationTrainExamples += states
+                print("Number of training samples:",len(iterationTrainExamples))
+                # print(iterationTrainExamples)
+                # if ite==0:
+                    # self.save_episodes(iterationTrainExamples,ep)
+
             print("Training....")
 
             self.net.train(iterationTrainExamples)
@@ -96,6 +108,30 @@ class Play():
                     accuracy += 1
         print("Accuracy = ",accuracy/self.args.numEpsTest)
 
+    def save_episodes(self,iterationTrainExamples,ep):
+        print("Saving Episodes..")
+        folder = os.getcwd() + self.args.checkpoint
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+        filename = os.path.join(folder, "episodes_" + str(ep) + ".examples")
+        with open(filename, "wb+") as f:
+            Pickler(f).dump(iterationTrainExamples)
+        f.closed
+
+    def load_episodes(self):
+        # iterationTrainExamples = deque([], maxlen=self.args.maxlenOfQueue)
+        folder = os.getcwd() + self.args.checkpoint
+
+        filelist = [y for x in os.walk(folder) for y in glob(os.path.join(x[0], '*.examples'))]
+        print(filelist,folder)
+        for examplesFile in filelist:
+            with open(examplesFile, "rb") as f:
+                iterationTrainExamples = Unpickler(f).load()
+                # if trainExamplesHistory is not None:
+                    # iterationTrainExamples = trainExamplesHistory
+        print("Loaded Episodes:", len(iterationTrainExamples))
+        return iterationTrainExamples
+
 
 
 
@@ -106,6 +142,8 @@ if __name__ == '__main__':
     parser.add_argument('--dataset_name', type=str, default='7days1')
     parser.add_argument('--models_folder', type=str, default='/saved_models/')
     parser.add_argument('--model_weights', type=str, default=None)
+    parser.add_argument('--checkpoint', type=str, default='/episodes/')
+    parser.add_argument('--load_episodes', type=bool, default=False)
 
     parser.add_argument('--obs', type=int, default=20)
     parser.add_argument('--preds', type=int, default=120)
