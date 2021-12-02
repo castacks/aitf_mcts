@@ -64,7 +64,7 @@ class Policy(nn.Module):
 
         # output = torch.squeeze(decoded2,dim=0)
 
-        softmax_out = F.softmax(decoded2_x, dim=1)
+        softmax_out = F.log_softmax(decoded2_x, dim=1)
         # print(softmax_out.shape)
 
         v = self.tanh(self.output_v(decoded2_v))

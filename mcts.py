@@ -71,11 +71,10 @@ class MCTS():
 
         if s not in self.Ps:
             # leaf node
-            curr_position = curr_position.to(self.device)
+            curr_position = curr_position.to(self.device)*1000 ##km to m
             goal_position = goal_position.to(self.device)
 
             self.Ps[s], v = self.nnet.predict(curr_position, goal_position)
-            print(curr_position[-1], torch.argmax(self.Ps[s]))
             self.Ns[s] = 0
             # print("Leaf")
             return v

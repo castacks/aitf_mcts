@@ -4,7 +4,7 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 import os
 from base_net import Policy
-
+import numpy as np
 import torch
 import torch.optim as optim
 
@@ -26,7 +26,7 @@ class Net():
         checkpoint = torch.load(modelpath, map_location=torch.device('cpu'))
         miss, unex = self.nnet.load_state_dict(checkpoint['model_state_dict'], strict=False)
         print("miss", miss, "unex", unex)
-        print(" Pre-trainined model weights loaded")
+        print(" Pre-trainined model weights loaded from ", modelpath)
 
     def train(self,examples):
         print("Device is ",self.device)
@@ -52,7 +52,9 @@ class Net():
                     l_v = self.loss_v(target_vs, out_v)
                     total_loss += l_pi + l_v
                     loss_v += l_v.item()  
-                    loss_pi += l_pi.item() 
+                    loss_pi += l_pi.item()
+                    assert(not np.isnan(loss_v))
+                    assert(not np.isnan(loss_pi))
 
                 total_loss.backward()
                 optimizer.step()
@@ -63,12 +65,12 @@ class Net():
         # self.nnet.eval()
 
         # self.nnet.to('cpu')
-
-        return self.nnet.forward(curr_position, goal_position)
+        pi, v = self.nnet.forward(curr_position, goal_position)
+        return torch.exp(pi), v
     
     
     def loss_pi(self, targets, outputs):
-        return -torch.sum(targets * torch.log(outputs)) / targets.size()[0]
+        return -torch.sum(targets * (outputs)) / targets.size()[0]
 
     def loss_v(self, targets, outputs):
         return torch.sum((targets - outputs.view(-1)) ** 2) / targets.size()[0]
