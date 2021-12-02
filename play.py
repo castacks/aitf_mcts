@@ -1,4 +1,5 @@
 import argparse
+import copy
 import os
 from numpy.lib import utils
 from tqdm import tqdm
@@ -22,24 +23,56 @@ class Play():
         self.mcts = MCTS(self.gym, self.net, args)
         # self.train()
         self.play()
-
+        # self.executeEpisode()
 
     def executeEpisode(self):
 
-        curr_position = self.gym.get_random_start_position()
-        # self.gym.plot_env(curr_position)
+        while True:
 
-        curr_goal = self.gym.get_random_goal_location()
+            curr_position = self.gym.get_random_start_position()
+            # self.gym.plot_env(curr_position)
+            start_position = copy.deepcopy(curr_position)
+            curr_goal = self.gym.get_random_goal_location()
+
+            r,g = self.gym.getGameEnded(curr_position, curr_goal)
+            if r == 0:
+                break ##make sure start is not goal
+            else:
+                print("No viable start")
+
         # print("curr goal",goal_enum(curr_goal))
-        
+        # print(curr_position,curr_goal)
+        # curr_position = torch.Tensor([[-0.1239, -0.0032,  0.4420],
+        # [-0.1519, -0.0048,  0.4496],
+        # [-0.1855, -0.0069,  0.4572],
+        # [-0.2022, -0.0066,  0.4572],
+        # [-0.2343, -0.0068,  0.4572],
+        # [-0.2684, -0.0050,  0.4648],
+        # [-0.2864, -0.0098,  0.4648],
+        # [-0.3366, -0.0101,  0.4648],
+        # [-0.3617, -0.0133,  0.4724],
+        # [-0.3889, -0.0152,  0.4724],
+        # [-0.4345, -0.0215,  0.4724],
+        # [-0.4622, -0.0232,  0.4801],
+        # [-0.4913, -0.0296,  0.4801],
+        # [-0.5275, -0.0344,  0.4801],
+        # [-0.5557, -0.0364,  0.4801],
+        # [-0.5827, -0.0427,  0.4877],
+        # [-0.6207, -0.0476,  0.4877],
+        # [-0.6383, -0.0526,  0.4877],
+        # [-0.6673, -0.0569,  0.4902],
+        # [-0.6962, -0.0613,  0.4928]])
+        # curr_goal = torch.Tensor([[0., 0., 1., 0., 0., 0., 0., 0., 0., 0.]])
         trainExamples = []
         episodeStep = 0
 
         while True:
             episodeStep += 1
 
-            pi = np.squeeze(self.mcts.getActionProbs(curr_position, curr_goal))
-
+            pi = self.mcts.getActionProbs(curr_position, curr_goal)
+            if pi == None:
+                print(curr_position,curr_goal,start_position)
+            pi = np.squeeze(pi)
             trainExamples.append([curr_position, curr_goal, pi])
 
             action = np.random.choice(len(pi), p=pi)

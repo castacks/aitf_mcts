@@ -108,11 +108,12 @@ class Gym():
         plt.xlim([-7, 7])
         plt.ylim([-7, 7])
 
-        self.fig.show()
         if save:
             plt.savefig("mcts_"+str(self.fig_count) + ".png")
             self.fig_count += 1
-        plt.pause(0.1)
+        else:
+            self.fig.show()
+            plt.pause(0.1)
 
 
 if __name__ == '__main__':

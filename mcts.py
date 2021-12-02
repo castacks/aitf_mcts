@@ -50,20 +50,21 @@ class MCTS():
         if int(counts_sum) != 0:
             probs = [x / counts_sum for x in counts]
         else:
-            print(self.Nsa)
+            print(self.Nsa,self.Qsa)
             print("All counts zero for ",s)
-            probs = np.ones_like(counts)/self.gym.getActionSize()
+            probs = None
+            # probs = np.ones_like(counts)/self.gym.getActionSize()
         return probs
 
     def search(self, curr_position, goal_position):
 
         s = self.gym.get_hash(curr_position)
 
-        # self.gym.plot_env(curr_position,'r')
+        # self.gym.plot_env(curr_position,'r',save=True)
 
         if s not in self.Es:
             self.Es[s],_ = self.gym.getGameEnded(curr_position, goal_position)
-        if self.Es[s] != 0 and len(self.Nsa) != 0:
+        if self.Es[s] != 0:
             # terminal node
             # print("Terminal Node")
             return -self.Es[s]
