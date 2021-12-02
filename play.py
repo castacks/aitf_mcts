@@ -13,6 +13,12 @@ from utils import goal_enum
 from pickle import Pickler, Unpickler
 from glob import glob
 
+
+torch.manual_seed(5345)
+import random
+random.seed(5345)
+np.random.seed(5345)
+
 class Play():
 
     def __init__(self, datapath, args):

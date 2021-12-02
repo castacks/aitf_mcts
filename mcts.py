@@ -75,7 +75,7 @@ class MCTS():
             goal_position = goal_position.to(self.device)
 
             self.Ps[s], v = self.nnet.predict(curr_position, goal_position)
-            # print(self.Ps[s])
+            print(curr_position[-1], torch.argmax(self.Ps[s]))
             self.Ns[s] = 0
             # print("Leaf")
             return v
