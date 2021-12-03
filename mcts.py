@@ -53,13 +53,12 @@ class MCTS():
             print(self.Nsa,self.Qsa)
             print("All counts zero for ",s)
             probs = None
-            # probs = np.ones_like(counts)/self.gym.getActionSize()
+            probs = np.ones_like(counts)/self.gym.getActionSize()
         return probs
 
     def search(self, curr_position, goal_position):
 
         s = self.gym.get_hash(curr_position)
-
         # self.gym.plot_env(curr_position,'r',save=True)
 
         if s not in self.Es:

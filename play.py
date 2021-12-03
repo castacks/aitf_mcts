@@ -43,8 +43,8 @@ class Play():
             r,g = self.gym.getGameEnded(curr_position, curr_goal)
             if r == 0:
                 break ##make sure start is not goal
-            else:
-                print("No viable start")
+            # else:
+                # print("No viable start")
 
         # print("curr goal",goal_enum(curr_goal))
         # print(curr_position,curr_goal)
@@ -79,6 +79,8 @@ class Play():
             pi = self.mcts.getActionProbs(curr_position, curr_goal)
             if pi == None:
                 print(curr_position,curr_goal,start_position)
+                # pi = np.ones_like(counts)/self.gym.getActionSize()
+
             pi = np.squeeze(pi)
             trainExamples.append([curr_position, curr_goal, pi])
 
@@ -201,7 +203,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--numEpisodeSteps', type=int, default=20)
     parser.add_argument('--maxlenOfQueue', type=int, default=25600)
-    parser.add_argument('--numEps', type=int, default=2)
+    parser.add_argument('--numEps', type=int, default=1000)
     parser.add_argument('--numEpsTest', type=int, default=100)
 
     parser.add_argument('--numIters', type=int, default=20)
