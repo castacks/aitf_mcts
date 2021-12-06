@@ -52,7 +52,6 @@ class MCTS():
         else:
             print(self.Nsa,self.Qsa)
             print("All counts zero for ",s)
-            probs = None
             probs = np.ones_like(counts)/self.gym.getActionSize()
         return probs
 

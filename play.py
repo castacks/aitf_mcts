@@ -14,10 +14,10 @@ from pickle import Pickler, Unpickler
 from glob import glob
 
 
-torch.manual_seed(5345)
-import random
-random.seed(5345)
-np.random.seed(5345)
+# torch.manual_seed(5345)
+# import random
+# random.seed(5345)
+# np.random.seed(5345)
 
 class Play():
 
@@ -27,9 +27,7 @@ class Play():
         self.net = Net(args)
         self.gym = Gym(datapath, args)
         self.mcts = MCTS(self.gym, self.net, args)
-        # self.train()
         self.play()
-        # self.executeEpisode()
 
     def executeEpisode(self):
 
@@ -77,8 +75,8 @@ class Play():
             episodeStep += 1
 
             pi = self.mcts.getActionProbs(curr_position, curr_goal)
-            if pi == None:
-                print(curr_position,curr_goal,start_position)
+            # if pi == None:
+                # print(curr_position,curr_goal,start_position)
                 # pi = np.ones_like(counts)/self.gym.getActionSize()
 
             pi = np.squeeze(pi)
@@ -126,7 +124,7 @@ class Play():
                     states = self.executeEpisode()
                     if states is not None:
                         iterationTrainExamples += states
-                print("Number of training samples:",len(iterationTrainExamples))
+            print("Number of training samples:",len(iterationTrainExamples))
                 # print(iterationTrainExamples)
                 # if ite==0:
                     # self.save_episodes(iterationTrainExamples,ep)
@@ -185,7 +183,7 @@ if __name__ == '__main__':
     parser.add_argument('--models_folder', type=str, default='/saved_models/')
     parser.add_argument('--model_weights', type=str, default=None)
     parser.add_argument('--checkpoint', type=str, default='/episodes/')
-    parser.add_argument('--load_episodes', type=bool, default=False)
+    parser.add_argument('--load_episodes', type=bool, default=True)
 
     parser.add_argument('--obs', type=int, default=20)
     parser.add_argument('--preds', type=int, default=120)
@@ -208,7 +206,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--numIters', type=int, default=20)
 
-    parser.add_argument('--epochs', type=int, default=25)
+    parser.add_argument('--epochs', type=int, default=15)
 
     parser.add_argument('--plot', type=bool, default=False)
 

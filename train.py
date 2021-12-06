@@ -1,5 +1,6 @@
 from numpy.lib.function_base import disp
 from torch.utils.data.dataset import Dataset
+from torch.utils.data import WeightedRandomSampler
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 import os
@@ -32,9 +33,20 @@ class Net():
         print("Device is ",self.device)
         # self.nnet.to(self.device)
         self.nnet.train()
-        optimizer = optim.Adam(self.nnet.parameters())
+        optimizer = optim.AdamW(self.nnet.parameters(), lr =0.0001)
         train_data = ReplayDataLoader(examples)
-        train_dataloader = DataLoader(train_data, batch_size=64, shuffle=True)
+        target = np.hstack([x[3] for x in examples])
+
+
+        print('target train -1/1: {}/{}'.format(len(np.where(target == -1)[0]), len(np.where(target == 1)[0])))
+        class_sample_count = np.array([len(np.where(target == t)[0]) for t in np.unique(target)])
+        weight = 1. / class_sample_count
+        samples_weight = np.array([weight[t] for t in target])
+
+        samples_weight = torch.from_numpy(samples_weight)
+        samples_weigth = samples_weight.double()
+        sampler = WeightedRandomSampler(samples_weight, len(samples_weight))
+        train_dataloader = DataLoader(train_data, batch_size=64, shuffle=False, sampler=sampler)
 
         for epoch in range(self.args.epochs):
             loss_pi = 0
@@ -79,6 +91,10 @@ class Net():
 class ReplayDataLoader(Dataset):
     def __init__(self, examples):
         self.examples = examples
+
+    def balance_data(self):
+
+        pass
     
     def __len__(self):
         return len(self.examples)

@@ -5,3 +5,5 @@ dataset/*
 episodes/*
 !episodes/.gitkeep
 .idea/
+log.txt
+*.examples
