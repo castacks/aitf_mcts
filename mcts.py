@@ -53,6 +53,7 @@ class MCTS():
             print(self.Nsa,self.Qsa)
             print("All counts zero for ",s)
             probs = np.ones_like(counts)/self.gym.getActionSize()
+            probs = None
         return probs
 
     def search(self, curr_position, goal_position):
