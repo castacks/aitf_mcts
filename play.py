@@ -183,7 +183,7 @@ if __name__ == '__main__':
     parser.add_argument('--models_folder', type=str, default='/saved_models/')
     parser.add_argument('--model_weights', type=str, default=None)
     parser.add_argument('--checkpoint', type=str, default='/episodes/')
-    parser.add_argument('--load_episodes', type=bool, default=True)
+    parser.add_argument('--load_episodes', type=bool, default=False)
 
     parser.add_argument('--obs', type=int, default=20)
     parser.add_argument('--preds', type=int, default=120)

@@ -2,42 +2,390 @@ miss ['linear_decoder_v.weight', 'linear_decoder_v.bias', 'linear_v.weight', 'li
  Pre-trainined model weights loaded from  /ocean/projects/cis210086p/jaypat/AITF/aitf_mcts/saved_models/goalGAIL1b_60.pt
 /ocean/projects/cis210086p/jaypat/AITF/aitf_mcts/traj_lib_0SI.txt
 Playing....
-['/ocean/projects/cis210086p/jaypat/AITF/aitf_mcts/episodes/episodes_900.examples'] /ocean/projects/cis210086p/jaypat/AITF/aitf_mcts/episodes/
-Loaded Episodes: 6923
-Number of training samples: 6923
+Eps 0.0
+Saving Episodes..
+Eps 0.1
+Saving Episodes..
+All counts zero for  tensor(-4.4982)tensor(-4.0796)
+Eps 0.2
+Saving Episodes..
+Eps 0.3
+Saving Episodes..
+All counts zero for  tensor(1.6652)tensor(5.4885)
+Eps 0.4
+Saving Episodes..
+All counts zero for  tensor(-1.8044)tensor(-5.3529)
+Eps 0.5
+Saving Episodes..
+Eps 0.6
+Saving Episodes..
+Eps 0.7
+Saving Episodes..
+Eps 0.8
+Saving Episodes..
+All counts zero for  tensor(-2.9099)tensor(4.7488)
+Eps 0.9
+Saving Episodes..
+All counts zero for  tensor(-5.4182)tensor(1.5866)
+Number of training samples: 7701
 Training....
 Device is  cuda
-target train -1/1: 6312/611
-Balanced training samples are  12422
-Epoch # 0 Loss_pi 397.3852364127955 Loss_v 9385.137687224142
-Epoch # 1 Loss_pi 200.36794307090355 Loss_v 7245.365503263919
-Epoch # 2 Loss_pi 192.60423773694444 Loss_v 5895.736837684156
-Epoch # 3 Loss_pi 184.85529220402805 Loss_v 4729.877405980062
-Epoch # 4 Loss_pi 178.8851085579349 Loss_v 3903.2297063335614
-Epoch # 5 Loss_pi 174.95217182314394 Loss_v 3185.7840379689023
-Epoch # 6 Loss_pi 171.60690375746867 Loss_v 2841.36338648078
-Epoch # 7 Loss_pi 169.2996640633286 Loss_v 2537.612385632515
-Epoch # 8 Loss_pi 166.55439178764763 Loss_v 2351.2959469681155
-Epoch # 9 Loss_pi 164.50848274312762 Loss_v 2258.358454369025
-Epoch # 10 Loss_pi 162.38215368053756 Loss_v 1901.0316988220088
-Epoch # 11 Loss_pi 160.804006466386 Loss_v 1853.3623260986221
-Epoch # 12 Loss_pi 159.49252991819588 Loss_v 1775.931575176697
-Epoch # 13 Loss_pi 158.37457908501608 Loss_v 1846.3071824730705
-Epoch # 14 Loss_pi 156.22375169803175 Loss_v 1596.1003649598129
+target train -1/1: 4856/2845
+Balanced training samples are  7701
+Epoch # 0 Loss_pi 372.95649151436567 Loss_v 6842.411444679368
+Epoch # 1 Loss_pi 134.0675140181147 Loss_v 6255.99243936612
+Epoch # 2 Loss_pi 132.50317985208318 Loss_v 5714.111482256363
+Epoch # 3 Loss_pi 129.96602119076977 Loss_v 4981.51522005974
+Epoch # 4 Loss_pi 127.12959787156223 Loss_v 4513.302553434626
+Epoch # 5 Loss_pi 124.28394407285167 Loss_v 4142.859619341999
+Epoch # 6 Loss_pi 122.51390587875088 Loss_v 3795.9344427559868
+Epoch # 7 Loss_pi 121.63034554934926 Loss_v 3667.69990614167
+Epoch # 8 Loss_pi 120.07091196489809 Loss_v 3526.7303665353484
+Epoch # 9 Loss_pi 119.28471811814663 Loss_v 3489.6714050217724
+Epoch # 10 Loss_pi 118.34529639220304 Loss_v 3284.7882885674267
+Epoch # 11 Loss_pi 117.48998612833545 Loss_v 3231.57040557321
+Epoch # 12 Loss_pi 116.90136303445927 Loss_v 3173.86873723814
+Epoch # 13 Loss_pi 116.54943393687806 Loss_v 3087.9238954246407
+Epoch # 14 Loss_pi 115.6491952220483 Loss_v 2942.9424301389595
 Testing....
+All counts zero for  tensor(5.6252)tensor(1.0336)
+All counts zero for  tensor(3.2268)tensor(-4.5733)
+All counts zero for  tensor(3.7687)tensor(4.6453)
+All counts zero for  tensor(-5.0449)tensor(-2.6880)
+All counts zero for  tensor(-0.2899)tensor(0.0637)
+All counts zero for  tensor(4.5098)tensor(-3.3041)
+All counts zero for  tensor(5.4146)tensor(1.1347)
+All counts zero for  tensor(6.0540)tensor(-0.3243)
 Accuracy =  0.09
 Playing....
 Eps 0.0
-All counts zero for  tensor(0.9088)tensor(-0.2155)
+All counts zero for  tensor(-4.1896)tensor(-3.7147)
+All counts zero for  tensor(5.2804)tensor(1.7111)
+All counts zero for  tensor(5.3595)tensor(1.4960)
+All counts zero for  tensor(1.5461)tensor(5.8840)
+All counts zero for  tensor(-3.0404)tensor(5.0172)
+All counts zero for  tensor(-4.4370)tensor(-3.4793)
+All counts zero for  tensor(5.1411)tensor(2.4960)
 Eps 0.1
-All counts zero for  tensor(0.2936)tensor(0.1203)
-All counts zero for  tensor(2.0686)tensor(0.0152)
+All counts zero for  tensor(-1.4435)tensor(-5.5530)
+All counts zero for  tensor(5.7319)tensor(1.6927)
 Eps 0.2
+All counts zero for  tensor(-5.4730)tensor(1.4835)
+All counts zero for  tensor(5.8544)tensor(0.4475)
+All counts zero for  tensor(-6.1026)tensor(0.0731)
 Eps 0.3
+All counts zero for  tensor(5.2798)tensor(2.8615)
+All counts zero for  tensor(2.9450)tensor(5.0730)
+All counts zero for  tensor(-0.1661)tensor(0.0120)
 Eps 0.4
-All counts zero for  tensor(-4.8862)tensor(-3.6088)
-All counts zero for  tensor(-4.0131)tensor(-3.8383)
+All counts zero for  tensor(-0.2998)tensor(0.0036)
+All counts zero for  tensor(5.3191)tensor(-1.7670)
+All counts zero for  tensor(1.0208)tensor(5.7466)
 Eps 0.5
+All counts zero for  tensor(5.7981)tensor(-1.7417)
+All counts zero for  tensor(5.8092)tensor(-1.9279)
+All counts zero for  tensor(-5.4840)tensor(0.6712)
+All counts zero for  tensor(-5.7929)tensor(0.5367)
+All counts zero for  tensor(-4.1996)tensor(-3.8756)
+All counts zero for  tensor(0.4591)tensor(-0.0450)
+All counts zero for  tensor(-4.1732)tensor(-4.2073)
+All counts zero for  tensor(0.8438)tensor(-5.7795)
 Eps 0.6
-All counts zero for  tensor(0.8538)tensor(-0.0060)
+All counts zero for  tensor(4.2593)tensor(-4.2115)
+All counts zero for  tensor(-5.6375)tensor(1.5449)
+All counts zero for  tensor(-4.6701)tensor(-3.0048)
+All counts zero for  tensor(6.0089)tensor(0.4608)
 Eps 0.7
+All counts zero for  tensor(2.8198)tensor(5.2364)
+All counts zero for  tensor(4.6579)tensor(3.0982)
+All counts zero for  tensor(-1.2011)tensor(-5.7355)
+All counts zero for  tensor(5.0287)tensor(-2.6330)
+Eps 0.8
+All counts zero for  tensor(-1.2248)tensor(5.5955)
+All counts zero for  tensor(5.1203)tensor(-2.7028)
+Eps 0.9
+All counts zero for  tensor(-0.6479)tensor(0.0760)
+All counts zero for  tensor(-2.2331)tensor(5.2020)
+All counts zero for  tensor(-5.7173)tensor(-0.8660)
+All counts zero for  tensor(5.2182)tensor(2.4364)
+All counts zero for  tensor(4.9326)tensor(2.3131)
+All counts zero for  tensor(5.0812)tensor(-2.0345)
+All counts zero for  tensor(5.1980)tensor(2.1238)
+All counts zero for  tensor(3.0077)tensor(4.6047)
+All counts zero for  tensor(5.6844)tensor(-1.2089)
+All counts zero for  tensor(-0.4939)tensor(-5.8058)
+Number of training samples: 15637
+Training....
+Device is  cuda
+target train -1/1: 11699/3938
+Balanced training samples are  19575
+Epoch # 0 Loss_pi 322.7782018028857 Loss_v 9604.232021319078
+Epoch # 1 Loss_pi 314.26959472758085 Loss_v 9067.553857350666
+Epoch # 2 Loss_pi 311.15461823673286 Loss_v 8702.73140014891
+Epoch # 3 Loss_pi 309.0882180482038 Loss_v 8385.777757088545
+Epoch # 4 Loss_pi 307.9798179587768 Loss_v 8141.884485819597
+Epoch # 5 Loss_pi 305.8086465459308 Loss_v 7908.884658839227
+Epoch # 6 Loss_pi 304.6551322208672 Loss_v 7793.801791074305
+Epoch # 7 Loss_pi 303.02601550177366 Loss_v 7441.429190619823
+Epoch # 8 Loss_pi 302.002432627206 Loss_v 7370.586677364356
+Epoch # 9 Loss_pi 300.7614995842719 Loss_v 7273.59605920898
+Epoch # 10 Loss_pi 299.60991523261225 Loss_v 7024.765374602578
+Epoch # 11 Loss_pi 298.6575079633018 Loss_v 6929.979824688309
+Epoch # 12 Loss_pi 297.50276078199005 Loss_v 6621.266260557368
+Epoch # 13 Loss_pi 296.9704301827053 Loss_v 6616.690653479355
+Epoch # 14 Loss_pi 296.40330222945613 Loss_v 6520.165587936832
+Testing....
+All counts zero for  tensor(-1.3942)tensor(5.5745)
+All counts zero for  tensor(5.5569)tensor(-1.2237)
+All counts zero for  tensor(5.0007)tensor(2.6393)
+All counts zero for  tensor(4.7864)tensor(2.6241)
+Accuracy =  0.12
+Playing....
+Eps 0.0
+All counts zero for  tensor(0.4585)tensor(-0.0129)
+All counts zero for  tensor(-5.3319)tensor(2.3410)
+Eps 0.1
+All counts zero for  tensor(5.5696)tensor(-0.9803)
+All counts zero for  tensor(-3.6244)tensor(4.8779)
+All counts zero for  tensor(-5.3949)tensor(2.1320)
+Eps 0.2
+All counts zero for  tensor(-0.8820)tensor(5.5699)
+All counts zero for  tensor(0.2597)tensor(0.0294)
+All counts zero for  tensor(0.7732)tensor(-0.1257)
+Eps 0.3
+All counts zero for  tensor(-5.4053)tensor(2.3556)
+All counts zero for  tensor(5.6457)tensor(0.1166)
+All counts zero for  tensor(-4.6141)tensor(-3.3420)
+Eps 0.4
+All counts zero for  tensor(0.8538)tensor(-0.0060)
+All counts zero for  tensor(-3.9523)tensor(4.3132)
+Eps 0.5
+All counts zero for  tensor(0.8353)tensor(5.4925)
+All counts zero for  tensor(0.7678)tensor(0.5882)
+All counts zero for  tensor(5.8490)tensor(-0.2767)
+All counts zero for  tensor(-1.7112)tensor(5.3070)
+Eps 0.6
+All counts zero for  tensor(-5.7519)tensor(1.9901)
+All counts zero for  tensor(5.4355)tensor(-1.9670)
+Eps 0.7
+All counts zero for  tensor(4.9425)tensor(-2.4410)
+All counts zero for  tensor(0.7383)tensor(-0.0646)
+All counts zero for  tensor(-5.5955)tensor(1.2190)
+Eps 0.8
+All counts zero for  tensor(-2.2257)tensor(5.0777)
+All counts zero for  tensor(5.8782)tensor(-0.4251)
+All counts zero for  tensor(5.7558)tensor(0.6358)
+All counts zero for  tensor(5.2028)tensor(-1.9932)
+All counts zero for  tensor(5.9414)tensor(0.7815)
+All counts zero for  tensor(4.8803)tensor(3.6412)
+All counts zero for  tensor(-4.9413)tensor(2.6575)
+Eps 0.9
+All counts zero for  tensor(2.9666)tensor(5.1864)
+All counts zero for  tensor(-2.1662)tensor(5.2402)
+All counts zero for  tensor(0.4255)tensor(5.5978)
+Number of training samples: 23068
+Training....
+Device is  cuda
+target train -1/1: 18206/4862
+Balanced training samples are  32792
+Epoch # 0 Loss_pi 496.24109341653883 Loss_v 13209.578321603823
+Epoch # 1 Loss_pi 493.0972773927598 Loss_v 12419.602919197105
+Epoch # 2 Loss_pi 491.4640236443148 Loss_v 11894.64473794817
+Epoch # 3 Loss_pi 490.09692968109806 Loss_v 11336.280315938466
+Epoch # 4 Loss_pi 488.467360310922 Loss_v 11156.934635946276
+Epoch # 5 Loss_pi 487.91832584463185 Loss_v 10869.800903330472
+Epoch # 6 Loss_pi 486.39909486396965 Loss_v 10567.302450133835
+Epoch # 7 Loss_pi 485.4687815806781 Loss_v 10242.450218482805
+Epoch # 8 Loss_pi 484.82164503971984 Loss_v 9976.578544873752
+Epoch # 9 Loss_pi 484.1950571490914 Loss_v 9671.910993486157
+Epoch # 10 Loss_pi 483.048448770925 Loss_v 9509.149400792598
+Epoch # 11 Loss_pi 482.258536016152 Loss_v 9116.216398934806
+Epoch # 12 Loss_pi 482.1381865278205 Loss_v 9100.805505696544
+Epoch # 13 Loss_pi 481.06905328248706 Loss_v 8806.856737385111
+Epoch # 14 Loss_pi 480.5624207334487 Loss_v 8562.402660263875
+Testing....
+All counts zero for  tensor(-0.0080)tensor(5.8792)
+All counts zero for  tensor(3.0312)tensor(-4.6816)
+All counts zero for  tensor(5.3173)tensor(-2.6888)
+All counts zero for  tensor(0.2109)tensor(5.9780)
+Accuracy =  0.1
+Playing....
+Eps 0.0
+All counts zero for  tensor(-5.5747)tensor(-1.5167)
+All counts zero for  tensor(1.2989)tensor(5.6518)
+All counts zero for  tensor(-1.8694)tensor(-5.5643)
+All counts zero for  tensor(5.1252)tensor(-1.9759)
+All counts zero for  tensor(4.8000)tensor(3.4212)
+All counts zero for  tensor(1.1832)tensor(-0.4966)
+Eps 0.1
+All counts zero for  tensor(4.7292)tensor(3.2334)
+All counts zero for  tensor(-0.0273)tensor(-5.8448)
+All counts zero for  tensor(5.6355)tensor(-0.0061)
+Eps 0.2
+All counts zero for  tensor(1.9478)tensor(-0.1689)
+All counts zero for  tensor(4.6419)tensor(-3.5254)
+All counts zero for  tensor(3.5656)tensor(-4.2665)
+All counts zero for  tensor(0.2832)tensor(0.1033)
+All counts zero for  tensor(1.3099)tensor(-5.6549)
+All counts zero for  tensor(-3.9090)tensor(-4.2284)
+Eps 0.3
+All counts zero for  tensor(-3.2977)tensor(-4.7129)
+All counts zero for  tensor(-2.9985)tensor(-4.9149)
+All counts zero for  tensor(4.5152)tensor(3.9057)
+All counts zero for  tensor(0.1791)tensor(5.6665)
+Eps 0.4
+All counts zero for  tensor(-4.5636)tensor(-3.6564)
+All counts zero for  tensor(0.8101)tensor(-0.0290)
+All counts zero for  tensor(-0.2481)tensor(-0.0236)
+All counts zero for  tensor(-3.3206)tensor(-5.1064)
+All counts zero for  tensor(1.2905)tensor(-5.4908)
+Eps 0.5
+All counts zero for  tensor(2.6246)tensor(-5.2962)
+All counts zero for  tensor(-4.8277)tensor(-3.5271)
+All counts zero for  tensor(5.5611)tensor(-0.5184)
+Eps 0.6
+All counts zero for  tensor(0.8545)tensor(0.2410)
+All counts zero for  tensor(2.5836)tensor(5.1153)
+All counts zero for  tensor(3.5503)tensor(4.6862)
+All counts zero for  tensor(-0.4460)tensor(5.8304)
+Eps 0.7
+All counts zero for  tensor(3.8528)tensor(-4.0892)
+All counts zero for  tensor(-4.7956)tensor(-2.9031)
+All counts zero for  tensor(-1.3326)tensor(-5.7100)
+All counts zero for  tensor(3.1105)tensor(-4.6852)
+All counts zero for  tensor(-5.5503)tensor(2.2040)
+All counts zero for  tensor(-0.9725)tensor(5.5137)
+Eps 0.8
+All counts zero for  tensor(-3.9686)tensor(4.0387)
+All counts zero for  tensor(5.9694)tensor(1.0449)
+All counts zero for  tensor(-5.2728)tensor(2.4124)
+All counts zero for  tensor(0.7187)tensor(0.0235)
+Eps 0.9
+All counts zero for  tensor(6.1144)tensor(-0.5740)
+All counts zero for  tensor(1.1229)tensor(5.5875)
+Number of training samples: 25600
+Training....
+Device is  cuda
+target train -1/1: 21219/4381
+Balanced training samples are  38743
+Epoch # 0 Loss_pi 565.2428351621828 Loss_v 13935.274765115406
+Epoch # 1 Loss_pi 561.2676313754879 Loss_v 12676.29448573549
+Epoch # 2 Loss_pi 559.4576353520287 Loss_v 11889.795313977324
+Epoch # 3 Loss_pi 558.4959773404994 Loss_v 11362.970449981978
+Epoch # 4 Loss_pi 557.5879110542481 Loss_v 10921.88445655635
+Epoch # 5 Loss_pi 556.7163277750092 Loss_v 10394.718889306812
+Epoch # 6 Loss_pi 556.0857406364146 Loss_v 9845.67637637075
+Epoch # 7 Loss_pi 555.1349437884513 Loss_v 9565.604223829741
+Epoch # 8 Loss_pi 554.6135951884613 Loss_v 9227.785711719287
+Epoch # 9 Loss_pi 554.4346127197942 Loss_v 8993.713086034088
+Epoch # 10 Loss_pi 553.7998877943215 Loss_v 8729.687301377719
+Epoch # 11 Loss_pi 553.5057652449219 Loss_v 8369.523216743495
+Epoch # 12 Loss_pi 553.53540114966 Loss_v 8273.901740667274
+Epoch # 13 Loss_pi 552.6727897732627 Loss_v 7910.365046552351
+Epoch # 14 Loss_pi 552.4678155012126 Loss_v 7839.392611767327
+Testing....
+All counts zero for  tensor(-4.3127)tensor(-4.0804)
+All counts zero for  tensor(4.7872)tensor(3.7577)
+All counts zero for  tensor(0.1347)tensor(-0.5577)
+All counts zero for  tensor(-0.3477)tensor(0.0223)
+All counts zero for  tensor(-0.3150)tensor(-0.3102)
+All counts zero for  tensor(4.5227)tensor(-3.2637)
+All counts zero for  tensor(-0.1938)tensor(-0.0762)
+Accuracy =  0.14
+Playing....
+Eps 0.0
+All counts zero for  tensor(2.3384)tensor(4.8670)
+All counts zero for  tensor(5.7185)tensor(-0.5538)
+All counts zero for  tensor(-1.1857)tensor(5.7374)
+All counts zero for  tensor(-5.5497)tensor(1.8800)
+All counts zero for  tensor(5.6853)tensor(-0.9347)
+All counts zero for  tensor(5.5261)tensor(-0.8118)
+All counts zero for  tensor(6.1166)tensor(-0.0363)
+All counts zero for  tensor(5.3193)tensor(-0.5241)
+Eps 0.1
+All counts zero for  tensor(0.8385)tensor(-0.1161)
+All counts zero for  tensor(-0.3745)tensor(0.0066)
+All counts zero for  tensor(5.2912)tensor(-0.3348)
+Eps 0.2
+All counts zero for  tensor(0.8382)tensor(-0.0374)
+Eps 0.3
+All counts zero for  tensor(-5.9159)tensor(0.3674)
+All counts zero for  tensor(-4.9372)tensor(2.6946)
+All counts zero for  tensor(-3.9901)tensor(4.0897)
+All counts zero for  tensor(4.4441)tensor(-3.9992)
+All counts zero for  tensor(5.7580)tensor(0.4842)
+All counts zero for  tensor(-5.1494)tensor(-2.5498)
+All counts zero for  tensor(4.6850)tensor(3.0101)
+Eps 0.4
+All counts zero for  tensor(0.9173)tensor(5.5123)
+All counts zero for  tensor(-0.2481)tensor(0.0026)
+All counts zero for  tensor(5.7956)tensor(0.2101)
+All counts zero for  tensor(4.4536)tensor(3.3783)
+Eps 0.5
+All counts zero for  tensor(5.9058)tensor(-0.3726)
+All counts zero for  tensor(0.9451)tensor(5.5194)
+All counts zero for  tensor(-5.8510)tensor(-0.1401)
+All counts zero for  tensor(-2.5922)tensor(-5.3800)
+All counts zero for  tensor(-5.2612)tensor(-2.5622)
+All counts zero for  tensor(4.2771)tensor(-3.6647)
+All counts zero for  tensor(5.6766)tensor(-1.9346)
+All counts zero for  tensor(5.9235)tensor(-0.1818)
+Eps 0.6
+All counts zero for  tensor(-5.6078)tensor(2.2018)
+All counts zero for  tensor(5.8579)tensor(0.4663)
+All counts zero for  tensor(-3.8511)tensor(4.1338)
+All counts zero for  tensor(-5.3469)tensor(2.2965)
+All counts zero for  tensor(4.4752)tensor(3.3129)
+All counts zero for  tensor(5.4944)tensor(-0.7038)
+All counts zero for  tensor(2.7615)tensor(5.3039)
+All counts zero for  tensor(5.7785)tensor(1.1481)
+All counts zero for  tensor(0.4603)tensor(5.6482)
+Eps 0.7
+All counts zero for  tensor(-5.3831)tensor(1.1718)
+Eps 0.8
+All counts zero for  tensor(-5.9646)tensor(0.4664)
+All counts zero for  tensor(0.4694)tensor(5.7369)
+All counts zero for  tensor(3.9659)tensor(-3.7769)
+Eps 0.9
+All counts zero for  tensor(-0.6612)tensor(0.0775)
+All counts zero for  tensor(-0.6526)tensor(-0.0362)
+All counts zero for  tensor(4.9664)tensor(2.0976)
+Number of training samples: 25600
+Training....
+Device is  cuda
+target train -1/1: 22248/3352
+Balanced training samples are  42360
+Epoch # 0 Loss_pi 583.0821947250023 Loss_v 13577.145907608476
+Epoch # 1 Loss_pi 580.763743566519 Loss_v 11090.596295464076
+Epoch # 2 Loss_pi 579.8390235582171 Loss_v 10161.416974591324
+Epoch # 3 Loss_pi 579.2280966391603 Loss_v 9334.940073636095
+Epoch # 4 Loss_pi 578.49492691562 Loss_v 8628.047243877643
+Epoch # 5 Loss_pi 577.9099679075355 Loss_v 8247.658831486586
+Epoch # 6 Loss_pi 577.4107348703757 Loss_v 7900.010911364533
+Epoch # 7 Loss_pi 577.319056438288 Loss_v 7501.049688823845
+Epoch # 8 Loss_pi 576.6525557516388 Loss_v 7350.789777593342
+Epoch # 9 Loss_pi 576.2496949992615 Loss_v 6829.020606939211
+Epoch # 10 Loss_pi 576.1511522357456 Loss_v 6690.327891142922
+Epoch # 11 Loss_pi 575.9909347405819 Loss_v 6419.014893792062
+Epoch # 12 Loss_pi 575.7360694283241 Loss_v 6419.089388254539
+Epoch # 13 Loss_pi 575.430114708463 Loss_v 6137.097171692074
+Epoch # 14 Loss_pi 575.0193836370929 Loss_v 5845.961340006645
+Testing....
+All counts zero for  tensor(4.3479)tensor(3.4445)
+All counts zero for  tensor(-4.3424)tensor(-3.5681)
+All counts zero for  tensor(1.8454)tensor(-5.3281)
+All counts zero for  tensor(-4.9646)tensor(2.8355)
+Accuracy =  0.12
+Playing....
+Eps 0.0
+All counts zero for  tensor(-5.7474)tensor(0.1975)
+All counts zero for  tensor(-0.3658)tensor(0.0015)
+Eps 0.1
+All counts zero for  tensor(0.1728)tensor(-0.6229)
+All counts zero for  tensor(-0.8795)tensor(0.5876)
+Eps 0.2
+All counts zero for  tensor(-5.5991)tensor(-0.2182)
+All counts zero for  tensor(-5.0843)tensor(-1.7753)
+All counts zero for  tensor(0.2771)tensor(5.5214)
+Eps 0.3
+All counts zero for  tensor(-2.3464)tensor(-5.1702)

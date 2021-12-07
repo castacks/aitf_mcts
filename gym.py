@@ -79,7 +79,8 @@ class Gym():
 
     def get_hash(self, curr_position):
 
-        return str(curr_position[-1, 0]) + str(curr_position[-1, 1])
+        # return str(curr_position[-1, 0]) + str(curr_position[-1, 1])
+        return "%s-%s" % (int(curr_position[-1, 0]*1000),int(curr_position[-1, 1]*1000))
 
     def reset_plot(self):
         plt.pause(2)
