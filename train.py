@@ -33,20 +33,33 @@ class Net():
         print("Device is ",self.device)
         # self.nnet.to(self.device)
         self.nnet.train()
-        optimizer = optim.AdamW(self.nnet.parameters(), lr =0.0001)
-        train_data = ReplayDataLoader(examples)
+        optimizer = optim.AdamW(self.nnet.parameters(), lr =0.001)
+
         target = np.hstack([x[3] for x in examples])
 
-
         print('target train -1/1: {}/{}'.format(len(np.where(target == -1)[0]), len(np.where(target == 1)[0])))
-        class_sample_count = np.array([len(np.where(target == t)[0]) for t in np.unique(target)])
-        weight = 1. / class_sample_count
-        samples_weight = np.array([weight[t] for t in target])
+        idx = np.where(target == 1)[0]
+        pos_samples = [examples[i] for i in idx] 
+        idx = np.where(target == -1)[0]
+        neg_samples = [examples[i] for i in idx] 
+        
+        rep_count = int(len(neg_samples)/len(pos_samples))
 
-        samples_weight = torch.from_numpy(samples_weight)
-        samples_weigth = samples_weight.double()
-        sampler = WeightedRandomSampler(samples_weight, len(samples_weight))
-        train_dataloader = DataLoader(train_data, batch_size=64, shuffle=False, sampler=sampler)
+        pos_samples = pos_samples*rep_count
+        examples = pos_samples + neg_samples
+        print("Balanced training samples are ", len(examples))
+        train_data = ReplayDataLoader(examples)
+
+      
+        train_dataloader = DataLoader(train_data, batch_size=64,shuffle=True)
+
+        # test_v = []
+        # for test in train_dataloader:
+        #     _,_,_,v = test
+        #     test_v.append(v.numpy()[0])
+        # test_v = np.array(test_v)
+        # print('target train -1/1: {}/{}'.format(len(np.where(test_v == -1)[0]), len(np.where(test_v == 1)[0])))
+
 
         for epoch in range(self.args.epochs):
             loss_pi = 0
@@ -59,9 +72,10 @@ class Net():
                 position,goal, target_pis, target_vs = batch
                 total_loss = 0
                 for i in range(position.shape[0]):
+                    # print(target_vs[i])
                     out_pi, out_v = self.nnet(position[i],goal[i])
-                    l_pi = self.loss_pi(target_pis, out_pi)
-                    l_v = self.loss_v(target_vs, out_v)
+                    l_pi = self.loss_pi(target_pis[i], out_pi)
+                    l_v = self.loss_v(target_vs[i], out_v)
                     total_loss += l_pi + l_v
                     loss_v += l_v.item()  
                     loss_pi += l_pi.item()
@@ -85,7 +99,7 @@ class Net():
         return -torch.sum(targets * (outputs)) / targets.size()[0]
 
     def loss_v(self, targets, outputs):
-        return torch.sum((targets - outputs.view(-1)) ** 2) / targets.size()[0]
+        return (targets - outputs.view(-1)) ** 2
 
 
 class ReplayDataLoader(Dataset):

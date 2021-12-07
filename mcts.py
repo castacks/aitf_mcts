@@ -50,10 +50,10 @@ class MCTS():
         if int(counts_sum) != 0:
             probs = [x / counts_sum for x in counts]
         else:
-            print(self.Nsa,self.Qsa)
+            # print(self.Nsa,self.Qsa)
             print("All counts zero for ",s)
             probs = np.ones_like(counts)/self.gym.getActionSize()
-            probs = None
+            # probs = None
         return probs
 
     def search(self, curr_position, goal_position):
