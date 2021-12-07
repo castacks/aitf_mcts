@@ -66,7 +66,7 @@ class MCTS():
         if self.Es[s] != 0:
             # terminal node
             # print("Terminal Node")
-            return -self.Es[s]
+            return self.Es[s]
 
         if s not in self.Ps:
             # leaf node

@@ -140,7 +140,7 @@ class Play():
     
     def test(self):
         accuracy = 0
-        for _ in range(self.args.numEpsTest):
+        for _ in tqdm(range(self.args.numEpsTest)):
             self.mcts = MCTS(self.gym, self.net, self.args)  # reset search tree
             states = self.executeEpisode()
             if states is not None:

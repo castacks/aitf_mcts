@@ -72,16 +72,9 @@ class Gym():
         angle = np.arctan2(difference[1], difference[0])
         r = R.from_euler('z', angle)
         direction_matrx_rep = np.squeeze(r.as_matrix())
+        trajs = (np.dot(direction_matrx_rep,self.traj_lib[action_choice]) + (np.array(curr_position[-1,:])[:,None])).T
 
-        trajs = np.zeros([20, 3])
-        for j in range(20):
-            trajs[j, 0:2] = torch.from_numpy(
-                np.dot(direction_matrx_rep[0:2, 0:2], self.traj_lib[action_choice, 0:2, j].T))
-        for i in range(20):
-            trajs[i, 0] += curr_position[-1, 0]
-            trajs[i, 1] += curr_position[-1, 1]
-            trajs[i, 2] = self.traj_lib[action_choice, 2, i] + curr_position[-1, 2]
-
+    
         return torch.from_numpy(trajs).float()
 
     def get_hash(self, curr_position):

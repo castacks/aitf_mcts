@@ -1,3 +1,43 @@
 miss ['linear_decoder_v.weight', 'linear_decoder_v.bias', 'linear_v.weight', 'linear_v.bias', 'output_v.weight', 'output_v.bias'] unex []
  Pre-trainined model weights loaded from  /ocean/projects/cis210086p/jaypat/AITF/aitf_mcts/saved_models/goalGAIL1b_60.pt
 /ocean/projects/cis210086p/jaypat/AITF/aitf_mcts/traj_lib_0SI.txt
+Playing....
+['/ocean/projects/cis210086p/jaypat/AITF/aitf_mcts/episodes/episodes_900.examples'] /ocean/projects/cis210086p/jaypat/AITF/aitf_mcts/episodes/
+Loaded Episodes: 6923
+Number of training samples: 6923
+Training....
+Device is  cuda
+target train -1/1: 6312/611
+Balanced training samples are  12422
+Epoch # 0 Loss_pi 397.3852364127955 Loss_v 9385.137687224142
+Epoch # 1 Loss_pi 200.36794307090355 Loss_v 7245.365503263919
+Epoch # 2 Loss_pi 192.60423773694444 Loss_v 5895.736837684156
+Epoch # 3 Loss_pi 184.85529220402805 Loss_v 4729.877405980062
+Epoch # 4 Loss_pi 178.8851085579349 Loss_v 3903.2297063335614
+Epoch # 5 Loss_pi 174.95217182314394 Loss_v 3185.7840379689023
+Epoch # 6 Loss_pi 171.60690375746867 Loss_v 2841.36338648078
+Epoch # 7 Loss_pi 169.2996640633286 Loss_v 2537.612385632515
+Epoch # 8 Loss_pi 166.55439178764763 Loss_v 2351.2959469681155
+Epoch # 9 Loss_pi 164.50848274312762 Loss_v 2258.358454369025
+Epoch # 10 Loss_pi 162.38215368053756 Loss_v 1901.0316988220088
+Epoch # 11 Loss_pi 160.804006466386 Loss_v 1853.3623260986221
+Epoch # 12 Loss_pi 159.49252991819588 Loss_v 1775.931575176697
+Epoch # 13 Loss_pi 158.37457908501608 Loss_v 1846.3071824730705
+Epoch # 14 Loss_pi 156.22375169803175 Loss_v 1596.1003649598129
+Testing....
+Accuracy =  0.09
+Playing....
+Eps 0.0
+All counts zero for  tensor(0.9088)tensor(-0.2155)
+Eps 0.1
+All counts zero for  tensor(0.2936)tensor(0.1203)
+All counts zero for  tensor(2.0686)tensor(0.0152)
+Eps 0.2
+Eps 0.3
+Eps 0.4
+All counts zero for  tensor(-4.8862)tensor(-3.6088)
+All counts zero for  tensor(-4.0131)tensor(-3.8383)
+Eps 0.5
+Eps 0.6
+All counts zero for  tensor(0.8538)tensor(-0.0060)
+Eps 0.7
