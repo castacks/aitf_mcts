@@ -155,7 +155,7 @@ def populate_traj_lib():
     # note position of motion prim library text files
     lib_path = os.getcwd() + '/traj_lib_0SI.txt'
     index_path = os.getcwd() + '/traj_index_0SI.txt'
-    print(lib_path)
+    print("Loading traj lib from", lib_path)
     ## obtain a 3d matrix of each trajectory's (x, y, z) positions into an array
     file1 = open(lib_path, 'r',newline='\r\n')
     traj_no = 252 # note the number

@@ -36,7 +36,7 @@ class Gym():
         dataset_train = TrajectoryDataset(self.datapath + "test", obs_len=self.args.obs,
                                           pred_len=self.args.preds, step=self.args.preds_step, delim=self.args.delim)
         self.loader_train = DataLoader(
-            dataset_train,  batch_size=1, num_workers=4, shuffle=True, collate_fn=seq_collate_old)
+            dataset_train,  batch_size=1, num_workers=1, shuffle=True, collate_fn=seq_collate_old)
 
     def get_random_start_position(self):
 

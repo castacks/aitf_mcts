@@ -26,7 +26,7 @@ class Net():
 
         checkpoint = torch.load(modelpath, map_location=torch.device('cpu'))
         miss, unex = self.nnet.load_state_dict(checkpoint['model_state_dict'], strict=False)
-        print("miss", miss, "unex", unex)
+        # print("miss", miss, "unex", unex)
         print(" Pre-trainined model weights loaded from ", modelpath)
 
     def train(self,examples):
@@ -35,19 +35,21 @@ class Net():
         self.nnet.train()
         optimizer = optim.AdamW(self.nnet.parameters(), lr =0.001)
 
-        target = np.hstack([x[3] for x in examples])
+        if self.args.balance_data:
+            target = np.hstack([x[3] for x in examples])
 
-        print('target train -1/1: {}/{}'.format(len(np.where(target == -1)[0]), len(np.where(target == 1)[0])))
-        idx = np.where(target == 1)[0]
-        pos_samples = [examples[i] for i in idx] 
-        idx = np.where(target == -1)[0]
-        neg_samples = [examples[i] for i in idx] 
-        
-        rep_count = int(len(neg_samples)/len(pos_samples))
+            print('target train -1/1: {}/{}'.format(len(np.where(target == -1)[0]), len(np.where(target == 1)[0])))
+            idx = np.where(target == 1)[0]
+            pos_samples = [examples[i] for i in idx] 
+            idx = np.where(target == -1)[0]
+            neg_samples = [examples[i] for i in idx] 
+            
+            rep_count = int(len(neg_samples)/len(pos_samples))
 
-        pos_samples = pos_samples*rep_count
-        examples = pos_samples + neg_samples
-        print("Balanced training samples are ", len(examples))
+            pos_samples = pos_samples*rep_count
+            examples = pos_samples + neg_samples
+            print("Balanced training samples are ", len(examples))
+
         train_data = ReplayDataLoader(examples)
 
       
