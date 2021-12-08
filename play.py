@@ -31,7 +31,6 @@ class Play():
 
 
     def parallel_play(self,rank,world_size):
-
         iterationTrainExamples = deque([])
 
         # net = Net(self.args)
@@ -55,7 +54,7 @@ class Play():
             self.net.nnet.eval()
 
             t = time.time()            
-            mp.spawn(self.parallel_play, args=(3,), nprocs=3, join=True)
+            mp.spawn(self.parallel_play, args=(5,), nprocs=3, join=True)
             print(time.time() - t)
 
             iterationTrainExamples += load_episodes(self.args.checkpoint) 
@@ -115,7 +114,7 @@ if __name__ == '__main__':
     parser.add_argument('--numEpisodeSteps', type=int, default=20)
     parser.add_argument('--maxlenOfQueue', type=int, default=25600)
     parser.add_argument('--numEps', type=int, default=1000)
-    parser.add_argument('--numEpsTest', type=int, default=100)
+    parser.add_argument('--numEpsTest', type=int, default=1)
 
     parser.add_argument('--numIters', type=int, default=20)
 

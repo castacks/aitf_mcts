@@ -35,15 +35,14 @@ class Net():
         self.nnet.train()
         optimizer = optim.AdamW(self.nnet.parameters(), lr =0.001)
 
-        if self.args.balance_data:
-            target = np.hstack([x[3] for x in examples])
+        target = np.hstack([x[3] for x in examples])
+        print('target train -1/1: {}/{}'.format(len(np.where(target == -1)[0]), len(np.where(target == 1)[0])))
+        idx = np.where(target == 1)[0]
+        pos_samples = [examples[i] for i in idx] 
+        idx = np.where(target == -1)[0]
+        neg_samples = [examples[i] for i in idx] 
+        if self.args.balance_data and len(neg_samples) != 0 and len(pos_samples) != 0 :
 
-            print('target train -1/1: {}/{}'.format(len(np.where(target == -1)[0]), len(np.where(target == 1)[0])))
-            idx = np.where(target == 1)[0]
-            pos_samples = [examples[i] for i in idx] 
-            idx = np.where(target == -1)[0]
-            neg_samples = [examples[i] for i in idx] 
-            
             rep_count = int(len(neg_samples)/len(pos_samples))
 
             pos_samples = pos_samples*rep_count
@@ -54,13 +53,6 @@ class Net():
 
       
         train_dataloader = DataLoader(train_data, batch_size=64,shuffle=True)
-
-        # test_v = []
-        # for test in train_dataloader:
-        #     _,_,_,v = test
-        #     test_v.append(v.numpy()[0])
-        # test_v = np.array(test_v)
-        # print('target train -1/1: {}/{}'.format(len(np.where(test_v == -1)[0]), len(np.where(test_v == 1)[0])))
 
 
         for epoch in range(self.args.epochs):
