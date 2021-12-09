@@ -1,16 +1,10 @@
-import math
+from gym.dataset_utils import read_file
+import numpy as np
 import os
-from tqdm import tqdm
-
-from torch import nn
+import math
 import torch
 from torch.utils.data import Dataset
-from dataset_utils import read_file
-import numpy as np
-import random
-
-
-
+from tqdm import tqdm
 ##Dataloader class
 
 class TrajectoryDataset(Dataset):
@@ -148,92 +142,3 @@ class TrajectoryDataset(Dataset):
             self.obs_traj_rel[start:end, :], self.pred_traj_rel[start:end, :], self.obs_context[start:end, :]
         ]
         return out
-
-
-def populate_traj_lib():
-	
-    # note position of motion prim library text files
-    lib_path = os.getcwd() + '/traj_lib_0SI.txt'
-    index_path = os.getcwd() + '/traj_index_0SI.txt'
-    print("Loading traj lib from", lib_path)
-    ## obtain a 3d matrix of each trajectory's (x, y, z) positions into an array
-    file1 = open(lib_path, 'r',newline='\r\n')
-    traj_no = 252 # note the number
-    count, j = 0,0
-    traj_lib = np.zeros([traj_no,3,20])
-
-    for line in open(lib_path, 'r',newline='\n'):
-        if count%4 == 1:
-            traj_lib[j,0] = np.fromstring( line.strip(), dtype=float, sep=' ' )/1000
-        if count%4 == 2:
-            traj_lib[j,1] = np.fromstring( line.strip(), dtype=float, sep=' ' )/1000
-        if count%4 == 3:
-            traj_lib[j,2] = np.fromstring( line.strip(), dtype=float, sep=' ' )/1000
-            j+=1
-        count += 1
-
-    ## obtain the details of each trajectory from the index
-    file1 = open(index_path, 'r',newline='\r\n')
-
-    j = 0
-    index_lib = np.zeros([traj_no,6])
-
-    for line in open(index_path, 'r',newline='\n'):
-        index_lib[j,:] = np.fromstring( line.strip(), dtype=float, sep=' ' )
-        j+=1
-    
-    return traj_lib,index_lib
-
-
-    # return one-hot vector of goal position
-def direction_goal_detect(input_pos, goal):
-    
-    dir_array = torch.zeros([input_pos.shape[0],10]) ## [N, NE, E, SE, S, SW, W, NW, R1, R2]
-    
-    difference = goal-input_pos
-    goal = torch.unsqueeze(goal,0)
-
-    if np.linalg.norm(difference) > 5:
-        # print("diff",difference,'goal',goal, "input_pos",input_pos)
-        for b in range(input_pos.shape[0]):
-            planar_slope = torch.atan2(difference[b,1],difference[b,0])
-            degrees_slope = planar_slope*180.0/np.pi
-          
-
-            if degrees_slope <22.5 and degrees_slope >-22.5: #east
-                dir_array[b,2] = 1.0
-            elif degrees_slope <67.5 and degrees_slope >22.5: #NE
-                dir_array[b,1] = 1.0
-            elif degrees_slope <112.5 and degrees_slope >67.5: #N
-                dir_array[b,0] = 1.0
-            elif degrees_slope <157.5 and degrees_slope >112.5: # NW
-                dir_array[b,7] = 1.0
-            elif degrees_slope <-157.5 or degrees_slope >157.5: # W
-                dir_array[b,6] = 1.0
-            elif degrees_slope <-22.5 and degrees_slope >-67.5: #SE
-                dir_array[b,3] = 1.0
-            elif degrees_slope <-67.5 and degrees_slope >-112.5: #S
-                dir_array[b,4] = 1.0
-            elif degrees_slope <-112.5 and degrees_slope >-157.5: #SW:
-                dir_array[b,5] = 1.0
-        # print("Outer goal reached",goal_enum(dir_array))
-    else:
-        
-        for b in range(input_pos.shape[0]):
-
-            if goal[b,0]<0.5 and goal[b,0]> -0.5 and abs(goal[b,1])<0.10: #1
-                dir_array[b,9] = 1.0
-                # print("Runway reached",goal_enum(dir_array))
-
-
-            elif goal[b,0]<1.5 and goal[b,0]> 1.3 and abs(goal[b,1])<0.10:  #2,
-                dir_array[b,8] = 1.0
-                # print("Runway reached",goal_enum(dir_array))
-
-    return dir_array
-
-def goal_enum(goal):
-    msk = goal.squeeze().numpy().astype(bool)
-    g = ["N","NE","E","SE","S","SW","W","NW","R2","R1"]
-    return [g[i] for i in range(len(g)) if msk[i]]
-

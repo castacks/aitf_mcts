@@ -3,9 +3,9 @@ import os
 from matplotlib import pyplot as plt
 
 # from utils import TrajectoryDataset
-from utils import TrajectoryDataset
-from dataset_utils import seq_collate_old
-from utils import populate_traj_lib, direction_goal_detect
+from gym.dataset_loader import TrajectoryDataset
+from gym.dataset_utils import seq_collate_old
+from gym.utils import populate_traj_lib, direction_goal_detect
 from torch.utils.data import DataLoader
 import torch
 import numpy as np
@@ -47,6 +47,22 @@ class Gym():
     def get_random_goal_location(self, num_goals=10):
 
         return torch.from_numpy(np.eye(num_goals)[np.random.choice(num_goals, 1)]).float()
+
+    def get_valid_start_goal(self):
+            
+        while True:
+
+            start_position = self.get_random_start_position()
+            # self.gym.plot_env(curr_position)
+            # start_position = copy.deepcopy(curr_position)
+            curr_goal = self.get_random_goal_location()
+
+            r,g = self.getGameEnded(start_position, curr_goal)
+            if r == 0:
+                break ##make sure start is not goal
+            # else:
+                # print("No viable start")
+        return start_position, curr_goal
 
     def getActionSize(self):
 

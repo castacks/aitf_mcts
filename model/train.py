@@ -4,7 +4,7 @@ from torch.utils.data import WeightedRandomSampler
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 import os
-from base_net import Policy
+from model.base_net import Policy
 import numpy as np
 import torch
 import torch.optim as optim

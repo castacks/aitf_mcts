@@ -3,24 +3,13 @@ import os
 from pickle import Pickler, Unpickler
 from glob import glob
 from collections import deque
-from mcts import MCTS
+from mcts.mcts import MCTS
 import numpy as np
 
 def run_episode(rank,gym,net,args):
     mcts = MCTS(gym, net, args)
 
-    while True:
-
-        curr_position = gym.get_random_start_position()
-        # self.gym.plot_env(curr_position)
-        # start_position = copy.deepcopy(curr_position)
-        curr_goal = gym.get_random_goal_location()
-
-        r,g = gym.getGameEnded(curr_position, curr_goal)
-        if r == 0:
-            break ##make sure start is not goal
-        # else:
-            # print("No viable start")
+    curr_position , curr_goal = gym.get_valid_start_goal()
 
     # print("curr goal",goal_enum(curr_goal))
     # # print(curr_position,curr_goal)

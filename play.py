@@ -1,17 +1,16 @@
 import argparse
-import copy
 import os
 from numpy.lib import utils
 from tqdm import tqdm
 import torch
 import numpy as np
-from gym import Gym
-from train import Net
+from gym.gym import Gym
+from model.train import Net
 from collections import deque
-from utils import goal_enum
+from gym.utils import goal_enum
 import torch.multiprocessing as mp
 import time
-from play_utils import *
+from mcts.play_utils import *
 
 # torch.manual_seed(5345)
 # import random
@@ -38,7 +37,7 @@ class Play():
         gym = Gym(self.datapath, self.args)
         print("Playing with Process", rank)
 
-        for i in range(100):
+        for i in tqdm(range(self.args.numEps)):
             states = run_episode(i,gym,self.net,self.args)
             if states is not None:
                 iterationTrainExamples += states   
@@ -53,8 +52,11 @@ class Play():
         for ite in range(args.numIters):
             self.net.nnet.eval()
 
-            t = time.time()            
-            mp.spawn(self.parallel_play, args=(10,), nprocs=10, join=True)
+            t = time.time()  
+            if self.args.parallel:          
+                mp.spawn(self.parallel_play, args=(self.args.num_process,), nprocs=self.args.num_process, join=True)
+            else:
+                self.parallel_play(0,0)
             print(time.time() - t)
 
             iterationTrainExamples += load_episodes(self.args.checkpoint) 
@@ -110,10 +112,12 @@ if __name__ == '__main__':
 
     parser.add_argument('--numMCTS', type=int, default=50)
     parser.add_argument('--cpuct', type=int, default= 1)
+    parser.add_argument('--parallel', type=bool, default=False)
+    parser.add_argument('--num_process', type=int, default=10)
 
     parser.add_argument('--numEpisodeSteps', type=int, default=20)
     parser.add_argument('--maxlenOfQueue', type=int, default=25600)
-    parser.add_argument('--numEps', type=int, default=1000)
+    parser.add_argument('--numEps', type=int, default=10)
     parser.add_argument('--numEpsTest', type=int, default=100)
 
     parser.add_argument('--numIters', type=int, default=20)

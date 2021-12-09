@@ -1,8 +1,7 @@
 import torch.nn.functional as F
-from tcn import TemporalConvNet
+from model.tcn import TemporalConvNet
 import torch
 from torch import nn
-from dataset_utils import direction_detect
 
 
 class Policy(nn.Module):
