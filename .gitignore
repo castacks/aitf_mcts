@@ -7,3 +7,4 @@ episodes/*
 .idea/
 log.txt
 *.examples
+*.pyc
