@@ -43,7 +43,7 @@ class Net():
         neg_samples = [examples[i] for i in idx] 
         if self.args.balance_data and len(neg_samples) != 0 and len(pos_samples) != 0 :
 
-            rep_count = int(len(neg_samples)/len(pos_samples))
+            rep_count = int(np.ceil(len(neg_samples)/len(pos_samples))
 
             pos_samples = pos_samples*rep_count
             examples = pos_samples + neg_samples

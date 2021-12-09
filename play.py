@@ -38,7 +38,7 @@ class Play():
         gym = Gym(self.datapath, self.args)
         print("Playing with Process", rank)
 
-        for i in range(1):
+        for i in range(100):
             states = run_episode(i,gym,self.net,self.args)
             if states is not None:
                 iterationTrainExamples += states   
@@ -54,7 +54,7 @@ class Play():
             self.net.nnet.eval()
 
             t = time.time()            
-            mp.spawn(self.parallel_play, args=(5,), nprocs=3, join=True)
+            mp.spawn(self.parallel_play, args=(10,), nprocs=10, join=True)
             print(time.time() - t)
 
             iterationTrainExamples += load_episodes(self.args.checkpoint) 
@@ -114,7 +114,7 @@ if __name__ == '__main__':
     parser.add_argument('--numEpisodeSteps', type=int, default=20)
     parser.add_argument('--maxlenOfQueue', type=int, default=25600)
     parser.add_argument('--numEps', type=int, default=1000)
-    parser.add_argument('--numEpsTest', type=int, default=1)
+    parser.add_argument('--numEpsTest', type=int, default=100)
 
     parser.add_argument('--numIters', type=int, default=20)
 
