@@ -1,0 +1,2 @@
+ Pre-trainined model weights loaded from  /ocean/projects/cis210086p/jaypat/AITF/aitf_mcts/saved_models/goalGAIL1b_60.pt
+Loading traj lib from /ocean/projects/cis210086p/jaypat/AITF/aitf_mcts/traj_lib_0SI.txt
