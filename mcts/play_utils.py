@@ -52,6 +52,7 @@ def run_episode(rank,gym,net,args):
 
         action = np.random.choice(len(pi), p=pi)
         curr_position = gym.getNextState(curr_position, action)
+        print(curr_position[-1,2]*3280.84,1000*gym.get_cost(curr_position))
         # print("Step")
         if args.plot: gym.plot_env(curr_position,'g')
 

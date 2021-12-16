@@ -39,15 +39,18 @@ class Gym():
          # input data sample
         x = curr_position[-1,0].item() #(km)
         y = curr_position[-1,1].item() #(km)
-        z = 0.6096 #(km)
-        angle = 11.5 #degrees
+        z = curr_position[-1,2].item() #(km)
+        yaw_diff = curr_position[-1,:] - curr_position[-3,:]
+        slope = torch.atan2(yaw_diff[1],yaw_diff[0])
+
+        angle = slope*180/np.pi #degrees
 
         try :
             return self.costmap.state_value(x, y, z, angle)
 
         except:
             return 0.0
-            
+
     def load_action_space(self):
 
         self.traj_lib, self.index_lib = populate_traj_lib()
@@ -76,7 +79,7 @@ class Gym():
             start_position = self.get_random_start_position()
             # self.gym.plot_env(curr_position)
             # start_position = copy.deepcopy(curr_position)
-            curr_goal = self.get_random_goal_location(p=[0,0,0,0,0,0,0,0,1,0])
+            curr_goal = self.get_random_goal_location(p=[0,0,0,0,0,0,0,0,0,1])
 
             r,g = self.getGameEnded(start_position, curr_goal)
             if r == 0:
@@ -132,7 +135,7 @@ class Gym():
 
         pos = self.goal_list[np.argmax(curr_goal.numpy())]
     
-        return np.linalg.norm(curr_position[-1,:2]-pos)
+        return np.linalg.norm(curr_position[-1,:]-pos)
 
     def plot_env(self, curr_position,color='r',save=False):
      

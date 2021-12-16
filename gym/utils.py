@@ -104,11 +104,11 @@ def goal_eucledian_list(num_goals = 10):
         ang = np.array([90,45,0,-45,-90,-135,180,135])
         
         if goal_idx < 8:
-            pos.append(np.array([THRESH*np.cos(np.deg2rad(ang[goal_idx])),THRESH*np.sin(np.deg2rad(ang[goal_idx]))]))
+            pos.append(np.array([THRESH*np.cos(np.deg2rad(ang[goal_idx])),THRESH*np.sin(np.deg2rad(ang[goal_idx])), 1.0 ]))
         elif goal_idx == 9:
-            pos.append(np.array([0.0,0.0]))
+            pos.append(np.array([0.0,0.0,0.1]))
         elif goal_idx == 8:
-            pos.append(np.array([1.45,0.0]))
+            pos.append(np.array([1.45,0.0,0.1]))
 
     return pos
 
