@@ -59,18 +59,18 @@ class Play():
                 self.parallel_play(0,0)
             print(time.time() - t)
 
-            iterationTrainExamples += load_episodes(self.args.checkpoint) 
-            print("Number of training samples:",len(iterationTrainExamples))
-                # print(iterationTrainExamples)
-                # if ite==0:
-                    # self.save_episodes(iterationTrainExamples,ep)
+            # iterationTrainExamples += load_episodes(self.args.checkpoint) 
+            # print("Number of training samples:",len(iterationTrainExamples))
+            #     # print(iterationTrainExamples)
+            #     # if ite==0:
+            #         # self.save_episodes(iterationTrainExamples,ep)
 
-            print("Training....")
+            # print("Training....")
 
-            self.net.train(iterationTrainExamples)
-            print("Testing....")
-            self.net.nnet.eval()
-            self.test()
+            # self.net.train(iterationTrainExamples)
+            # print("Testing....")
+            # self.net.nnet.eval()
+            # self.test()
 
 
     
@@ -120,7 +120,7 @@ if __name__ == '__main__':
     parser.add_argument('--numEps', type=int, default=10)
     parser.add_argument('--numEpsTest', type=int, default=100)
 
-    parser.add_argument('--numIters', type=int, default=20)
+    parser.add_argument('--numIters', type=int, default=1)
 
     parser.add_argument('--epochs', type=int, default=15)
 

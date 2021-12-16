@@ -55,7 +55,7 @@ class Gym():
             start_position = self.get_random_start_position()
             # self.gym.plot_env(curr_position)
             # start_position = copy.deepcopy(curr_position)
-            curr_goal = self.get_random_goal_location()
+            curr_goal = self.get_random_goal_location(p=[0,0,0,0,0,0,0,0,1,0])
 
             r,g = self.getGameEnded(start_position, curr_goal)
             if r == 0:
@@ -71,15 +71,16 @@ class Gym():
 
     def getGameEnded(self, curr_position, goal_position):
         for i in range(curr_position.shape[0]):
+
             current_pos = curr_position[i, :]  # check shape of traj input
-            input_pos = torch.zeros(1, 3)
-            dir_array = direction_goal_detect(input_pos, current_pos)
+            second_pos = curr_position[i-3,:] if i>3 else current_pos
+            dir_array = direction_goal_detect(current_pos,second_pos)
             if (dir_array == goal_position).all(): ##wanted goal
                 return 1,dir_array
-            elif (dir_array.any()): ##unwanted goal
+            if (dir_array.any()): ##unwanted goal
                 return -1, dir_array
-            else:
-                return 0 ,dir_array## no goal
+            
+        return 0 ,dir_array## no goal
 
     def getNextState(self, curr_position, action_choice):
         # rotate and translate action choice to end of previous executed traj
@@ -95,8 +96,8 @@ class Gym():
 
     def get_hash(self, curr_position):
 
-        return str(curr_position[-1, 0]) + str(curr_position[-1, 1])
-        # return "%s-%s" % (int(curr_position[-1, 0]*1000),int(curr_position[-1, 1]*1000))
+        # return str(curr_position[-1, 0]) + str(curr_position[-1, 1])
+        return "%s-%s" % (int(curr_position[-1, 0]*1000),int(curr_position[-1, 1]*1000))
 
     def reset_plot(self):
         plt.pause(2)

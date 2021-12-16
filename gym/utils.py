@@ -46,49 +46,49 @@ def populate_traj_lib():
 
 
     # return one-hot vector of goal position
-def direction_goal_detect(input_pos, goal):
+def direction_goal_detect(pos,second_pos):
     
-    dir_array = torch.zeros([input_pos.shape[0],10]) ## [N, NE, E, SE, S, SW, W, NW, R1, R2]
-    
-    difference = goal-input_pos
-    goal = torch.unsqueeze(goal,0)
+    dir_array = torch.zeros([10]) ## [N, NE, E, SE, S, SW, W, NW, R1, R2]
+    yaw_diff = pos-second_pos
 
-    if np.linalg.norm(difference) > THRESH:
-        # print("diff",difference,'goal',goal, "input_pos",input_pos)
-        for b in range(input_pos.shape[0]):
-            planar_slope = torch.atan2(difference[b,1],difference[b,0])
+    if np.linalg.norm(pos) > THRESH:
+        # print("diff",difference,'pos',pos, "input_pos",input_pos)
+            planar_slope = torch.atan2(pos[1],pos[0])
             degrees_slope = planar_slope*180.0/np.pi
           
 
             if degrees_slope <22.5 and degrees_slope >-22.5: #east
-                dir_array[b,2] = 1.0
+                dir_array[2] = 1.0
             elif degrees_slope <67.5 and degrees_slope >22.5: #NE
-                dir_array[b,1] = 1.0
+                dir_array[1] = 1.0
             elif degrees_slope <112.5 and degrees_slope >67.5: #N
-                dir_array[b,0] = 1.0
+                dir_array[0] = 1.0
             elif degrees_slope <157.5 and degrees_slope >112.5: # NW
-                dir_array[b,7] = 1.0
+                dir_array[7] = 1.0
             elif degrees_slope <-157.5 or degrees_slope >157.5: # W
-                dir_array[b,6] = 1.0
+                dir_array[6] = 1.0
             elif degrees_slope <-22.5 and degrees_slope >-67.5: #SE
-                dir_array[b,3] = 1.0
+                dir_array[3] = 1.0
             elif degrees_slope <-67.5 and degrees_slope >-112.5: #S
-                dir_array[b,4] = 1.0
+                dir_array[4] = 1.0
             elif degrees_slope <-112.5 and degrees_slope >-157.5: #SW:
-                dir_array[b,5] = 1.0
-        # print("Outer goal reached",goal_enum(dir_array))
+                dir_array[5] = 1.0
+        # print("Outer pos reached",goal_enum(dir_array))
     else:
         
-        for b in range(input_pos.shape[0]):
+            yaw_diff_slope = torch.atan2(yaw_diff[1],yaw_diff[0])
+            yaw_diff_slope_degrees = yaw_diff_slope*180.0/np.pi
+            # print(yaw_diff_slope_degrees)
+            if pos[0]<0.2 and pos[0]> -0.2 and abs(pos[1])<0.20: #1
+                if abs(yaw_diff_slope_degrees) <20.0:
+                    dir_array[9] = 1.0
+                    # print("Runway reached",goal_enum(dir_array))
 
-            if goal[b,0]<0.2 and goal[b,0]> -0.2 and abs(goal[b,1])<0.20: #1
-                dir_array[b,9] = 1.0
-                # print("Runway reached",goal_enum(dir_array))
 
-
-            elif goal[b,0]<1.65 and goal[b,0]> 1.25 and abs(goal[b,1])<0.20:  #2,
-                dir_array[b,8] = 1.0
-                # print("Runway reached",goal_enum(dir_array))
+            elif pos[0]<1.65 and pos[0]> 1.25 and abs(pos[1])<0.20:  #2,
+                if 180-abs(yaw_diff_slope_degrees) <20.0:
+                    dir_array[8] = 1.0
+                    # print("Runway reached",goal_enum(dir_array))
 
     return dir_array
 

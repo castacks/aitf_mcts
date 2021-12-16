@@ -3,6 +3,8 @@ import scipy
 import math
 import torch
 from tqdm import tqdm
+from line_profiler import LineProfiler
+
 EPS = 1e-8
 
 
@@ -25,6 +27,10 @@ class MCTS():
 
         self.Es = {}  # stores game.getGameEnded ended for board s
         self.Vs = {}  # stores game.getValidMoves for board s
+
+
+
+
 
     def getActionProbs(self, curr_position, goal_postion, temp=1):
 
@@ -57,6 +63,7 @@ class MCTS():
             # probs = None
         return probs
 
+    @profile
     def search(self, curr_position, goal_position):
 
         s = self.gym.get_hash(curr_position)
@@ -83,18 +90,18 @@ class MCTS():
         best_act = -1
         h = np.zeros(self.gym.getActionSize())
         
-        for a in range(self.gym.getActionSize()):
-            next_state = self.gym.getNextState(curr_position,a)
-            h[a] = 1.0/self.gym.get_heuristic(next_state,goal_position)
-        h = scipy.special.softmax(h)
+        # for a in range(self.gym.getActionSize()):
+        #     next_state = self.gym.getNextState(curr_position,a)
+        #     h[a] = 1.0/self.gym.get_heuristic(next_state,goal_position)
+        # h = scipy.special.softmax(h)
 
 
         # pick the action with the highest upper confidence bound
         for a in range(self.gym.getActionSize()):
             if (s, a) in self.Qsa:
-                u = self.Qsa[(s, a)] + self.args.cpuct * self.Ps[s][a] * (math.sqrt(self.Ns[s]) / (1 + self.Nsa[(s, a)])) + 1000*h[a]
+                u = self.Qsa[(s, a)] + self.args.cpuct * self.Ps[s][a] * (math.sqrt(self.Ns[s]) / (1 + self.Nsa[(s, a)])) + 10*h[a]
             else:
-                u = self.args.cpuct * self.Ps[s][a] * math.sqrt(self.Ns[s] + EPS) + 1000*h[a]
+                u = self.args.cpuct * self.Ps[s][a] * math.sqrt(self.Ns[s] + EPS) + 10*h[a]
             if u > cur_best:
                 cur_best = u
                 best_act = a
