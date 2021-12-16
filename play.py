@@ -24,7 +24,7 @@ class Play():
         self.args = args
         self.datapath = datapath
         self.net = Net(args)
-        self.gym = Gym(datapath, args)
+        # self.gym = Gym(datapath, args)
         # self.mcts = MCTS(self.gym, self.net, args)
         self.play()
 
@@ -124,7 +124,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--epochs', type=int, default=15)
 
-    parser.add_argument('--plot', type=bool, default=False)
+    parser.add_argument('--plot', type=bool, default=True)
 
 
 

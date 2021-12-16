@@ -7,7 +7,7 @@ import torch
 from torch.utils.data import Dataset
 import numpy as np
 import random
-
+THRESH = 5 #KM
 
 
 def populate_traj_lib():
@@ -53,7 +53,7 @@ def direction_goal_detect(input_pos, goal):
     difference = goal-input_pos
     goal = torch.unsqueeze(goal,0)
 
-    if np.linalg.norm(difference) > 5:
+    if np.linalg.norm(difference) > THRESH:
         # print("diff",difference,'goal',goal, "input_pos",input_pos)
         for b in range(input_pos.shape[0]):
             planar_slope = torch.atan2(difference[b,1],difference[b,0])
@@ -81,12 +81,12 @@ def direction_goal_detect(input_pos, goal):
         
         for b in range(input_pos.shape[0]):
 
-            if goal[b,0]<0.5 and goal[b,0]> -0.5 and abs(goal[b,1])<0.10: #1
+            if goal[b,0]<0.2 and goal[b,0]> -0.2 and abs(goal[b,1])<0.20: #1
                 dir_array[b,9] = 1.0
                 # print("Runway reached",goal_enum(dir_array))
 
 
-            elif goal[b,0]<1.5 and goal[b,0]> 1.3 and abs(goal[b,1])<0.10:  #2,
+            elif goal[b,0]<1.65 and goal[b,0]> 1.25 and abs(goal[b,1])<0.20:  #2,
                 dir_array[b,8] = 1.0
                 # print("Runway reached",goal_enum(dir_array))
 
@@ -94,6 +94,21 @@ def direction_goal_detect(input_pos, goal):
 
 def goal_enum(goal):
     msk = goal.squeeze().numpy().astype(bool)
-    g = ["N","NE","E","SE","S","SW","W","NW","R2","R1"]
+    g = ["N","NE","E","SE","S","SW","W","NW","R1","R2"]
     return [g[i] for i in range(len(g)) if msk[i]]
+
+def goal_eucledian_list(num_goals = 10):
+
+    pos = []
+    for goal_idx in range(num_goals): 
+        ang = np.array([90,45,0,-45,-90,-135,180,135])
+        
+        if goal_idx < 8:
+            pos.append(np.array([THRESH*np.cos(np.deg2rad(ang[goal_idx])),THRESH*np.sin(np.deg2rad(ang[goal_idx]))]))
+        elif goal_idx == 9:
+            pos.append(np.array([0.0,0.0]))
+        elif goal_idx == 8:
+            pos.append(np.array([1.45,0.0]))
+
+    return pos
 

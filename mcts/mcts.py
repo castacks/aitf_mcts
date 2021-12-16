@@ -1,4 +1,5 @@
 import numpy as np
+import scipy
 import math
 import torch
 from tqdm import tqdm
@@ -59,7 +60,7 @@ class MCTS():
     def search(self, curr_position, goal_position):
 
         s = self.gym.get_hash(curr_position)
-        # self.gym.plot_env(curr_position,'r',save=True)
+        # self.gym.plot_env(curr_position,'r',save=False)
 
         if s not in self.Es:
             self.Es[s],_ = self.gym.getGameEnded(curr_position, goal_position)
@@ -80,14 +81,20 @@ class MCTS():
 
         cur_best = -float('inf')
         best_act = -1
+        h = np.zeros(self.gym.getActionSize())
+        
+        for a in range(self.gym.getActionSize()):
+            next_state = self.gym.getNextState(curr_position,a)
+            h[a] = 1.0/self.gym.get_heuristic(next_state,goal_position)
+        h = scipy.special.softmax(h)
+
 
         # pick the action with the highest upper confidence bound
         for a in range(self.gym.getActionSize()):
             if (s, a) in self.Qsa:
-                u = self.Qsa[(s, a)] + self.args.cpuct * self.Ps[s][a] * math.sqrt(self.Ns[s]) / (
-                        1 + self.Nsa[(s, a)])
+                u = self.Qsa[(s, a)] + self.args.cpuct * self.Ps[s][a] * (math.sqrt(self.Ns[s]) / (1 + self.Nsa[(s, a)])) + 1000*h[a]
             else:
-                u = self.args.cpuct * self.Ps[s][a] * math.sqrt(self.Ns[s] + EPS)  # Q = 0 ?
+                u = self.args.cpuct * self.Ps[s][a] * math.sqrt(self.Ns[s] + EPS) + 1000*h[a]
             if u > cur_best:
                 cur_best = u
                 best_act = a

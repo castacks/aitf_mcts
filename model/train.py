@@ -86,7 +86,7 @@ class Net():
 
         # self.nnet.to('cpu')
         pi, v = self.nnet.forward(curr_position, goal_position)
-        return torch.exp(pi), v
+        return torch.exp(pi).detach(), v.detach()
     
     
     def loss_pi(self, targets, outputs):

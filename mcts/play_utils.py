@@ -4,6 +4,7 @@ from pickle import Pickler, Unpickler
 from glob import glob
 from collections import deque
 from mcts.mcts import MCTS
+from gym.utils import goal_enum
 import numpy as np
 
 def run_episode(rank,gym,net,args):
@@ -11,7 +12,7 @@ def run_episode(rank,gym,net,args):
 
     curr_position , curr_goal = gym.get_valid_start_goal()
 
-    # print("curr goal",goal_enum(curr_goal))
+    print("curr goal",goal_enum(curr_goal))
     # # print(curr_position,curr_goal)
     # curr_position = torch.Tensor([[ 0.1519,  0.3398,  0.2845],
     # [ 0.1379,  0.2875,  0.2859],
@@ -59,13 +60,13 @@ def run_episode(rank,gym,net,args):
             gym.reset_plot()
 
         if r == 1:
-            # print("Goal Reached; Exiting")
+            print("Goal Reached; Exiting")
             return [(x[0], x[1], x[2], r) for x in trainExamples]
         if r == -1:
-            # print("Other Goal Reached; Exiting",goal_enum(g))
+            print("Other Goal Reached; Exiting",goal_enum(g))
             return [(x[0], x[1], x[2], r) for x in trainExamples]
         if episodeStep > args.numEpisodeSteps:
-            # print("Max Steps Reached")
+            print("Max Steps Reached")
             if args.plot: gym.reset_plot()
             return None
             

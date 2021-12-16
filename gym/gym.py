@@ -2,10 +2,9 @@ import argparse
 import os
 from matplotlib import pyplot as plt
 
-# from utils import TrajectoryDataset
 from gym.dataset_loader import TrajectoryDataset
 from gym.dataset_utils import seq_collate_old
-from gym.utils import populate_traj_lib, direction_goal_detect
+from gym.utils import populate_traj_lib, direction_goal_detect, goal_eucledian_list
 from torch.utils.data import DataLoader
 import torch
 import numpy as np
@@ -20,6 +19,7 @@ class Gym():
         self.args = args
         self.load_action_space()
         self.load_trajair()
+        self.goal_list = goal_eucledian_list()
         if self.args.plot:
             self.fig = plt.figure()
             self.sp = self.fig.add_subplot(111)
@@ -44,9 +44,9 @@ class Gym():
 
         return obs_traj[:, 0, :]  ##select one agent
 
-    def get_random_goal_location(self, num_goals=10):
+    def get_random_goal_location(self, num_goals=10,p = None):
 
-        return torch.from_numpy(np.eye(num_goals)[np.random.choice(num_goals, 1)]).float()
+        return torch.from_numpy(np.eye(num_goals)[np.random.choice(num_goals, 1, p = p)]).float()
 
     def get_valid_start_goal(self):
             
@@ -95,8 +95,8 @@ class Gym():
 
     def get_hash(self, curr_position):
 
-        # return str(curr_position[-1, 0]) + str(curr_position[-1, 1])
-        return "%s-%s" % (int(curr_position[-1, 0]*1000),int(curr_position[-1, 1]*1000))
+        return str(curr_position[-1, 0]) + str(curr_position[-1, 1])
+        # return "%s-%s" % (int(curr_position[-1, 0]*1000),int(curr_position[-1, 1]*1000))
 
     def reset_plot(self):
         plt.pause(2)
@@ -104,6 +104,12 @@ class Gym():
         self.fig = plt.figure()
         self.sp = self.fig.add_subplot(111)
         self.fig.show()
+
+    def get_heuristic(self, curr_position, curr_goal):
+
+        pos = self.goal_list[np.argmax(curr_goal.numpy())]
+    
+        return np.linalg.norm(curr_position[-1,:2]-pos)
 
     def plot_env(self, curr_position,color='r',save=False):
      
@@ -135,8 +141,11 @@ if __name__ == '__main__':
     parser.add_argument('--preds', type=int, default=120)
     parser.add_argument('--preds_step', type=int, default=10)
     parser.add_argument('--delim', type=str, default=' ')
+    parser.add_argument('--plot', type=bool, default=True)
 
     args = parser.parse_args()
 
     datapath = os.getcwd() + args.dataset_folder + args.dataset_name + "/processed_data/"
     gym = Gym(datapath, args)
+
+    print(goal_eucledian_list())
