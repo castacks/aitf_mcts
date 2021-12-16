@@ -11,7 +11,6 @@ from gym.utils import goal_enum
 import torch.multiprocessing as mp
 import time
 from mcts.play_utils import *
-
 # torch.manual_seed(5345)
 # import random
 # random.seed(5345)
@@ -19,11 +18,12 @@ from mcts.play_utils import *
 
 class Play():
 
-    def __init__(self, datapath, args):
-
+    def __init__(self, args):
+        
+        self.datapath = os.getcwd() + args.dataset_folder + args.dataset_name + "/processed_data/"
         self.args = args
-        self.datapath = datapath
         self.net = Net(args)
+
         # self.gym = Gym(datapath, args)
         # self.mcts = MCTS(self.gym, self.net, args)
         self.play()
@@ -133,5 +133,5 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    datapath = os.getcwd() + args.dataset_folder + args.dataset_name + "/processed_data/"
-    Play(datapath, args)
+    
+    Play(args)

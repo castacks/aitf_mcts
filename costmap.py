@@ -1,9 +1,12 @@
 from glob import glob
 from os.path import join, abspath
 from os import getcwd, stat
+import os
 import pandas as pd
 from numpy import arctan2, pi
 from tqdm import tqdm
+import pickle 
+import numpy as np 
 
 class CostMap:
 
@@ -17,19 +20,37 @@ class CostMap:
         self.state_direction = {}
         self.precision = 1
 
-        self.read_csv_folder()
+        if not self.load_dataframe():
+            print("Generating cost map from",path)
 
-        self.round_df()
+            self.read_csv_folder()
 
-        self.discretize_alt_df()
+            self.round_df()
 
-        self.calculate_angle_df()
+            self.discretize_alt_df()
 
-        self.discretize_angle_df()
+            self.calculate_angle_df()
 
-        self.set_keys()
+            self.discretize_angle_df()
 
-        self.creating_dictionaries()
+            self.set_keys()
+
+            self.creating_dictionaries()
+
+            self.normalize_dictionary()
+
+
+            self.save_dataframe()
+
+    def load_dataframe(self):
+        path = self.path + '/file.pkl'
+        if os.path.exists(path):
+            print("Reading cost map from",path)
+            with open(path,'rb') as f:
+                self.state_direction = pickle.load(f)
+            return True
+        return False
+
 
     def read_csv_folder(self):
         df = pd.DataFrame(columns=self.names)
@@ -85,14 +106,31 @@ class CostMap:
 
         self.state_direction = state_value
 
+    def save_dataframe(self):
+        path = self.path + '/file.pkl'
+        with open(path,'wb') as f:
+            pickle.dump(self.state_direction,f)
+
+
     def state_value(self, x, y, z, angle):
+        # print(x.),y,z,angle)
 
-        x = round(x, 1)
-        y = round(y, 1)
+        x = np.round(x,1)
+        y = np.round(y,1)
         z = self.discretize_altitude(z)
-        angle = self.discretize_angle(angle)
 
+        angle = self.discretize_angle(angle)
+        # print(self.state_direction.keys())
         return self.state_direction[(x, y, z, angle)]
+
+    def normalize_dictionary(self, normalization_range=(0, 1)):
+
+        min_value = min(self.state_direction.values())
+        max_value = max(self.state_direction.values())
+
+        for key, value in self.state_direction.items():
+            self.state_direction[key] = ((value - min_value) / (max_value - min_value)) * (
+                        normalization_range[1] - normalization_range[0]) + normalization_range[0]
 
     @staticmethod
     def discretize_altitude(x):
@@ -135,9 +173,10 @@ if __name__ == '__main__':
    
 
     # input data sample
-    x = 3.344 #(km)
-    y = 0.111 #(km)
-    z = 0.233 #(km)
+    x = 3.7 #(km)
+    y = 2.7 #(km)
+    z = 0.6096 #(km)
+  
     angle = 11.5 #degrees
 
     print(f"({x},{y},{z},{angle}) =", mp3d.state_value(x, y, z, angle))

@@ -1,6 +1,7 @@
 import argparse
 import os
 from matplotlib import pyplot as plt
+from costmap import CostMap
 
 from gym.dataset_loader import TrajectoryDataset
 from gym.dataset_utils import seq_collate_old
@@ -18,8 +19,14 @@ class Gym():
         self.datapath = datapath
         self.args = args
         self.load_action_space()
+        self.costpath = os.getcwd() + args.dataset_folder + '111_days' + "/processed_data/train"
+
+        self.costmap = CostMap(self.costpath)
         self.load_trajair()
         self.goal_list = goal_eucledian_list()
+
+
+
         if self.args.plot:
             self.fig = plt.figure()
             self.sp = self.fig.add_subplot(111)
@@ -27,6 +34,20 @@ class Gym():
             self.fig_count = 0
         
 
+    def get_cost(self,curr_position):
+        
+         # input data sample
+        x = curr_position[-1,0].item() #(km)
+        y = curr_position[-1,1].item() #(km)
+        z = 0.6096 #(km)
+        angle = 11.5 #degrees
+
+        try :
+            return self.costmap.state_value(x, y, z, angle)
+
+        except:
+            return 0.0
+            
     def load_action_space(self):
 
         self.traj_lib, self.index_lib = populate_traj_lib()
@@ -62,6 +83,7 @@ class Gym():
                 break ##make sure start is not goal
             # else:
                 # print("No viable start")
+
         return start_position, curr_goal
 
     def getActionSize(self):
