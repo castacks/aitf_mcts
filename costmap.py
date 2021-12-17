@@ -37,6 +37,8 @@ class CostMap:
 
             self.creating_dictionaries()
 
+            self.clip_dictionary()
+            
             self.normalize_dictionary()
 
 
@@ -91,6 +93,12 @@ class CostMap:
         self.data['right_direction'] = self.data['direction']
         self.keys = self.data.groupby(['x1', 'y1', 'z1', 'right_direction']).count()['direction'].to_dict().keys()
 
+    def clip_dictionary(self, threshold=200):
+        for key, value in self.state_direction.items():
+            if value > threshold:
+                self.state_direction[key] = threshold
+            else:
+                pass
     def creating_dictionaries(self):
 
         state_value = dict.fromkeys(self.keys, 0)

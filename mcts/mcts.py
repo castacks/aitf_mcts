@@ -67,19 +67,19 @@ class MCTS():
     def search(self, curr_position, goal_position):
 
         s = self.gym.get_hash(curr_position)
-        # self.gym.plot_env(curr_position,'r',save=False)
 
         if s not in self.Es:
             self.Es[s],_ = self.gym.getGameEnded(curr_position, goal_position)
         if self.Es[s] != 0:
             # terminal node
             # print("Terminal Node")
-            return self.Es[s]
+            return 10.0*self.Es[s]
 
         if s not in self.Ps:
             # leaf node
-            v =  10000*self.gym.get_cost(curr_position)
-
+            v =  self.gym.get_cost(curr_position)
+            self.gym.plot_env(curr_position,'r',save=False)
+            # print(curr_position[-1,2]*3280.84,v)
             curr_position = curr_position.to(self.device)*1000 ##km to m
             goal_position = goal_position.to(self.device)
 
@@ -102,9 +102,12 @@ class MCTS():
         # pick the action with the highest upper confidence bound
         for a in range(self.gym.getActionSize()):
             if (s, a) in self.Qsa:
-                u = self.Qsa[(s, a)] + self.args.cpuct * self.Ps[s][a] * (math.sqrt(self.Ns[s]) / (1 + self.Nsa[(s, a)])) + 0.1*h[a]
+                u = self.Qsa[(s, a)] + h[a] + self.args.cpuct * self.Ps[s][a] * (math.sqrt(self.Ns[s]) / (1 + self.Nsa[(s, a)])) 
+                # print(self.Qsa[(s, a)] , 0.1*h[a])
             else:
-                u = self.args.cpuct * self.Ps[s][a] * math.sqrt(self.Ns[s] + EPS) + 0.1*h[a]
+                u = h[a] + self.args.cpuct * self.Ps[s][a] * math.sqrt(self.Ns[s] + EPS)  
+                # print(0.1*h[a])
+
             if u > cur_best:
                 cur_best = u
                 best_act = a

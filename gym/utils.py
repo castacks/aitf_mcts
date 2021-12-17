@@ -79,13 +79,13 @@ def direction_goal_detect(pos,second_pos):
             yaw_diff_slope = torch.atan2(yaw_diff[1],yaw_diff[0])
             yaw_diff_slope_degrees = yaw_diff_slope*180.0/np.pi
             # print(yaw_diff_slope_degrees)
-            if pos[0]<0.2 and pos[0]> -0.2 and abs(pos[1])<0.20: #1
+            if pos[0]<0.2 and pos[0]> -0.2 and abs(pos[1])<0.20 and pos[2] <0.3: #1
                 if abs(yaw_diff_slope_degrees) <20.0:
                     dir_array[9] = 1.0
                     # print("Runway reached",goal_enum(dir_array))
 
 
-            elif pos[0]<1.65 and pos[0]> 1.25 and abs(pos[1])<0.20:  #2,
+            elif pos[0]<1.65 and pos[0]> 1.25 and abs(pos[1])<0.20 and pos[2] <0.3:  #2,
                 if 180-abs(yaw_diff_slope_degrees) <20.0:
                     dir_array[8] = 1.0
                     # print("Runway reached",goal_enum(dir_array))
@@ -106,9 +106,9 @@ def goal_eucledian_list(num_goals = 10):
         if goal_idx < 8:
             pos.append(np.array([THRESH*np.cos(np.deg2rad(ang[goal_idx])),THRESH*np.sin(np.deg2rad(ang[goal_idx])), 1.0 ]))
         elif goal_idx == 9:
-            pos.append(np.array([0.0,0.0,0.1]))
+            pos.append(np.array([0.0,0.0,0.2]))
         elif goal_idx == 8:
-            pos.append(np.array([1.45,0.0,0.1]))
+            pos.append(np.array([1.45,0.0,0.2]))
 
     return pos
 

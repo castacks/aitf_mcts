@@ -24,7 +24,7 @@ class Gym():
         self.costmap = CostMap(self.costpath)
         self.load_trajair()
         self.goal_list = goal_eucledian_list()
-
+        self.hh = []
 
 
         if self.args.plot:
@@ -37,19 +37,25 @@ class Gym():
     def get_cost(self,curr_position):
         
          # input data sample
-        x = curr_position[-1,0].item() #(km)
-        y = curr_position[-1,1].item() #(km)
-        z = curr_position[-1,2].item() #(km)
-        yaw_diff = curr_position[-1,:] - curr_position[-3,:]
-        slope = torch.atan2(yaw_diff[1],yaw_diff[0])
+        cost = 0.0
+        for i in range(3,curr_position.shape[0]):
+            x = curr_position[i,0].item() #(km)
+            y = curr_position[i,1].item() #(km)
+            z = curr_position[i,2].item() #(km)
+            yaw_diff = curr_position[i,:] - curr_position[i-3,:]
+            slope = torch.atan2(yaw_diff[1],yaw_diff[0])
 
-        angle = slope*180/np.pi #degrees
+            angle = slope*180/np.pi #degrees
+            if x>-0.2 and x<1.6 and abs(y) <0.5 and z < 0.4:
+                cost += -1
 
-        try :
-            return self.costmap.state_value(x, y, z, angle)
+            try :
+                cost += self.costmap.state_value(x, y, z, angle)
 
-        except:
-            return 0.0
+            except:
+                cost += -1
+
+        return cost/((curr_position.shape[0]-3))
 
     def load_action_space(self):
 
@@ -82,11 +88,11 @@ class Gym():
             curr_goal = self.get_random_goal_location(p=[0,0,0,0,0,0,0,0,0,1])
 
             r,g = self.getGameEnded(start_position, curr_goal)
-            if r == 0:
+            if r == 0 and np.linalg.norm(start_position[-1,:2]) > 2:
                 break ##make sure start is not goal
             # else:
                 # print("No viable start")
-
+           
         return start_position, curr_goal
 
     def getActionSize(self):
@@ -95,10 +101,10 @@ class Gym():
         return action_space_size
 
     def getGameEnded(self, curr_position, goal_position):
-        for i in range(curr_position.shape[0]):
+        for i in range(3,curr_position.shape[0]):
 
             current_pos = curr_position[i, :]  # check shape of traj input
-            second_pos = curr_position[i-3,:] if i>3 else current_pos
+            second_pos = curr_position[i-3,:] #if i>3 else current_pos ##bug at zero
             dir_array = direction_goal_detect(current_pos,second_pos)
             if (dir_array == goal_position).all(): ##wanted goal
                 return 1,dir_array
@@ -140,8 +146,17 @@ class Gym():
     def plot_env(self, curr_position,color='r',save=False):
      
         self.sp.grid(True)
-        self.sp.plot(curr_position[:, 0], curr_position[:, 1], color=color)
-        self.sp.scatter(curr_position[-1, 0], curr_position[-1, 1], color='b')
+        if color == 'r':
+            self.hh.append(self.sp.plot(curr_position[:, 0], curr_position[:, 1], color=color))
+        if color != 'r':
+            # self.reset_plot()
+            for h in self.hh: 
+                if len(h) != 0 :
+                    h.pop(0).remove() 
+            # for h in self.hh:
+            #     
+            self.sp.plot(curr_position[:, 0], curr_position[:, 1], color=color)
+            self.sp.scatter(curr_position[-1, 0], curr_position[-1, 1], color='b')
         self.sp.scatter(0, 0, color='k')
         self.sp.scatter(1.45, 0, color='k')
         plt.plot([0, 1.450], [0, 0], '--', color='k')

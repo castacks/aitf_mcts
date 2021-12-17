@@ -42,6 +42,8 @@ def run_episode(rank,gym,net,args):
     while True:
         episodeStep += 1
         # print(episodeStep,rank)
+        if args.plot: gym.plot_env(curr_position,'g')
+
         pi = mcts.getActionProbs(curr_position, curr_goal)
         # if pi == None:
             # print(curr_position,curr_goal,start_position)
@@ -52,9 +54,8 @@ def run_episode(rank,gym,net,args):
 
         action = np.random.choice(len(pi), p=pi)
         curr_position = gym.getNextState(curr_position, action)
-        print(curr_position[-1,2]*3280.84,1000*gym.get_cost(curr_position))
+        print(curr_position[-1,2]*3280.84,gym.get_cost(curr_position))
         # print("Step")
-        if args.plot: gym.plot_env(curr_position,'g')
 
         r,g = gym.getGameEnded(curr_position, curr_goal)
         if r != 0 and args.plot:
