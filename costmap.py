@@ -132,7 +132,7 @@ class CostMap:
         if (x, y, z, angle, wind) in self.state_direction.keys():
             return self.state_direction[(x, y, z, angle, wind)]
         else:
-            return -1
+            return -0.0
 
     def normalize_dictionary(self, normalization_range=(0, 1)):
 

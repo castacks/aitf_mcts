@@ -77,8 +77,9 @@ class MCTS():
 
         if s not in self.Ps:
             # leaf node
-            v =  self.gym.get_cost(curr_position)
-            self.gym.plot_env(curr_position,'r',save=False)
+            v =  self.gym.get_cost(curr_position,goal_position)
+            self.gym.plot_env(curr_position, 'r')
+
             # print(curr_position[-1,2]*3280.84,v)
             curr_position = curr_position.to(self.device)*1000 ##km to m
             goal_position = goal_position.to(self.device)
@@ -102,10 +103,10 @@ class MCTS():
         # pick the action with the highest upper confidence bound
         for a in range(self.gym.getActionSize()):
             if (s, a) in self.Qsa:
-                u = self.Qsa[(s, a)] + h[a] + self.args.cpuct * self.Ps[s][a] * (math.sqrt(self.Ns[s]) / (1 + self.Nsa[(s, a)])) 
+                u = self.Qsa[(s, a)] + 10*h[a] + self.args.cpuct * self.Ps[s][a] * (math.sqrt(self.Ns[s]) / (1 + self.Nsa[(s, a)])) 
                 # print(self.Qsa[(s, a)] , 0.1*h[a])
             else:
-                u = h[a] + self.args.cpuct * self.Ps[s][a] * math.sqrt(self.Ns[s] + EPS)  
+                u = 10*h[a] + self.args.cpuct * self.Ps[s][a] * math.sqrt(self.Ns[s] + EPS)  
                 # print(0.1*h[a])
 
             if u > cur_best:

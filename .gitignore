@@ -8,3 +8,4 @@ episodes/*
 log.txt
 *.examples
 *.pyc
+*.png

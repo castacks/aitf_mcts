@@ -5,7 +5,7 @@ from costmap import CostMap
 
 from gym.dataset_loader import TrajectoryDataset
 from gym.dataset_utils import seq_collate_old
-from gym.utils import populate_traj_lib, direction_goal_detect, goal_eucledian_list
+from gym.utils import populate_traj_lib, direction_goal_detect, goal_eucledian_list, goal_enum
 from torch.utils.data import DataLoader
 import torch
 import numpy as np
@@ -34,7 +34,7 @@ class Gym():
             self.fig_count = 0
         
 
-    def get_cost(self,curr_position):
+    def get_cost(self,curr_position,curr_goal):
         
          # input data sample
         cost = 0.0
@@ -44,11 +44,16 @@ class Gym():
             z = curr_position[i,2].item() #(km)
             yaw_diff = curr_position[i,:] - curr_position[i-3,:]
             slope = torch.atan2(yaw_diff[1],yaw_diff[0])
-            wind = 1
+            if goal_enum(curr_goal) == 'R1':
+                wind = -1
+            else:
+                wind = 1
+
             angle = slope*180/np.pi #degrees
             # angle = 0
             if x>-0.2 and x<1.6 and abs(y) <0.5 :
-                cost += -1
+                # print("Witin")
+                cost +=  -1
 
             # try :
             cost += self.costmap.state_value(x, y, z, angle, wind) 
@@ -88,7 +93,7 @@ class Gym():
             start_position = self.get_random_start_position()
             # self.gym.plot_env(curr_position)
             # start_position = copy.deepcopy(curr_position)
-            curr_goal = self.get_random_goal_location(p=[0,0,0,0,0,0,0,0,1,0])
+            curr_goal = self.get_random_goal_location()
 
             r,g = self.getGameEnded(start_position, curr_goal)
             if r == 0 and np.linalg.norm(start_position[-1,:2]) > 2:
@@ -143,10 +148,9 @@ class Gym():
     def get_heuristic(self, curr_position, curr_goal):
 
         pos = self.goal_list[np.argmax(curr_goal.numpy())]
-    
         return np.linalg.norm(curr_position[-1,:]-pos)
 
-    def plot_env(self, curr_position,color='r',save=False):
+    def plot_env(self, curr_position,color='r',save=True,goal_position=None):
      
         self.sp.grid(True)
         if color == 'r':
@@ -168,6 +172,9 @@ class Gym():
             self.sp.scatter(curr_position[-1, 0], curr_position[-1, 1], color=alt)
         self.sp.scatter(0, 0, color='k')
         self.sp.scatter(1.45, 0, color='k')
+        if goal_position is not None:
+            print(goal_enum(goal_position))
+            plt.text(0,-1,"Goal: " + goal_enum(goal_position)[0])
         plt.plot([0, 1.450], [0, 0], '--', color='k')
         plt.axis("equal")
         plt.grid(True)
@@ -179,7 +186,7 @@ class Gym():
             self.fig_count += 1
         else:
             self.fig.show()
-            plt.pause(0.1)
+            plt.pause(0.01)
 
 
 if __name__ == '__main__':
