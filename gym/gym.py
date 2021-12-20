@@ -44,16 +44,19 @@ class Gym():
             z = curr_position[i,2].item() #(km)
             yaw_diff = curr_position[i,:] - curr_position[i-3,:]
             slope = torch.atan2(yaw_diff[1],yaw_diff[0])
-
+            wind = 1
             angle = slope*180/np.pi #degrees
-            if x>-0.2 and x<1.6 and abs(y) <0.5 and z < 0.4:
+            # angle = 0
+            if x>-0.2 and x<1.6 and abs(y) <0.5 :
                 cost += -1
 
-            try :
-                cost += self.costmap.state_value(x, y, z, angle)
+            # try :
+            cost += self.costmap.state_value(x, y, z, angle, wind) 
+            # cost += c if 
 
-            except:
-                cost += -1
+            # except:
+                # cost += -1
+
 
         return cost/((curr_position.shape[0]-3))
 
@@ -85,7 +88,7 @@ class Gym():
             start_position = self.get_random_start_position()
             # self.gym.plot_env(curr_position)
             # start_position = copy.deepcopy(curr_position)
-            curr_goal = self.get_random_goal_location(p=[0,0,0,0,0,0,0,0,0,1])
+            curr_goal = self.get_random_goal_location(p=[0,0,0,0,0,0,0,0,1,0])
 
             r,g = self.getGameEnded(start_position, curr_goal)
             if r == 0 and np.linalg.norm(start_position[-1,:2]) > 2:
@@ -156,7 +159,13 @@ class Gym():
             # for h in self.hh:
             #     
             self.sp.plot(curr_position[:, 0], curr_position[:, 1], color=color)
-            self.sp.scatter(curr_position[-1, 0], curr_position[-1, 1], color='b')
+            if curr_position[-1,2] < 0.45:
+                alt = 'r'
+            elif curr_position[-1,2] > 0.7:
+                alt = 'b'
+            else:
+                alt = 'g'    
+            self.sp.scatter(curr_position[-1, 0], curr_position[-1, 1], color=alt)
         self.sp.scatter(0, 0, color='k')
         self.sp.scatter(1.45, 0, color='k')
         plt.plot([0, 1.450], [0, 0], '--', color='k')
