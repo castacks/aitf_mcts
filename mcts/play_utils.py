@@ -8,7 +8,6 @@ from gym.utils import goal_enum
 import numpy as np
 
 def run_episode(rank,gym,net,args):
-    mcts = MCTS(gym, net, args)
 
     curr_position , curr_goal = gym.get_valid_start_goal()
 
@@ -41,6 +40,8 @@ def run_episode(rank,gym,net,args):
 
     while True:
         episodeStep += 1
+        mcts = MCTS(gym, net, args)
+
         # print(episodeStep,rank)
         if args.plot: gym.plot_env(curr_position,'g',goal_position = curr_goal)
 

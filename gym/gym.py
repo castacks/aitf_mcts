@@ -31,7 +31,7 @@ class Gym():
             self.fig = plt.figure()
             self.sp = self.fig.add_subplot(111)
             self.fig.show()
-            self.fig_count = 0
+            self.fig_count = 965
         
 
     def get_cost(self,curr_position,curr_goal):
@@ -44,10 +44,10 @@ class Gym():
             z = curr_position[i,2].item() #(km)
             yaw_diff = curr_position[i,:] - curr_position[i-3,:]
             slope = torch.atan2(yaw_diff[1],yaw_diff[0])
-            if goal_enum(curr_goal) == 'R1':
-                wind = -1
-            else:
+            if goal_enum(curr_goal) == 'R2':
                 wind = 1
+            else:
+                wind = -1
 
             angle = slope*180/np.pi #degrees
             # angle = 0
@@ -93,10 +93,10 @@ class Gym():
             start_position = self.get_random_start_position()
             # self.gym.plot_env(curr_position)
             # start_position = copy.deepcopy(curr_position)
-            curr_goal = self.get_random_goal_location()
+            curr_goal = self.get_random_goal_location(p = [0,0,0,0,0,0,0,0,0,1])
 
             r,g = self.getGameEnded(start_position, curr_goal)
-            if r == 0 and np.linalg.norm(start_position[-1,:2]) > 2:
+            if r == 0 and np.linalg.norm(start_position[-1,:2]) > 3:
                 break ##make sure start is not goal
             # else:
                 # print("No viable start")
@@ -150,7 +150,7 @@ class Gym():
         pos = self.goal_list[np.argmax(curr_goal.numpy())]
         return np.linalg.norm(curr_position[-1,:]-pos)
 
-    def plot_env(self, curr_position,color='r',save=True,goal_position=None):
+    def plot_env(self, curr_position,color='r',save=False,goal_position=None):
      
         self.sp.grid(True)
         if color == 'r':

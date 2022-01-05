@@ -19,7 +19,7 @@ if __name__ == '__main__':
         for j in range(len(yv)):
 
             z = 0.5096 #(km)
-            angle = -0 #degrees
+            angle = -180 #degrees
             wind = 1 # 1 for right -1 for left
             # print(xv.shape)
             

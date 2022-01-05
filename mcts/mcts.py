@@ -103,10 +103,10 @@ class MCTS():
         # pick the action with the highest upper confidence bound
         for a in range(self.gym.getActionSize()):
             if (s, a) in self.Qsa:
-                u = self.Qsa[(s, a)] + 10*h[a] + self.args.cpuct * self.Ps[s][a] * (math.sqrt(self.Ns[s]) / (1 + self.Nsa[(s, a)])) 
+                u = self.Qsa[(s, a)]  + self.args.cpuct * self.Ps[s][a] * (math.sqrt(self.Ns[s]) / (1 + self.Nsa[(s, a)])) + 0.005*h[a]
                 # print(self.Qsa[(s, a)] , 0.1*h[a])
             else:
-                u = 10*h[a] + self.args.cpuct * self.Ps[s][a] * math.sqrt(self.Ns[s] + EPS)  
+                u =  self.args.cpuct * self.Ps[s][a] * math.sqrt(self.Ns[s] + EPS)  + 0.005*h[a] 
                 # print(0.1*h[a])
 
             if u > cur_best:
