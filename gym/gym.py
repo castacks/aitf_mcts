@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader
 import torch
 import numpy as np
 from scipy.spatial.transform import Rotation as R
-
+THRESH = 6.0
 
 class Gym():
 
@@ -22,7 +22,9 @@ class Gym():
         self.costpath = os.getcwd() + args.dataset_folder + '111_days' + "/processed_data/train"
 
         self.costmap = CostMap(self.costpath)
-        self.load_trajair()
+        if self.args.use_trajair:
+            self.load_trajair()
+        
         self.goal_list = goal_eucledian_list()
         self.hh = []
 
@@ -78,9 +80,17 @@ class Gym():
 
     def get_random_start_position(self):
 
-        obs_traj, pred_traj, obs_traj_rel, pred_traj_rel, context, seq_start = next(iter(self.loader_train))
+        if self.args.use_trajair:
+            obs_traj, pred_traj, obs_traj_rel, pred_traj_rel, context, seq_start = next(iter(self.loader_train))
+            return obs_traj[:, 0, :]  ##select one agent
 
-        return obs_traj[:, 0, :]  ##select one agent
+        angle = np.deg2rad(np.random.randint(-180,180))
+        x, y = THRESH*np.cos(angle+np.pi),THRESH*np.sin(angle+np.pi)
+        z = 1.0
+        r = R.from_euler('z', angle)
+        direction_matrx_rep = np.squeeze(r.as_matrix())
+        trajs = (np.dot(direction_matrx_rep,self.traj_lib[2]) + (np.array([x,y,z])[:,None])).T
+        return torch.from_numpy(trajs).float()
 
     def get_random_goal_location(self, num_goals=10,p = None):
 
@@ -96,7 +106,7 @@ class Gym():
             curr_goal = self.get_random_goal_location(p = [0,0,0,0,0,0,0,0,0,1])
 
             r,g = self.getGameEnded(start_position, curr_goal)
-            if r == 0 and np.linalg.norm(start_position[-1,:2]) > 3:
+            if r == 0 and np.linalg.norm(start_position[-1,:2]) > 4:
                 break ##make sure start is not goal
             # else:
                 # print("No viable start")
@@ -117,7 +127,7 @@ class Gym():
             if (dir_array == goal_position).all(): ##wanted goal
                 return 1,dir_array
             if (dir_array.any()): ##unwanted goal
-                return -1, dir_array
+                return 0, dir_array
             
         return 0 ,dir_array## no goal
 
@@ -149,6 +159,19 @@ class Gym():
 
         pos = self.goal_list[np.argmax(curr_goal.numpy())]
         return np.linalg.norm(curr_position[-1,:]-pos)
+    
+    def get_heuristic_dw(self, curr_position, curr_goal):
+        # x = np.array([[ 0.0 ,43.32168421052632 ,86.64336842105263 ,129.96505263157894 ,173.28673684210526 ,216.6084210526316 ,259.93010526315794 ,303.2517894736842 ,346.5734736842105 ,389.89515789473677 ,433.2168421052632 ,476.5385263157894 ,519.8602105263158, 563.1818947368421, 606.5035789473684, 649.8252631578947, 693.146947368421, 736.4686315789475 ,779.7903157894735 ,823.1120000000001 ],[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ]])
+        # x[0] = x[0] + 627.0
+        x = np.arange(0.7,6.0,43.321/1000)
+        y = np.repeat(-1.5,len(x))
+        z = np.repeat(0.5,len(x))
+        self.traj = np.vstack((x,y,z)).transpose()
+        # print(self.traj.shape,curr_position.shape)
+        idx_closest = np.argmin(np.linalg.norm(self.traj-np.tile(curr_position[0,:],(len(y),1)),axis=1))
+        idx = min(idx_closest+20,len(x)-1)
+        return np.linalg.norm(curr_position[-1,:]-self.traj[idx,:])
+        
 
     def plot_env(self, curr_position,color='r',save=False,goal_position=None):
      
@@ -203,6 +226,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     datapath = os.getcwd() + args.dataset_folder + args.dataset_name + "/processed_data/"
+    print(goal_eucledian_list())
+
     gym = Gym(datapath, args)
 
-    print(goal_eucledian_list())

@@ -102,6 +102,7 @@ if __name__ == '__main__':
     parser.add_argument('--preds', type=int, default=120)
     parser.add_argument('--preds_step', type=int, default=10)
     parser.add_argument('--delim', type=str, default=' ')
+    parser.add_argument('--use_trajair', type=bool, default=False)
 
     parser.add_argument('--input_size', type=int, default=3)
     parser.add_argument('--num_channels', type=int, default=1)
@@ -112,6 +113,8 @@ if __name__ == '__main__':
 
     parser.add_argument('--numMCTS', type=int, default=50)
     parser.add_argument('--cpuct', type=int, default= 0.1)
+    parser.add_argument('--huct', type=int, default= 1000)
+
     parser.add_argument('--parallel', type=bool, default=False)
     parser.add_argument('--num_process', type=int, default=10)
 

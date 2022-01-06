@@ -37,7 +37,8 @@ def run_episode(rank,gym,net,args):
     # print(self.gym.getGameEnded(curr_position, curr_goal))
     trainExamples = []
     episodeStep = 0
-
+    cond_number = 0
+    args.changeh = False
     while True:
         episodeStep += 1
         mcts = MCTS(gym, net, args)
@@ -54,8 +55,26 @@ def run_episode(rank,gym,net,args):
         trainExamples.append([curr_position, curr_goal, pi])
 
         action = np.random.choice(len(pi), p=pi)
+        # action = np.argmax(pi)
         curr_position = gym.getNextState(curr_position, action)
-        print(curr_position[-1,2]*3280.84,gym.get_cost(curr_position,curr_goal))
+        # print(gym.get_heuristic(curr_position,curr_goal))
+        if gym.get_heuristic(curr_position,curr_goal) < 0.5 and cond_number==0:
+            print("Changing H")
+            cond_number += 1
+            args.changeh = True
+        #     gym.goal_list[9] = np.array([2.5,-2.0,0.4])
+        #     # args.huct = args.huct/10
+        # if gym.get_heuristic(curr_position,curr_goal) < 0.3 and cond_number==1:
+        #     print("Changing H")
+        #     cond_number += 1
+        #     gym.goal_list[9] = np.array([2.5,0.0,0.3])
+        #     # args.huct = args.huct/10
+        # if gym.get_heuristic(curr_position,curr_goal) < 0.3 and cond_number==2:
+        #     print("Changing H")
+        #     cond_number += 1
+        #     gym.goal_list[9] = np.array([1.45,0.0,0.2])
+            # args.huct = args.huct/10               
+        print(curr_position[-1,2]*3280.84,gym.get_heuristic_dw(curr_position,curr_goal))
         # print("Step")
         if args.plot: gym.plot_env(curr_position,'g',save=False)
 

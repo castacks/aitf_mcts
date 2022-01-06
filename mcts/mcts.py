@@ -28,7 +28,7 @@ class MCTS():
         self.Es = {}  # stores game.getGameEnded ended for board s
         self.Vs = {}  # stores game.getValidMoves for board s
 
-
+        
 
 
 
@@ -78,7 +78,8 @@ class MCTS():
         if s not in self.Ps:
             # leaf node
             v =  self.gym.get_cost(curr_position,goal_position)
-            self.gym.plot_env(curr_position, 'r')
+            # v = 0.5
+            # self.gym.plot_env(curr_position, 'r')
 
             # print(curr_position[-1,2]*3280.84,v)
             curr_position = curr_position.to(self.device)*1000 ##km to m
@@ -96,17 +97,23 @@ class MCTS():
         
         for a in range(self.gym.getActionSize()):
             next_state = self.gym.getNextState(curr_position,a)
-            h[a] = 1.0/self.gym.get_heuristic(next_state,goal_position)
+            if not self.args.changeh:
+                h[a] = 1.0/self.gym.get_heuristic(next_state,goal_position)
+            else:
+                h[a] = 1.0/self.gym.get_heuristic_dw(next_state,goal_position)
+
         h = scipy.special.softmax(h)
 
 
         # pick the action with the highest upper confidence bound
         for a in range(self.gym.getActionSize()):
             if (s, a) in self.Qsa:
-                u = self.Qsa[(s, a)]  + self.args.cpuct * self.Ps[s][a] * (math.sqrt(self.Ns[s]) / (1 + self.Nsa[(s, a)])) + 0.005*h[a]
-                # print(self.Qsa[(s, a)] , 0.1*h[a])
+                u = self.Qsa[(s, a)]  + self.args.cpuct * self.Ps[s][a] * (math.sqrt(self.Ns[s]) / (1 + self.Nsa[(s, a)])) + self.args.huct*h[a]
+                # print(u,a)
             else:
-                u =  self.args.cpuct * self.Ps[s][a] * math.sqrt(self.Ns[s] + EPS)  + 0.005*h[a] 
+                u =  self.args.cpuct * self.Ps[s][a] * math.sqrt(self.Ns[s] + EPS)  + self.args.huct*h[a] 
+                # print(u,a)
+
                 # print(0.1*h[a])
 
             if u > cur_best:

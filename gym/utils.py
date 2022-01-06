@@ -7,7 +7,7 @@ import torch
 from torch.utils.data import Dataset
 import numpy as np
 import random
-THRESH = 5 #KM
+THRESH = 8 #KM
 
 
 def populate_traj_lib():
@@ -108,7 +108,7 @@ def goal_eucledian_list(num_goals = 10):
         elif goal_idx == 8:
             pos.append(np.array([0.0,0.0,0.2]))
         elif goal_idx == 9:
-            pos.append(np.array([1.45,0.0,0.2]))
+           pos.append(np.array([-2.0,-2.5,0.5]))
 
     return pos
 
