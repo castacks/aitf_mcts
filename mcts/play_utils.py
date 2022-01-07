@@ -39,6 +39,8 @@ def run_episode(rank,gym,net,args):
     episodeStep = 0
     cond_number = 0
     args.changeh = False
+    args.huct = 1000
+
     while True:
         episodeStep += 1
         mcts = MCTS(gym, net, args)
@@ -62,8 +64,10 @@ def run_episode(rank,gym,net,args):
             print("Changing H")
             cond_number += 1
             args.changeh = True
+            args.huct = args.huct/100
+
         #     gym.goal_list[9] = np.array([2.5,-2.0,0.4])
-        #     # args.huct = args.huct/10
+            # args.huct = args.huct/10
         # if gym.get_heuristic(curr_position,curr_goal) < 0.3 and cond_number==1:
         #     print("Changing H")
         #     cond_number += 1
@@ -74,7 +78,7 @@ def run_episode(rank,gym,net,args):
         #     cond_number += 1
         #     gym.goal_list[9] = np.array([1.45,0.0,0.2])
             # args.huct = args.huct/10               
-        print(curr_position[-1,2]*3280.84,gym.get_heuristic_dw(curr_position,curr_goal))
+        print(curr_position[-1,2]*3280.84,gym.get_cost(curr_position,curr_goal))
         # print("Step")
         if args.plot: gym.plot_env(curr_position,'g',save=False)
 
@@ -84,9 +88,12 @@ def run_episode(rank,gym,net,args):
 
         if r == 1:
             print("Goal Reached; Exiting")
+            gym.reset_plot()
             return [(x[0], x[1], x[2], r) for x in trainExamples]
         if r == -1:
             print("Other Goal Reached; Exiting",goal_enum(g))
+            gym.reset_plot()
+
             return [(x[0], x[1], x[2], r) for x in trainExamples]
         if episodeStep > args.numEpisodeSteps:
             print("Max Steps Reached")

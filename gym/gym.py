@@ -5,7 +5,7 @@ from costmap import CostMap
 
 from gym.dataset_loader import TrajectoryDataset
 from gym.dataset_utils import seq_collate_old
-from gym.utils import populate_traj_lib, direction_goal_detect, goal_eucledian_list, goal_enum
+from gym.utils import *
 from torch.utils.data import DataLoader
 import torch
 import numpy as np
@@ -20,7 +20,8 @@ class Gym():
         self.args = args
         self.load_action_space()
         self.costpath = os.getcwd() + args.dataset_folder + '111_days' + "/processed_data/train"
-
+        self.traj = get_ref_traj()
+        print(self.traj.shape)
         self.costmap = CostMap(self.costpath)
         if self.args.use_trajair:
             self.load_trajair()
@@ -34,7 +35,8 @@ class Gym():
             self.sp = self.fig.add_subplot(111)
             self.fig.show()
             self.fig_count = 965
-        
+            plt.plot(self.traj[:,0],self.traj[:,1],'y',linewidth=10, alpha=0.2)
+
 
     def get_cost(self,curr_position,curr_goal):
         
@@ -149,11 +151,12 @@ class Gym():
         return "%s-%s" % (int(curr_position[-1, 0]*1000),int(curr_position[-1, 1]*1000))
 
     def reset_plot(self):
-        plt.pause(2)
         plt.close()
         self.fig = plt.figure()
         self.sp = self.fig.add_subplot(111)
         self.fig.show()
+        plt.plot(self.traj[:,0],self.traj[:,1],'y',linewidth=10, alpha=0.2)
+
 
     def get_heuristic(self, curr_position, curr_goal):
 
@@ -161,19 +164,13 @@ class Gym():
         return np.linalg.norm(curr_position[-1,:]-pos)
     
     def get_heuristic_dw(self, curr_position, curr_goal):
-        # x = np.array([[ 0.0 ,43.32168421052632 ,86.64336842105263 ,129.96505263157894 ,173.28673684210526 ,216.6084210526316 ,259.93010526315794 ,303.2517894736842 ,346.5734736842105 ,389.89515789473677 ,433.2168421052632 ,476.5385263157894 ,519.8602105263158, 563.1818947368421, 606.5035789473684, 649.8252631578947, 693.146947368421, 736.4686315789475 ,779.7903157894735 ,823.1120000000001 ],[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ]])
-        # x[0] = x[0] + 627.0
-        x = np.arange(0.7,6.0,43.321/1000)
-        y = np.repeat(-1.5,len(x))
-        z = np.repeat(0.5,len(x))
-        self.traj = np.vstack((x,y,z)).transpose()
-        # print(self.traj.shape,curr_position.shape)
-        idx_closest = np.argmin(np.linalg.norm(self.traj-np.tile(curr_position[0,:],(len(y),1)),axis=1))
-        idx = min(idx_closest+20,len(x)-1)
+   
+        idx_closest = np.argmin(np.linalg.norm(self.traj-np.tile(curr_position[0,:],(self.traj.shape[0],1)),axis=1))
+        idx = min(idx_closest+20,self.traj.shape[0]-1)
         return np.linalg.norm(curr_position[-1,:]-self.traj[idx,:])
         
 
-    def plot_env(self, curr_position,color='r',save=False,goal_position=None):
+    def plot_env(self, curr_position,color='r',save=True,goal_position=None):
      
         self.sp.grid(True)
         if color == 'r':
@@ -183,6 +180,7 @@ class Gym():
             for h in self.hh: 
                 if len(h) != 0 :
                     h.pop(0).remove() 
+
             # for h in self.hh:
             #     
             self.sp.plot(curr_position[:, 0], curr_position[:, 1], color=color)

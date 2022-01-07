@@ -108,7 +108,29 @@ def goal_eucledian_list(num_goals = 10):
         elif goal_idx == 8:
             pos.append(np.array([0.0,0.0,0.2]))
         elif goal_idx == 9:
-           pos.append(np.array([-2.0,-2.5,0.5]))
+           pos.append(np.array([-2.0,-3.5,0.6]))
 
     return pos
 
+def get_ref_traj():
+
+    x = np.arange(0.7,3.0,43.321/1000)
+    y = np.repeat(-1.5,len(x))
+    z = np.repeat(0.6,len(x))
+
+    traj = np.vstack((x,y,z))
+
+    y = np.arange(-1.5,0.0,43.321/1000)
+    x = np.repeat(3,len(y))
+    z = np.repeat(0.3,len(x))
+    # print(traj.shape,np.vstack((x,y,z)).transpose().shape)
+    traj = np.hstack((traj,np.vstack((x,y,z))))
+    # print(traj.shape,np.vstack((x,y,z)).transpose().shape)
+
+    x = np.flip(np.arange(1.45,3,43.321/1000))
+    y = np.repeat(0.0,len(x))
+    z = np.repeat(0.2,len(x))
+
+    traj = np.hstack((traj,np.vstack((x,y,z))))
+
+    return traj.transpose()

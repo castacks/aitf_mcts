@@ -118,7 +118,7 @@ if __name__ == '__main__':
     parser.add_argument('--parallel', type=bool, default=False)
     parser.add_argument('--num_process', type=int, default=10)
 
-    parser.add_argument('--numEpisodeSteps', type=int, default=20)
+    parser.add_argument('--numEpisodeSteps', type=int, default=30)
     parser.add_argument('--maxlenOfQueue', type=int, default=25600)
     parser.add_argument('--numEps', type=int, default=50)
     parser.add_argument('--numEpsTest', type=int, default=100)

@@ -79,7 +79,7 @@ class MCTS():
             # leaf node
             v =  self.gym.get_cost(curr_position,goal_position)
             # v = 0.5
-            # self.gym.plot_env(curr_position, 'r')
+            self.gym.plot_env(curr_position, 'r')
 
             # print(curr_position[-1,2]*3280.84,v)
             curr_position = curr_position.to(self.device)*1000 ##km to m
