@@ -39,7 +39,7 @@ def run_episode(rank,gym,net,args):
     episodeStep = 0
     cond_number = 0
     args.changeh = False
-    args.huct = 1000
+    # args.huct = 100
 
     while True:
         episodeStep += 1
@@ -57,6 +57,7 @@ def run_episode(rank,gym,net,args):
         trainExamples.append([curr_position, curr_goal, pi])
 
         action = np.random.choice(len(pi), p=pi)
+
         # action = np.argmax(pi)
         curr_position = gym.getNextState(curr_position, action)
         # print(gym.get_heuristic(curr_position,curr_goal))
@@ -64,7 +65,7 @@ def run_episode(rank,gym,net,args):
             print("Changing H")
             cond_number += 1
             args.changeh = True
-            args.huct = args.huct/100
+            # args.huct = args.huct/1000
 
         #     gym.goal_list[9] = np.array([2.5,-2.0,0.4])
             # args.huct = args.huct/10

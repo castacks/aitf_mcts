@@ -34,7 +34,7 @@ class Gym():
             self.fig = plt.figure()
             self.sp = self.fig.add_subplot(111)
             self.fig.show()
-            self.fig_count = 965
+            self.fig_count = 0
             plt.plot(self.traj[:,0],self.traj[:,1],'y',linewidth=10, alpha=0.2)
 
 
@@ -124,7 +124,7 @@ class Gym():
         for i in range(3,curr_position.shape[0]):
 
             current_pos = curr_position[i, :]  # check shape of traj input
-            second_pos = curr_position[i-3,:] #if i>3 else current_pos ##bug at zero
+            second_pos = curr_position[i-1,:] #if i>3 else current_pos ##bug at zero
             dir_array = direction_goal_detect(current_pos,second_pos)
             if (dir_array == goal_position).all(): ##wanted goal
                 return 1,dir_array
@@ -166,8 +166,13 @@ class Gym():
     def get_heuristic_dw(self, curr_position, curr_goal):
    
         idx_closest = np.argmin(np.linalg.norm(self.traj-np.tile(curr_position[0,:],(self.traj.shape[0],1)),axis=1))
-        idx = min(idx_closest+20,self.traj.shape[0]-1)
+        idx = min(idx_closest+30,self.traj.shape[0]-1)
+        # print(idx_closest,idx,curr_position[-(idx-idx_closest):,:].shape)
+        # print(np.mean(np.linalg.norm(curr_position[-(idx-idx_closest):,:]-self.traj[idx_closest:idx,:],axis=1)))
+        # print(idx_closest,idx,self.traj.shape)
         return np.linalg.norm(curr_position[-1,:]-self.traj[idx,:])
+
+        # return np.mean(np.linalg.norm(curr_position[-(idx-idx_closest):,:]-self.traj[idx_closest:idx,:],axis=1))
         
 
     def plot_env(self, curr_position,color='r',save=True,goal_position=None):

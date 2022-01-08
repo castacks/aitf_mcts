@@ -79,6 +79,7 @@ class MCTS():
             # leaf node
             v =  self.gym.get_cost(curr_position,goal_position)
             # v = 0.5
+            # if self.args.changeh:
             self.gym.plot_env(curr_position, 'r')
 
             # print(curr_position[-1,2]*3280.84,v)
@@ -104,7 +105,7 @@ class MCTS():
 
         h = scipy.special.softmax(h)
 
-
+        # u = np.zeros((self.gym.getActionSize()))
         # pick the action with the highest upper confidence bound
         for a in range(self.gym.getActionSize()):
             if (s, a) in self.Qsa:
@@ -121,6 +122,10 @@ class MCTS():
                 best_act = a
 
         a = best_act
+        # u = scipy.special.softmax(u)
+        # print(u.shape)
+        # a = np.random.choice(self.gym.getActionSize(), p=u)
+
         next_position = self.gym.getNextState(curr_position, a)
 
         v = self.search(next_position, goal_position)

@@ -55,7 +55,8 @@ def generate_ref():
     print(traj.shape,curr_position.shape)
     # print(np.linalg.norm(traj-np.tile(curr_position[0,:],(len(y),1)),axis=1))
     idx_closest = np.argmin(np.linalg.norm(traj-np.tile(curr_position[0,:],(len(y),1)),axis=1))
-    print(idx_closest)
+    idx_closest = 207
+    print(min(idx_closest+20,traj.shape[0]-2),traj[208,:])
 
 if __name__ == '__main__':
     generate_ref()

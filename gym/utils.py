@@ -114,7 +114,7 @@ def goal_eucledian_list(num_goals = 10):
 
 def get_ref_traj():
 
-    x = np.arange(0.7,3.0,43.321/1000)
+    x = np.arange(0.0,3.0,43.321/1000)
     y = np.repeat(-1.5,len(x))
     z = np.repeat(0.6,len(x))
 
