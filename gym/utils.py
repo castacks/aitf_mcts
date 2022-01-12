@@ -10,11 +10,11 @@ import random
 THRESH = 8 #KM
 
 
-def populate_traj_lib():
+def populate_traj_lib(path):
 	
     # note position of motion prim library text files
-    lib_path = os.getcwd() + '/gym/traj_lib_0SI.txt'
-    index_path = os.getcwd() + '/gym/traj_index_0SI.txt'
+    lib_path = path + '/gym/traj_lib_0SI.txt'
+    index_path = path + '/gym/traj_index_0SI.txt'
     print("Loading traj lib from", lib_path)
     ## obtain a 3d matrix of each trajectory's (x, y, z) positions into an array
     file1 = open(lib_path, 'r',newline='\r\n')
@@ -85,8 +85,8 @@ def direction_goal_detect(pos,second_pos):
                     # print("Runway reached",goal_enum(dir_array))
 
 
-            elif pos[0]<1.65 and pos[0]> 1.25 and abs(pos[1])<0.20 and pos[2] <0.3:  #2,
-                if 180-abs(yaw_diff_slope_degrees) <20.0:
+            elif pos[0]<1.65 and pos[0]> 1.25 and abs(pos[1])<0.20 and pos[2] <0.4:  #2,
+                if 180-abs(yaw_diff_slope_degrees) <5.0:
                     dir_array[9] = 1.0
                     # print("Runway reached",goal_enum(dir_array))
 
@@ -108,28 +108,28 @@ def goal_eucledian_list(num_goals = 10):
         elif goal_idx == 8:
             pos.append(np.array([0.0,0.0,0.2]))
         elif goal_idx == 9:
-           pos.append(np.array([-2.0,-3.5,0.6]))
+           pos.append(np.array([-3.0,-3.5,0.8]))
 
     return pos
 
 def get_ref_traj():
 
-    x = np.arange(0.0,3.0,43.321/1000)
+    x = np.arange(-3.0,3.0,36.321/1000)
     y = np.repeat(-1.5,len(x))
     z = np.repeat(0.6,len(x))
 
     traj = np.vstack((x,y,z))
 
-    y = np.arange(-1.5,0.0,43.321/1000)
-    x = np.repeat(3,len(y))
-    z = np.repeat(0.3,len(x))
+    y = np.arange(-1.5,0.0,36.321/1000)
+    x = np.repeat(3.0,len(y))
+    z = np.repeat(0.5,len(x))
     # print(traj.shape,np.vstack((x,y,z)).transpose().shape)
     traj = np.hstack((traj,np.vstack((x,y,z))))
     # print(traj.shape,np.vstack((x,y,z)).transpose().shape)
 
-    x = np.flip(np.arange(1.45,3,43.321/1000))
+    x = np.flip(np.arange(0.0,3.0,30.321/1000))
     y = np.repeat(0.0,len(x))
-    z = np.repeat(0.2,len(x))
+    z = np.repeat(0.45,len(x))
 
     traj = np.hstack((traj,np.vstack((x,y,z))))
 

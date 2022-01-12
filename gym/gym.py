@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader
 import torch
 import numpy as np
 from scipy.spatial.transform import Rotation as R
-THRESH = 6.0
+THRESH = 10.0
 
 class Gym():
 
@@ -19,9 +19,8 @@ class Gym():
         self.datapath = datapath
         self.args = args
         self.load_action_space()
-        self.costpath = os.getcwd() + args.dataset_folder + '111_days' + "/processed_data/train"
+        self.costpath = args.base_path + args.dataset_folder + '111_days' + "/processed_data/train"
         self.traj = get_ref_traj()
-        print(self.traj.shape)
         self.costmap = CostMap(self.costpath)
         if self.args.use_trajair:
             self.load_trajair()
@@ -32,7 +31,9 @@ class Gym():
 
         if self.args.plot:
             self.fig = plt.figure()
+            print("Plotting")
             self.sp = self.fig.add_subplot(111)
+            plt.ion()
             self.fig.show()
             self.fig_count = 0
             plt.plot(self.traj[:,0],self.traj[:,1],'y',linewidth=10, alpha=0.2)
@@ -71,7 +72,7 @@ class Gym():
 
     def load_action_space(self):
 
-        self.traj_lib, self.index_lib = populate_traj_lib()
+        self.traj_lib, self.index_lib = populate_traj_lib(self.args.base_path)
 
     def load_trajair(self):
 
@@ -88,10 +89,11 @@ class Gym():
 
         angle = np.deg2rad(np.random.randint(-180,180))
         x, y = THRESH*np.cos(angle+np.pi),THRESH*np.sin(angle+np.pi)
-        z = 1.0
+        z = 0.8
         r = R.from_euler('z', angle)
         direction_matrx_rep = np.squeeze(r.as_matrix())
         trajs = (np.dot(direction_matrx_rep,self.traj_lib[2]) + (np.array([x,y,z])[:,None])).T
+        print(trajs[0,:])
         return torch.from_numpy(trajs).float()
 
     def get_random_goal_location(self, num_goals=10,p = None):
@@ -112,7 +114,6 @@ class Gym():
                 break ##make sure start is not goal
             # else:
                 # print("No viable start")
-           
         return start_position, curr_goal
 
     def getActionSize(self):

@@ -4,6 +4,8 @@ import math
 import torch
 from tqdm import tqdm
 from line_profiler import LineProfiler
+import time
+from matplotlib import pyplot as plt
 
 EPS = 1e-8
 
@@ -32,14 +34,20 @@ class MCTS():
 
 
 
-    def getActionProbs(self, curr_position, goal_postion, temp=1):
+    def getActionProbs(self, curr_position, goal_postion, temp=1, max_time = None):
 
         # return np.eye(self.gym.getActionSize())[np.random.choice(self.gym.getActionSize(), 1)]
 
         # for i in tqdm(range(self.args.numMCTS), desc="MCTS Trees"):
-        for i in (range(self.args.numMCTS)):
-            # print("MCTS Tree #" + str(i))
-            self.search(curr_position, goal_postion)
+        start_time = time.time()
+        if max_time is None:
+            for i in (range(self.args.numMCTS)):
+                # print("MCTS Tree #" + str(i))
+                self.search(curr_position, goal_postion)
+        else:
+            while (time.time()-start_time) < max_time:
+                self.search(curr_position, goal_postion)
+
 
         s = self.gym.get_hash(curr_position)
 
@@ -80,7 +88,8 @@ class MCTS():
             v =  self.gym.get_cost(curr_position,goal_position)
             # v = 0.5
             # if self.args.changeh:
-            self.gym.plot_env(curr_position, 'r')
+            # self.gym.plot_env(curr_position, 'r')
+            # plt.plot(curr_position[:, 0], curr_position[:, 1], color='b')
 
             # print(curr_position[-1,2]*3280.84,v)
             curr_position = curr_position.to(self.device)*1000 ##km to m
