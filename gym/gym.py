@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader
 import torch
 import numpy as np
 from scipy.spatial.transform import Rotation as R
-THRESH = 5.0
+THRESH = 10.0
 
 class Gym():
 
@@ -20,7 +20,10 @@ class Gym():
         self.args = args
         self.load_action_space()
         self.costpath = args.base_path + args.dataset_folder + '111_days' + "/processed_data/train"
-        self.traj = get_ref_traj()
+        self.traj = get_ref_hand_traj()
+        print(self.traj.shape)
+        self.traj = get_ref_exp_traj()
+        print(self.traj.shape)
         self.costmap = CostMap(self.costpath)
         if self.args.use_trajair:
             self.load_trajair()
@@ -88,7 +91,7 @@ class Gym():
             return obs_traj[:, 0, :]  ##select one agent
 
         angle = np.deg2rad(np.random.randint(-180,180))
-        angle = np.deg2rad(45)
+        angle = np.deg2rad(65+180)
         x, y = THRESH*np.cos(angle+np.pi),THRESH*np.sin(angle+np.pi)
         z = 0.8
         r = R.from_euler('z', angle)
@@ -171,7 +174,9 @@ class Gym():
         # print(idx_closest,idx,curr_position[-(idx-idx_closest):,:].shape)
         # print(np.mean(np.linalg.norm(curr_position[-(idx-idx_closest):,:]-self.traj[idx_closest:idx,:],axis=1)))
         # print(idx_closest,idx,self.traj.shape)
-        return np.linalg.norm(curr_position[-1,:]-self.traj[idx,:])
+        compare_point = min(idx-idx_closest,19)
+        # print(compare_point)
+        return np.linalg.norm(curr_position[compare_point,:]-self.traj[idx,:])
 
         # return np.mean(np.linalg.norm(curr_position[-(idx-idx_closest):,:]-self.traj[idx_closest:idx,:],axis=1))
         
@@ -205,8 +210,8 @@ class Gym():
         plt.plot([0, 1.450], [0, 0], '--', color='k')
         plt.axis("equal")
         plt.grid(True)
-        plt.xlim([-7, 7])
-        plt.ylim([-7, 7])
+        plt.xlim([-12, 12])
+        plt.ylim([-12, 12])
 
         if save:
             plt.savefig("mcts_"+str(self.fig_count) + ".png")

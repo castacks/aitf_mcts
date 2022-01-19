@@ -12,7 +12,7 @@ def run_episode(rank,gym,net,args):
     curr_position , curr_goal = gym.get_valid_start_goal()
 
     print("curr goal",goal_enum(curr_goal))
-    # # print(curr_position,curr_goal)
+    print(curr_position,curr_goal)
     # curr_position = torch.Tensor([[ 0.1519,  0.3398,  0.2845],
     # [ 0.1379,  0.2875,  0.2859],
     # [ 0.1238,  0.2352,  0.2872],
@@ -65,7 +65,7 @@ def run_episode(rank,gym,net,args):
             print("Changing H")
             cond_number += 1
             args.changeh = True
-            args.huct = args.huct/5000
+            # args.huct = args.huct/5000
 
         #     gym.goal_list[9] = np.array([2.5,-2.0,0.4])
             # args.huct = args.huct/10

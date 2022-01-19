@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 import time
 from tqdm import tqdm
-import seaborn as sns
+# import seaborn as sns
 
 
 def plot_cost():
@@ -56,7 +56,7 @@ def generate_ref():
     # print(np.linalg.norm(traj-np.tile(curr_position[0,:],(len(y),1)),axis=1))
     idx_closest = np.argmin(np.linalg.norm(traj-np.tile(curr_position[0,:],(len(y),1)),axis=1))
     idx_closest = 207
-    print(min(idx_closest+20,traj.shape[0]-2),traj[208,:])
+    print(min(idx_closest+20,traj.shape[0]-2),traj[207,:])
 
 if __name__ == '__main__':
     generate_ref()

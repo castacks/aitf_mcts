@@ -82,12 +82,17 @@ def direction_goal_detect(pos,second_pos):
             if pos[0]<0.2 and pos[0]> -0.2 and abs(pos[1])<0.20 and pos[2] <0.3: #1
                 if abs(yaw_diff_slope_degrees) <20.0:
                     dir_array[8] = 1.0
+                    return dir_array
                     # print("Runway reached",goal_enum(dir_array))
 
 
-            elif pos[0]<1.65 and pos[0]> 1.5 and abs(pos[1])<0.01 and pos[2] <0.4:  #2,
+            elif pos[0]<1.7 and pos[0]> 1.5 and abs(pos[1])<0.01 and pos[2] <0.4:  #2,
+                print("bad head",abs(yaw_diff_slope_degrees))
                 if 180-abs(yaw_diff_slope_degrees) <20.0:
                     dir_array[9] = 1.0
+                    print("good head")
+
+                    return dir_array
                     # print("Runway reached",goal_enum(dir_array))
 
     return dir_array
@@ -112,7 +117,7 @@ def goal_eucledian_list(num_goals = 10):
 
     return pos
 
-def get_ref_traj():
+def get_ref_hand_traj():
 
     x = np.arange(-3.0,3.0,36.321/1000)
     y = np.repeat(-2,len(x))
@@ -134,3 +139,10 @@ def get_ref_traj():
     traj = np.hstack((traj,np.vstack((x,y,z))))
 
     return traj.transpose()
+
+def get_ref_exp_traj():
+
+    traj = np.genfromtxt('/home/jay/AITF/aitf_ws/src/aitf_mcts/gym/2799.csv',delimiter=",")
+
+    return traj
+    
