@@ -97,6 +97,7 @@ if __name__ == '__main__':
     parser.add_argument('--model_weights', type=str, default=None)
     parser.add_argument('--checkpoint', type=str, default='/episodes/')
     parser.add_argument('--load_episodes', type=bool, default=False)
+    parser.add_argument('--base_path', type=str, default='/home/jay/AITF/aitf_ws/src/aitf_mcts')
 
     parser.add_argument('--obs', type=int, default=20)
     parser.add_argument('--preds', type=int, default=120)
@@ -113,7 +114,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--numMCTS', type=int, default=50)
     parser.add_argument('--cpuct', type=int, default= 0.1)
-    parser.add_argument('--huct', type=int, default= 1000)
+    parser.add_argument('--huct', type=int, default= 0.1)
 
     parser.add_argument('--parallel', type=bool, default=False)
     parser.add_argument('--num_process', type=int, default=10)

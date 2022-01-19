@@ -30,7 +30,8 @@ class MCTS():
         self.Es = {}  # stores game.getGameEnded ended for board s
         self.Vs = {}  # stores game.getValidMoves for board s
 
-        
+        self.Hs = {}
+        self.Hsa = {}
 
 
 
@@ -43,10 +44,10 @@ class MCTS():
         if max_time is None:
             for i in (range(self.args.numMCTS)):
                 # print("MCTS Tree #" + str(i))
-                self.search(curr_position, goal_postion)
+                self.search(curr_position, goal_postion,0)
         else:
             while (time.time()-start_time) < max_time:
-                self.search(curr_position, goal_postion)
+                self.search(curr_position, goal_postion,0)
 
 
         s = self.gym.get_hash(curr_position)
@@ -72,56 +73,56 @@ class MCTS():
         return probs
 
     # @profile
-    def search(self, curr_position, goal_position):
-
+    def search(self, curr_position, goal_position,h):
+        # print("hah")
         s = self.gym.get_hash(curr_position)
-
+        # print(s)
         if s not in self.Es:
             self.Es[s],_ = self.gym.getGameEnded(curr_position, goal_position)
         if self.Es[s] != 0:
             # terminal node
-            # print("Terminal Node")
-            return 10.0*self.Es[s]
+            print("Terminal Node")
+            return self.Es[s],h
 
         if s not in self.Ps:
             # leaf node
             v =  self.gym.get_cost(curr_position,goal_position)
+
             # v = 0.5
             # if self.args.changeh:
-            # self.gym.plot_env(curr_position, 'r')
+            self.gym.plot_env(curr_position, 'r')
             # plt.plot(curr_position[:, 0], curr_position[:, 1], color='b')
 
             # print(curr_position[-1,2]*3280.84,v)
             curr_position = curr_position.to(self.device)*1000 ##km to m
             goal_position = goal_position.to(self.device)
 
-            self.Ps[s], _ = self.nnet.predict(curr_position, goal_position)
+            self.Ps[s], v = self.nnet.predict(curr_position, goal_position)
 
             self.Ns[s] = 0
             # print("Leaf")
-            return v
+            return v,h
 
         cur_best = -float('inf')
         best_act = -1
-        h = np.zeros(self.gym.getActionSize())
+        heu = np.zeros(self.gym.getActionSize())
         
         for a in range(self.gym.getActionSize()):
             next_state = self.gym.getNextState(curr_position,a)
             if not self.args.changeh:
-                h[a] = 1.0/self.gym.get_heuristic(next_state,goal_position)
+                heu[a] = 1.0/self.gym.get_heuristic(next_state,goal_position)
             else:
-                h[a] = 1.0/self.gym.get_heuristic_dw(next_state,goal_position)
+                heu[a] = 1.0/self.gym.get_heuristic_dw(next_state,goal_position)
 
-        h = scipy.special.softmax(h)
-
+        heu = scipy.special.softmax(heu)
         # u = np.zeros((self.gym.getActionSize()))
         # pick the action with the highest upper confidence bound
         for a in range(self.gym.getActionSize()):
             if (s, a) in self.Qsa:
-                u = self.Qsa[(s, a)]  + self.args.cpuct * self.Ps[s][a] * (math.sqrt(self.Ns[s]) / (1 + self.Nsa[(s, a)])) + self.args.huct*h[a]
+                u = self.Qsa[(s, a)]  + self.args.cpuct * self.Ps[s][a] * (math.sqrt(self.Ns[s]) / (1 + self.Nsa[(s, a)])) + self.args.huct*self.Hsa[(s, a)] 
                 # print(u,a)
             else:
-                u =  self.args.cpuct * self.Ps[s][a] * math.sqrt(self.Ns[s] + EPS)  + self.args.huct*h[a] 
+                u =  self.args.cpuct * self.Ps[s][a] * math.sqrt(self.Ns[s] + EPS)  + self.args.huct*heu[a] 
                 # print(u,a)
 
                 # print(0.1*h[a])
@@ -137,15 +138,18 @@ class MCTS():
 
         next_position = self.gym.getNextState(curr_position, a)
 
-        v = self.search(next_position, goal_position)
+        v , h = self.search(next_position, goal_position,heu[a])
         # print("test")
         if (s, a) in self.Qsa:
             self.Qsa[(s, a)] = (self.Nsa[(s, a)] * self.Qsa[(s, a)] + v) / (self.Nsa[(s, a)] + 1)
             self.Nsa[(s, a)] += 1
+            self.Hsa[(s, a)] = (self.Nsa[(s, a)] * self.Hsa[(s, a)] + h) / (self.Nsa[(s, a)] + 1)
+
 
         else:
             self.Qsa[(s, a)] = v
             self.Nsa[(s, a)] = 1
+            self.Hsa[(s, a)] = h
 
         self.Ns[s] += 1
-        return v
+        return v,h

@@ -85,8 +85,8 @@ def direction_goal_detect(pos,second_pos):
                     # print("Runway reached",goal_enum(dir_array))
 
 
-            elif pos[0]<1.65 and pos[0]> 1.25 and abs(pos[1])<0.20 and pos[2] <0.4:  #2,
-                if 180-abs(yaw_diff_slope_degrees) <5.0:
+            elif pos[0]<1.65 and pos[0]> 1.5 and abs(pos[1])<0.01 and pos[2] <0.4:  #2,
+                if 180-abs(yaw_diff_slope_degrees) <20.0:
                     dir_array[9] = 1.0
                     # print("Runway reached",goal_enum(dir_array))
 
@@ -115,12 +115,12 @@ def goal_eucledian_list(num_goals = 10):
 def get_ref_traj():
 
     x = np.arange(-3.0,3.0,36.321/1000)
-    y = np.repeat(-1.5,len(x))
+    y = np.repeat(-2,len(x))
     z = np.repeat(0.6,len(x))
 
     traj = np.vstack((x,y,z))
 
-    y = np.arange(-1.5,0.0,36.321/1000)
+    y = np.arange(-2,0.0,36.321/1000)
     x = np.repeat(3.0,len(y))
     z = np.repeat(0.5,len(x))
     # print(traj.shape,np.vstack((x,y,z)).transpose().shape)
@@ -129,7 +129,7 @@ def get_ref_traj():
 
     x = np.flip(np.arange(0.0,3.0,30.321/1000))
     y = np.repeat(0.0,len(x))
-    z = np.repeat(0.45,len(x))
+    z = np.repeat(0.35,len(x))
 
     traj = np.hstack((traj,np.vstack((x,y,z))))
 

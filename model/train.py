@@ -19,7 +19,7 @@ class Net():
         self.nnet.to(self.device)
 
         if args.model_weights is not None:
-            modelpath = os.getcwd() + args.models_folder + args.model_weights
+            modelpath = self.args.base_path + args.models_folder + args.model_weights
             self.load_hot_start(modelpath)
 
     def load_hot_start(self, modelpath):

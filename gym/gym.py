@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader
 import torch
 import numpy as np
 from scipy.spatial.transform import Rotation as R
-THRESH = 10.0
+THRESH = 5.0
 
 class Gym():
 
@@ -88,12 +88,12 @@ class Gym():
             return obs_traj[:, 0, :]  ##select one agent
 
         angle = np.deg2rad(np.random.randint(-180,180))
+        angle = np.deg2rad(45)
         x, y = THRESH*np.cos(angle+np.pi),THRESH*np.sin(angle+np.pi)
         z = 0.8
         r = R.from_euler('z', angle)
         direction_matrx_rep = np.squeeze(r.as_matrix())
         trajs = (np.dot(direction_matrx_rep,self.traj_lib[2]) + (np.array([x,y,z])[:,None])).T
-        print(trajs[0,:])
         return torch.from_numpy(trajs).float()
 
     def get_random_goal_location(self, num_goals=10,p = None):
@@ -110,7 +110,7 @@ class Gym():
             curr_goal = self.get_random_goal_location(p = [0,0,0,0,0,0,0,0,0,1])
 
             r,g = self.getGameEnded(start_position, curr_goal)
-            if r == 0 and np.linalg.norm(start_position[-1,:2]) > 4:
+            if r == 0 :
                 break ##make sure start is not goal
             # else:
                 # print("No viable start")
@@ -176,7 +176,7 @@ class Gym():
         # return np.mean(np.linalg.norm(curr_position[-(idx-idx_closest):,:]-self.traj[idx_closest:idx,:],axis=1))
         
 
-    def plot_env(self, curr_position,color='r',save=True,goal_position=None):
+    def plot_env(self, curr_position,color='r',save=False,goal_position=None):
      
         self.sp.grid(True)
         if color == 'r':
