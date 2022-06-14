@@ -13,12 +13,12 @@ THRESH = 8 #KM
 def populate_traj_lib(path):
 	
     # note position of motion prim library text files
-    lib_path = path + '/gym/traj_lib_0SI.txt'
-    index_path = path + '/gym/traj_index_0SI.txt'
+    lib_path = path + '/gym/traj_lib_0SI_new.txt'
+    index_path = path + '/gym/traj_index_0SI_new.txt'
     print("Loading traj lib from", lib_path)
     ## obtain a 3d matrix of each trajectory's (x, y, z) positions into an array
     file1 = open(lib_path, 'r',newline='\r\n')
-    traj_no = 252 # note the number
+    traj_no = 30 # note the number
     count, j = 0,0
     traj_lib = np.zeros([traj_no,3,20])
 
@@ -86,8 +86,8 @@ def direction_goal_detect(pos,second_pos):
                     # print("Runway reached",goal_enum(dir_array))
 
 
-            elif pos[0]<1.7 and pos[0]> 1.5 and abs(pos[1])<0.01 and pos[2] <0.4:  #2,
-                print("bad head",abs(yaw_diff_slope_degrees))
+            elif pos[0]<1.7 and pos[0]> 1.5 and abs(pos[1])<0.2 and pos[2] <1.0:  #2,
+                # print("bad head",abs(yaw_diff_slope_degrees))
                 if 180-abs(yaw_diff_slope_degrees) <20.0:
                     dir_array[9] = 1.0
                     print("good head")

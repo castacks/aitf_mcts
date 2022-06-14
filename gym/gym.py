@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader
 import torch
 import numpy as np
 from scipy.spatial.transform import Rotation as R
-THRESH = 10.0
+THRESH = 5.0
 
 class Gym():
 
@@ -19,11 +19,8 @@ class Gym():
         self.datapath = datapath
         self.args = args
         self.load_action_space()
-        self.costpath = args.base_path + args.dataset_folder + '111_days' + "/processed_data/train"
-        self.traj = get_ref_hand_traj()
-        print(self.traj.shape)
-        self.traj = get_ref_exp_traj()
-        print(self.traj.shape)
+        self.costpath = args.base_path + args.dataset_folder + '111_days' + "/processed_data/train/"
+
         self.costmap = CostMap(self.costpath)
         if self.args.use_trajair:
             self.load_trajair()
@@ -39,7 +36,7 @@ class Gym():
             plt.ion()
             self.fig.show()
             self.fig_count = 0
-            plt.plot(self.traj[:,0],self.traj[:,1],'y',linewidth=10, alpha=0.2)
+            # plt.plot(self.traj[:,0],self.traj[:,1],'y',linewidth=10, alpha=0.2)
 
 
     def get_cost(self,curr_position,curr_goal):
@@ -91,9 +88,9 @@ class Gym():
             return obs_traj[:, 0, :]  ##select one agent
 
         angle = np.deg2rad(np.random.randint(-180,180))
-        angle = np.deg2rad(65+180)
-        x, y = THRESH*np.cos(angle+np.pi),THRESH*np.sin(angle+np.pi)
-        z = 0.8
+        # angle = np.deg2rad(-120)
+        x, y = -THRESH*np.cos(angle),-THRESH*np.sin(angle)
+        z = 0.67
         r = R.from_euler('z', angle)
         direction_matrx_rep = np.squeeze(r.as_matrix())
         trajs = (np.dot(direction_matrx_rep,self.traj_lib[2]) + (np.array([x,y,z])[:,None])).T
@@ -125,6 +122,7 @@ class Gym():
         return action_space_size
 
     def getGameEnded(self, curr_position, goal_position):
+        # print(goal_position)
         for i in range(3,curr_position.shape[0]):
 
             current_pos = curr_position[i, :]  # check shape of traj input
@@ -182,8 +180,61 @@ class Gym():
         
 
     def plot_env(self, curr_position,color='r',save=False,goal_position=None):
-     
+        phi_1_x_r1 = [-1.2, 0.9]
+        phi_1_y_r1 = [0.8, 2.5]
+        phi_1_z_r1 = [0.5, 0.7]
+
+        phi_2_x_r1 = [-3, -1.2]
+        phi_2_y_r1 = [0.08, 2.5]
+        phi_2_z_r1 = [0.3, 0.5]
+        phi_3_x_r1 = [-3.0, 0.0]
+        phi_3_y_r1 = [-0.08,0.08]
+        phi_3_z_r1 = [0.3, 0.5]
+
+
+        phi_1_x_r2 = [-1.5, 0.50]
+        phi_1_y_r2 = [-3.0, -2.0]
+        phi_1_z_r2 = [0.6, 0.8]
+
+        phi_2_x_r2 = [2.5, 4.0]
+        phi_2_y_r2 = [-2.5, -1.0]
+        phi_2_z_r2 = [0.4, 0.6]
+        phi_3_x_r2 = [1.3, 1.5]
+        phi_3_y_r2 = [-0.2, 0.2]
+        phi_3_z_r2 = [0.3, 0.5]
         self.sp.grid(True)
+        if color == 'r':
+            self.hh.append(self.sp.plot(curr_position[:, 0], curr_position[:, 1], color=color))
+        if color == 'c':
+            self.hh.append(self.sp.plot(curr_position[:, 0], curr_position[:, 1], '--',color=color, linewidth=3, zorder=0))
+        if color != 'r' and color != 'c':
+            # self.reset_plot()
+            for h in self.hh: 
+                if len(h) != 0 :
+                    h.pop(0).remove() 
+
+            # for h in self.hh:
+            #     
+            self.sp.plot(curr_position[:, 0], curr_position[:, 1], color=color)
+            if curr_position[-1,2] < 0.45:
+                alt = 'r'
+            elif curr_position[-1,2] > 0.7:
+                alt = 'b'
+            else:
+                alt = 'g'    
+            self.sp.scatter(curr_position[-1, 0], curr_position[-1, 1], color=alt)
+        self.sp.scatter(0, 0, color='k')
+        self.sp.scatter(1.45, 0, color='k')
+        # if int(goal_traj[0,0,0,:,0].size) >350:
+        #     self.hh.append(self.sp.plot(goal_traj[0,0,0,:350,2], goal_traj[0,0,0,:350,3], "gray", linewidth=3, alpha=0.1,zorder =1))
+        # else:
+        #     self.hh.append(self.sp.plot(goal_traj[0,0,0,:,2], goal_traj[0,0,0,:,3], "gray", linewidth=3, alpha=0.1,zorder = 1))
+
+
+
+        self.hh.append(self.sp.plot([phi_1_x_r2[0],phi_1_x_r2[0],phi_1_x_r2[1],phi_1_x_r2[1],phi_1_x_r2[0]],[phi_1_y_r2[0],phi_1_y_r2[1],phi_1_y_r2[1],phi_1_y_r2[0],phi_1_y_r2[0]], c="blue", linewidth=1))
+        self.hh.append(self.sp.plot([phi_2_x_r2[0],phi_2_x_r2[0],phi_2_x_r2[1],phi_2_x_r2[1],phi_2_x_r2[0]],[phi_2_y_r2[0],phi_2_y_r2[1],phi_2_y_r2[1],phi_2_y_r2[0],phi_2_y_r2[0]], c="green", linewidth=1))
+        self.hh.append(self.sp.plot([phi_3_x_r2[0],phi_3_x_r2[0],phi_3_x_r2[1],phi_3_x_r2[1],phi_3_x_r2[0]],[phi_3_y_r2[0],phi_3_y_r2[1],phi_3_y_r2[1],phi_3_y_r2[0],phi_3_y_r2[0]], c="orange", linewidth=1))
         if color == 'r':
             self.hh.append(self.sp.plot(curr_position[:, 0], curr_position[:, 1], color=color))
         if color != 'r':
@@ -204,9 +255,7 @@ class Gym():
             self.sp.scatter(curr_position[-1, 0], curr_position[-1, 1], color=alt)
         self.sp.scatter(0, 0, color='k')
         self.sp.scatter(1.45, 0, color='k')
-        if goal_position is not None:
-            print(goal_enum(goal_position))
-            plt.text(0,-1,"Goal: " + goal_enum(goal_position)[0])
+
         plt.plot([0, 1.450], [0, 0], '--', color='k')
         plt.axis("equal")
         plt.grid(True)

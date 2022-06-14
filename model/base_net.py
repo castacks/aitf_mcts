@@ -2,7 +2,7 @@ import torch.nn.functional as F
 from model.tcn import TemporalConvNet
 import torch
 from torch import nn
-
+traj_no = 30
 
 class Policy(nn.Module):
     def __init__(self, args, device='cpu'):
@@ -14,10 +14,10 @@ class Policy(nn.Module):
         dropout = args.dropout
         self.device = device
         self.tcn_encoder_x = TemporalConvNet(input_size, num_channels, kernel_size=kernel_size, dropout=dropout)
-
-        self.linear_decoder_x = nn.Linear(256, 256)
-        self.linear_x = nn.Linear(256, 252)
-        self.linear_decoder_v = nn.Linear(256, 64)
+        self.layer_1_nodes = 640
+        self.linear_decoder_x = nn.Linear(self.layer_1_nodes, 256)
+        self.linear_x = nn.Linear(256, traj_no)
+        self.linear_decoder_v = nn.Linear(self.layer_1_nodes, 64)
         self.linear_v = nn.Linear(64, 64)
         self.output_v = nn.Linear(64, 1)
         self.goal_expand = nn.Linear(10, 128)
@@ -45,10 +45,11 @@ class Policy(nn.Module):
     def forward(self, x1, goal):
         x1 = torch.unsqueeze(x1, 2)
         x1 = torch.transpose(x1, 0, 2)
-
         # goal_vector = goal.to(self.device)
+        goal = goal.type(torch.float)
+        # print("baseNet",goal)
         goal_expanded = self.goal_expand(goal)
-
+        x1=x1/1000.0
         encoded_x = self.tcn_encoder_x(x1)
 
         encoded_x = encoded_x[:, :, -1]
@@ -69,4 +70,3 @@ class Policy(nn.Module):
         v = self.tanh(self.output_v(decoded2_v))
         # print(v)
         return softmax_out[0], v
-
