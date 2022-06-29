@@ -110,7 +110,7 @@ class MCTS():
             # print(curr_position,all_next_states[0],pred)
             # for i in range(30):
             #     self.gym.plot_env(np.transpose(all_next_states[i]),'k')
-            self.Ps[s] = self.gym.traj_to_action(pred[:,0],all_next_states)
+            self.Ps[s] = self.gym.traj_to_action(pred[:,:2],all_next_states)
             # print(all_next_states.shape) 
             # print(np.argmax(self.Ps[s]))
             # motion = self.gym.getNextState(curr_position, np.argmax(self.Ps[s]))

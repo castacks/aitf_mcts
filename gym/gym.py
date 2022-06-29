@@ -193,15 +193,15 @@ class Gym():
         return trajs
 
     def traj_to_action(self,pred,all_states):
-        # print(pred[None,:].shape,all_states[:,:,-1].shape)
-        action_probs = np.linalg.norm(pred[None,:]-all_states[:,:,-1],axis=1)
-        # print(action_probs.shape)
-        # action_probs = np.sum(action_probs,axis=0)
+        # print(pred[None,:].shape,all_states[:,:,9::10].shape)
+        action_probs = np.linalg.norm(pred[None,:]-all_states[:,:,9::10],axis=1)
+        # print("ha",action_probs.shape)
+        action_probs = np.sum(action_probs,axis=1)
         action_probs = action_probs/np.sum(action_probs)
         action_probs = scipy.special.softmax(np.power(action_probs,-1))
         return action_probs
     
-    def plot_env(self, curr_position,color='r',save=True,goal_position=None):
+    def plot_env(self, curr_position,color='r',save=False,goal_position=None):
         phi_1_x_r1 = [-1.2, 0.9]
         phi_1_y_r1 = [0.8, 2.5]
         phi_1_z_r1 = [0.5, 0.7]
@@ -214,7 +214,7 @@ class Gym():
         phi_3_z_r1 = [0.3, 0.5]
 
 
-        phi_1_x_r2 = [-2.5, 0.50]
+        phi_1_x_r2 = [-1.5, 1.50]
         phi_1_y_r2 = [-2.0, -1.0]
         phi_1_z_r2 = [0.6, 0.8]
 
