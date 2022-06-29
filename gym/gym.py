@@ -10,6 +10,8 @@ from torch.utils.data import DataLoader
 import torch
 import numpy as np
 from scipy.spatial.transform import Rotation as R
+import scipy
+
 THRESH = 5.0
 
 class Gym():
@@ -179,7 +181,27 @@ class Gym():
         # return np.mean(np.linalg.norm(curr_position[-(idx-idx_closest):,:]-self.traj[idx_closest:idx,:],axis=1))
         
 
-    def plot_env(self, curr_position,color='r',save=False,goal_position=None):
+    def getAllNextStates(self, curr_position):
+        # rotate and translate action choice to end of previous executed traj
+        difference = curr_position[-1, :] - curr_position[-3, :]
+        difference = difference.cpu().numpy()  # verify device
+        angle = np.arctan2(difference[1], difference[0])
+        r = R.from_euler('z', angle)
+        direction_matrx_rep = np.squeeze(r.as_matrix())
+        trajs =  np.matmul(direction_matrx_rep[None, :], self.traj_lib) + np.array(curr_position[ -1, :])[ :, None]
+
+        return trajs
+
+    def traj_to_action(self,pred,all_states):
+        # print(pred[None,:].shape,all_states[:,:,-1].shape)
+        action_probs = np.linalg.norm(pred[None,:]-all_states[:,:,-1],axis=1)
+        # print(action_probs.shape)
+        # action_probs = np.sum(action_probs,axis=0)
+        action_probs = action_probs/np.sum(action_probs)
+        action_probs = scipy.special.softmax(np.power(action_probs,-1))
+        return action_probs
+    
+    def plot_env(self, curr_position,color='r',save=True,goal_position=None):
         phi_1_x_r1 = [-1.2, 0.9]
         phi_1_y_r1 = [0.8, 2.5]
         phi_1_z_r1 = [0.5, 0.7]
@@ -192,12 +214,12 @@ class Gym():
         phi_3_z_r1 = [0.3, 0.5]
 
 
-        phi_1_x_r2 = [-1.5, 0.50]
-        phi_1_y_r2 = [-3.0, -2.0]
+        phi_1_x_r2 = [-2.5, 0.50]
+        phi_1_y_r2 = [-2.0, -1.0]
         phi_1_z_r2 = [0.6, 0.8]
 
-        phi_2_x_r2 = [2.5, 4.0]
-        phi_2_y_r2 = [-2.5, -1.0]
+        phi_2_x_r2 = [1.5, 3.0]
+        phi_2_y_r2 = [-2, 0.2]
         phi_2_z_r2 = [0.4, 0.6]
         phi_3_x_r2 = [1.3, 1.5]
         phi_3_y_r2 = [-0.2, 0.2]
@@ -205,9 +227,11 @@ class Gym():
         self.sp.grid(True)
         if color == 'r':
             self.hh.append(self.sp.plot(curr_position[:, 0], curr_position[:, 1], color=color))
+        if color == 'k':
+            self.hh.append(self.sp.plot(curr_position[:, 0], curr_position[:, 1], '--',color=color, linewidth=1, zorder=0))
         if color == 'c':
             self.hh.append(self.sp.plot(curr_position[:, 0], curr_position[:, 1], '--',color=color, linewidth=3, zorder=0))
-        if color != 'r' and color != 'c':
+        if color != 'r' and color != 'c' and color !='k':
             # self.reset_plot()
             for h in self.hh: 
                 if len(h) != 0 :
@@ -235,26 +259,26 @@ class Gym():
         self.hh.append(self.sp.plot([phi_1_x_r2[0],phi_1_x_r2[0],phi_1_x_r2[1],phi_1_x_r2[1],phi_1_x_r2[0]],[phi_1_y_r2[0],phi_1_y_r2[1],phi_1_y_r2[1],phi_1_y_r2[0],phi_1_y_r2[0]], c="blue", linewidth=1))
         self.hh.append(self.sp.plot([phi_2_x_r2[0],phi_2_x_r2[0],phi_2_x_r2[1],phi_2_x_r2[1],phi_2_x_r2[0]],[phi_2_y_r2[0],phi_2_y_r2[1],phi_2_y_r2[1],phi_2_y_r2[0],phi_2_y_r2[0]], c="green", linewidth=1))
         self.hh.append(self.sp.plot([phi_3_x_r2[0],phi_3_x_r2[0],phi_3_x_r2[1],phi_3_x_r2[1],phi_3_x_r2[0]],[phi_3_y_r2[0],phi_3_y_r2[1],phi_3_y_r2[1],phi_3_y_r2[0],phi_3_y_r2[0]], c="orange", linewidth=1))
-        if color == 'r':
-            self.hh.append(self.sp.plot(curr_position[:, 0], curr_position[:, 1], color=color))
-        if color != 'r':
-            # self.reset_plot()
-            for h in self.hh: 
-                if len(h) != 0 :
-                    h.pop(0).remove() 
+        # if color == 'r':
+        #     self.hh.append(self.sp.plot(curr_position[:, 0], curr_position[:, 1], color=color))
+        # if color != 'r':
+        #     # self.reset_plot()
+        #     for h in self.hh: 
+        #         if len(h) != 0 :
+        #             h.pop(0).remove() 
 
-            # for h in self.hh:
-            #     
-            self.sp.plot(curr_position[:, 0], curr_position[:, 1], color=color)
-            if curr_position[-1,2] < 0.45:
-                alt = 'r'
-            elif curr_position[-1,2] > 0.7:
-                alt = 'b'
-            else:
-                alt = 'g'    
-            self.sp.scatter(curr_position[-1, 0], curr_position[-1, 1], color=alt)
-        self.sp.scatter(0, 0, color='k')
-        self.sp.scatter(1.45, 0, color='k')
+        #     # for h in self.hh:
+        #     #     
+        #     self.sp.plot(curr_position[:, 0], curr_position[:, 1], color=color)
+        #     if curr_position[-1,2] < 0.45:
+        #         alt = 'r'
+        #     elif curr_position[-1,2] > 0.7:
+        #         alt = 'b'
+        #     else:
+        #         alt = 'g'    
+        #     self.sp.scatter(curr_position[-1, 0], curr_position[-1, 1], color=alt)
+        # self.sp.scatter(0, 0, color='k')
+        # self.sp.scatter(1.45, 0, color='k')
 
         plt.plot([0, 1.450], [0, 0], '--', color='k')
         plt.axis("equal")
@@ -263,7 +287,7 @@ class Gym():
         plt.ylim([-12, 12])
 
         if save:
-            plt.savefig("mcts_"+str(self.fig_count) + ".png")
+            plt.savefig("images/mcts_"+str(self.fig_count) + ".png")
             self.fig_count += 1
         else:
             self.fig.show()

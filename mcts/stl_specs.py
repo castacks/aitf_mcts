@@ -239,9 +239,9 @@ def monitor_R2(ways): # rtamt specs for runway R2
 	# spec.spec ='eventually( (( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) )) and eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -1.0)) and eventually( ((x > 1.5) and (x < 4.0) ) and ((y > -0.5) and (y < 0.2)) ) ))'
 	
 	
-	# spec.spec = 'eventually( (( (x >0.5) and (x < 2.5)) and ( (y > -3.6) and (y < -1.2) )  and ( (z > 0.72) and (z < 0.96) )  ) and eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -3.0) and (y < -1.2))  and eventually((final < 0.02) and phi_3l_head >0 and phi_3u_head)))'
+	spec.spec = 'eventually( (( (x >-2.5) and (x < 0.5)) and ( (y > -2) and (y < -1) )  and ( (z > 0.72) and (z < 0.96) )  ) and eventually( ((x > 1.5) and (x < 3.0) ) and ((y > -2) and (y < 0.2))  and eventually(((x > 1.3) and (x < 1.5) ) and ((y > -0.2) and (y < 0.2)))))'
 
-	spec.spec = 'eventually((((x > 1.3) and (x < 1.5) ) and ((y > -0.2) and (y < 0.2)) and (z < 0.4)))'
+	# spec.spec = 'eventually((((x > 1.3) and (x < 1.5) ) and ((y > -0.2) and (y < 0.2)) and (z < 0.4)))'
 	# spec.spec = '(((x > 1.5) and (x < 4.0) ) and ((y > -0.5) and (y < 0.2))) until (((x >-1.5) and (x < 0.5)) and ( (y > -3) and (y < -2) ))'   
 	# spec.spec =  '(((x >-1.5) and (x < 0.5)) and ( (y > -3) and (y < -2) )) and not((((x > 1.5) and (x < 4.0) ) and ((y > -0.5) and (y < 0.2))))  until (((x > 1.5) and (x < 4.0) ) and ((y > -0.5) and (y < 0.2))) '   
 

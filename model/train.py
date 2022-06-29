@@ -4,7 +4,7 @@ from torch.utils.data import WeightedRandomSampler
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 import os
-from model.base_net import Policy
+from model.trajairnet_tcn import TrajAirNet
 import numpy as np
 import torch
 import torch.optim as optim
@@ -14,7 +14,7 @@ class Net():
     def __init__(self,args):
         
         self.args = args
-        self.nnet = Policy(args)
+        self.nnet = TrajAirNet(args)
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.nnet.to(self.device)
 
@@ -23,6 +23,7 @@ class Net():
             self.load_hot_start(modelpath)
 
     def load_hot_start(self, modelpath):
+        print(" Loading model weights from ", modelpath)
 
         checkpoint = torch.load(modelpath, map_location=torch.device('cpu'))
         miss, unex = self.nnet.load_state_dict(checkpoint['model_state_dict'], strict=False)
@@ -81,12 +82,16 @@ class Net():
             print("Epoch #",epoch,"Loss_pi", loss_pi, "Loss_v", loss_v)
         
     def predict(self,curr_position,goal_position):
-
+        # print("ha",curr_position)
         # self.nnet.eval()
-
+        context = torch.zeros(11,2,1)
         # self.nnet.to('cpu')
-        pi, v = self.nnet.forward(curr_position, goal_position)
-        return torch.exp(pi).detach(), v.detach()
+        
+        pred = self.nnet.inference(torch.unsqueeze(curr_position[9:,:],2), context)
+        # print("he",curr_position)
+
+        # print("ha",pred[0].shape)
+        return pred[0].detach()
     
     
     def loss_pi(self, targets, outputs):

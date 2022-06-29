@@ -11,8 +11,8 @@ def run_episode(rank,gym,net,args):
 
     curr_position , curr_goal = gym.get_valid_start_goal()
 
-    print("curr goal",goal_enum(curr_goal))
-    print(curr_position,curr_goal)
+    # print("curr goal",goal_enum(curr_goal))
+    # print(curr_position,curr_goal)
     # curr_position = torch.Tensor([[ 0.1519,  0.3398,  0.2845],
     # [ 0.1379,  0.2875,  0.2859],
     # [ 0.1238,  0.2352,  0.2872],
@@ -79,7 +79,7 @@ def run_episode(rank,gym,net,args):
         #     cond_number += 1
         #     gym.goal_list[9] = np.array([1.45,0.0,0.2])
             # args.huct = args.huct/10               
-        print(curr_position[-1,2]*3280.84,gym.get_cost(curr_position,curr_goal))
+        # print(curr_position[-1,2]*3280.84,gym.get_cost(curr_position,curr_goal))
         # print("Step")
         if args.plot: gym.plot_env(curr_position,'g',save=False)
 

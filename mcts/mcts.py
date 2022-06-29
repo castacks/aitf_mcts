@@ -100,10 +100,22 @@ class MCTS():
             # plt.plot(curr_position[:, 0], curr_position[:, 1], color='b')
 
             # print(curr_position[-1,2]*3280.84,v)
-            curr_position = curr_position.to(self.device)*1000 ##km to m
+            curr_position = curr_position.to(self.device) ##km to m
             goal_position = goal_position.to(self.device)
 
-            self.Ps[s], v = self.nnet.predict(curr_position, goal_position)
+            pred = self.nnet.predict(curr_position, goal_position)
+            # print(curr_position,pred)
+            self.gym.plot_env(np.transpose(pred),'k')
+            all_next_states = self.gym.getAllNextStates(curr_position)
+            # print(curr_position,all_next_states[0],pred)
+            # for i in range(30):
+            #     self.gym.plot_env(np.transpose(all_next_states[i]),'k')
+            self.Ps[s] = self.gym.traj_to_action(pred[:,0],all_next_states)
+            # print(all_next_states.shape) 
+            # print(np.argmax(self.Ps[s]))
+            # motion = self.gym.getNextState(curr_position, np.argmax(self.Ps[s]))
+
+            # self.gym.plot_env((motion),'c')
 
             self.Ns[s] = 0
             # print("Leaf")
@@ -180,7 +192,7 @@ class MCTS():
                 # print(u,a)
 
                 # print(0.1*h[a])
-
+            # print(u)
             if u > cur_best:
                 cur_best = u
                 best_act = a
