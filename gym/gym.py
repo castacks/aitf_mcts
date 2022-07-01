@@ -21,7 +21,7 @@ class Gym():
         self.datapath = datapath
         self.args = args
         self.load_action_space()
-        self.costpath = args.base_path + args.dataset_folder + '111_days' + "/processed_data/train/"
+        self.costpath = args.base_path + args.dataset_folder + '7days1' + "/processed_data/train/"
 
         self.costmap = CostMap(self.costpath)
         if self.args.use_trajair:
@@ -201,7 +201,7 @@ class Gym():
         action_probs = scipy.special.softmax(np.power(action_probs,-1))
         return action_probs
     
-    def plot_env(self, curr_position,color='r',save=False,goal_position=None):
+    def plot_env(self, curr_position,color='r',save=True,goal_position=None):
         phi_1_x_r1 = [-1.2, 0.9]
         phi_1_y_r1 = [0.8, 2.5]
         phi_1_z_r1 = [0.5, 0.7]
@@ -287,7 +287,7 @@ class Gym():
         plt.ylim([-12, 12])
 
         if save:
-            plt.savefig("images/mcts_"+str(self.fig_count) + ".png")
+            plt.savefig("images2_1/mcts_"+str(self.fig_count) + ".png")
             self.fig_count += 1
         else:
             self.fig.show()

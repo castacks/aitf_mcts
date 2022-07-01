@@ -84,14 +84,13 @@ class Net():
     def predict(self,curr_position,goal_position):
         # print("ha",curr_position)
         # self.nnet.eval()
-        context = torch.zeros(11,2,1)
+        context = torch.zeros((11,2,1), device = self.device)
         # self.nnet.to('cpu')
-        
         pred = self.nnet.inference(torch.unsqueeze(curr_position[9:,:],2), context)
         # print("he",curr_position)
 
         # print("ha",pred[0].shape)
-        return pred[0].detach()
+        return pred[0].detach().cpu()
     
     
     def loss_pi(self, targets, outputs):
