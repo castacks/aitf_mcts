@@ -96,7 +96,7 @@ class MCTS():
                 # print(temp_stack_plot.shape,temp_stack_plot[:,0:2])
             # v = 0.5
             # if self.args.changeh:
-            self.gym.plot_env(curr_position, 'r')
+            if self.args.plot: self.gym.plot_env(curr_position, 'r')
             # plt.plot(curr_position[:, 0], curr_position[:, 1], color='b')
 
             # print(curr_position[-1,2]*3280.84,v)
@@ -105,16 +105,17 @@ class MCTS():
 
             pred = self.nnet.predict(curr_position, goal_position)
             # print(curr_position,pred)
+            # print(pred.shape)
             self.gym.plot_env(np.transpose(pred),'k')
-            all_next_states = self.gym.getAllNextStates(curr_position.cpu()) # added a copy to cpu since Allnextstates also performs numpy operations
+            all_next_states = (self.gym.getAllNextStates(curr_position.cpu())) # added a copy to cpu since Allnextstates also performs numpy operations
             # print(curr_position,all_next_states[0],pred)
             # for i in range(30):
             #     self.gym.plot_env(np.transpose(all_next_states[i]),'k')
-            self.Ps[s] = self.gym.traj_to_action(pred[:,:2],all_next_states)
+            self.Ps[s] = torch.clamp(torch.from_numpy(self.gym.traj_to_action(pred[:,:2],all_next_states)), max=0.5)
             # print(all_next_states.shape) 
             # print(np.argmax(self.Ps[s]))
             # motion = self.gym.getNextState(curr_position, np.argmax(self.Ps[s]))
-
+            # print(self.Ps[s])
             # self.gym.plot_env((motion),'c')
 
             self.Ns[s] = 0
@@ -155,6 +156,7 @@ class MCTS():
                     # print(a,"temp_state",temp_state.shape, "this temp state")
                     # heurist = MCTS_STL_spec_R2.evaluate(temp_state,0,0)
                     temp_state = temp_state[::5,:]
+                    # self.gym.plot_env((temp_state),'k')
                     heurist = monitor_R2(temp_state)
                 else:
                     # heurist = MCTS_STL_spec_R2.evaluate(next_state,0,0)
@@ -167,8 +169,13 @@ class MCTS():
                         # print(next_state[0:3,0:2])
                         temp_state = np.concatenate((temp_stack_state,next_state))
                         # print(a, "temp_state",temp_state.shape, "this temp state")
+                        # self.gym.plot_env((temp_state),'k')
+                        # print(temp_state.shape)
+                        temp_state = temp_state[::5,:]
+
                         heurist = monitor_R2(temp_state)
                     else:
+
                         heurist = monitor_R2(next_state)
                 
             heu[a] = heurist
@@ -203,6 +210,8 @@ class MCTS():
         # a = np.random.choice(self.gym.getActionSize(), p=u)
 
         next_position = self.gym.getNextState(curr_position, a)
+
+        self.stack.append(next_position)
 
         v , h = self.search(next_position, goal_position,heu[a])
         # print("test")

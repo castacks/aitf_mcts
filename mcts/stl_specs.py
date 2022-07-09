@@ -28,7 +28,7 @@ phi_1_x = [0.5, 2.50]
 phi_1_y = [-2.5, -1.0]
 phi_1_z = [0.5, 0.7]
 phi_2_x = [2.5, 4.0]
-phi_2_y = [-2.5, -1.0] 
+phi_2_y = [-2.5, -0.5] 
 phi_2_z = [0.3, 0.5]
 phi_3_x = [1.5, 4.0]# region 3 isolated for testing purposes
 phi_3_y = [-0.5, 0.2]
@@ -43,138 +43,108 @@ def monitor_R2(ways): # rtamt specs for runway R2
 	# data
 	# print("Hi", trajs0.shape)
 	trajs_x = ways[:,0].tolist()
-	trajs_y = ways[:,1].tolist()
-	trajs_z = ways[:,2].tolist()
-	r2 = np.array([[1.48,0.0,0.38]])
-	diff_trajs = np.diff(ways, axis = 0)
-	# print (diff_trajs,diff_trajs[:,1])
-	diff_angle = np.arctan2(diff_trajs[:,1],diff_trajs[:,0])
-	# print (diff_angle*180/np.pi)
-	# print (diff_angle.shape)
+	trajs_y = (ways[:,1]*1.1).tolist()
+	trajs_z = (ways[:,2]*1.2).tolist()
+	r2 = np.array([[1.48,0.0,0.456]])
+	region1 = np.array([[1.5,1.75,0.84]])
+	region2 = np.array([[3.25,1.75,0.6]])
 
-	diff_angle_full = np.concatenate((diff_angle,diff_angle[-1:]))
-	# print (diff_angle_full*180/np.pi)
-
-	diff_angle_full = np.where(diff_angle_full < -1.57, diff_angle_full + 2 * np.pi, diff_angle_full)
-
-	# diff_angle_full = diff_angle_full.tolist()
-	phi_1u = 0.349066 - diff_angle_full
-	phi_1l = diff_angle_full + 0.349066
-	phi_2u = 2.00713 - diff_angle_full
-	phi_2l = diff_angle_full - 1.13446
-	phi_3u = 3.40339 - diff_angle_full
-	phi_3l = diff_angle_full - 2.87979
-
-	phi_1u = phi_1u.tolist()
-	phi_1l = phi_1l.tolist()
-	phi_2u = phi_2u.tolist()
-	phi_2l = phi_2l.tolist()
-	phi_3u = phi_3u.tolist()
-	phi_3l = phi_3l.tolist()
-
-	diff_trajs = np.concatenate((diff_trajs,diff_trajs[-1:]))
-	# print (diff_angle_full*180/np.pi)
-	# print('phi_3l',phi_3l)
-
-	vels_x = diff_trajs[:,0].tolist()
-	vels_y = diff_trajs[:,1].tolist()
-	vels_z = diff_trajs[:,2].tolist()
-
-	# print(len(vels_x))
-
-	# diff_from_runway = ways - r2
-	# print(diff_from_runway)
-	# print("ways",ways.shape,r2.shape)
+	trajs_new_diff = np.diff(ways, axis=0)
+	# diff_tan = np.arctan2(trajs_new_diff[:,1],trajs_new_diff[:,0])
+	# diff_tan = diff_tan*180.0/np.pi
+	# diff_tan_list = diff_tan.tolist()
+	# print(diff_tan_list)
 	if torch.is_tensor(ways):
 		ways = ways.numpy()
-	# sqrA = torch.sum(torch.pow(ways, 2), 1, keepdim=True).expand(ways.shape[0], r2.shape[0])
-	# sqrB = torch.sum(torch.pow(r2, 2), 1, keepdim=True).expand(r2.shape[0], ways.shape[0]).t()
-
 	sqrA = np.broadcast_to(np.sum(np.power(ways, 2), 1).reshape(ways.shape[0], 1), (ways.shape[0], r2.shape[0]))
 	sqrB = np.broadcast_to(np.sum(np.power(r2, 2), 1).reshape(r2.shape[0], 1), (r2.shape[0], ways.shape[0])).transpose()
 	#
 	L2_dist_runway = np.sqrt(sqrA - 2*np.matmul(ways, r2.transpose()) + sqrB)
-	#
-	# print(L2_dist_runway.shape)
+	L2_dist_runway = L2_dist_runway*0.1
 	L2_dist_runway = L2_dist_runway.squeeze().tolist()
-	# print(L2_dist_runway)
+	diff_tan = np.arctan2(trajs_new_diff[:,1],trajs_new_diff[:,0])
+	# if 0.3490 > diff_tan[-1] >-0.3490:
+	# 	print("diff_tan",diff_tan[-1])
+	# diff_tan = diff_tan*180.0/np.pi
+	# diff_tan_list2 = diff_tan.tolist()
+	# diff_tan_list2.append(diff_tan_list2[-1])
+	# print("diff_tan_list",diff_tan_list2)
+	diff_tan = np.concatenate((diff_tan, diff_tan[-1:]),axis=0)
+	diff_tan[diff_tan < -1.57] += 2 * np.pi
 
-	# print("trajs_x",trajs_x)
-	xl_r1 = np.array(trajs_x) - 0.5
-	xu_r1 = 2.5 - np.array(trajs_x)
-	yl_r1 = np.array(trajs_y) + 2.5
-	yu_r1 = -1.0 - np.array(trajs_y)
-	zl_r1 = np.array(trajs_z) - 0.5
-	zu_r1 = 0.7 - np.array(trajs_z)
+	sqrA = np.broadcast_to(np.sum(np.power(ways, 2), 1).reshape(ways.shape[0], 1), (ways.shape[0], region1.shape[0]))
+	sqrB = np.broadcast_to(np.sum(np.power(region1, 2), 1).reshape(region1.shape[0], 1), (region1.shape[0], ways.shape[0])).transpose()
+	#
+	region_1_dist = np.sqrt(sqrA - 2*np.matmul(ways, region1.transpose()) + sqrB)
 
-	xl_r2 = np.array(trajs_x) - 2.5
-	xu_r2 = 4.0 - np.array(trajs_x)
-	yl_r2 = np.array(trajs_y) + 2.5
-	yu_r2 = -0.08 - np.array(trajs_y)
-	zl_r2 = np.array(trajs_z) - 0.3
-	zu_r2 = 0.5 - np.array(trajs_z)
-	# print("sub",xl_r1)
+	sqrA = np.broadcast_to(np.sum(np.power(ways, 2), 1).reshape(ways.shape[0], 1), (ways.shape[0], region2.shape[0]))
+	sqrB = np.broadcast_to(np.sum(np.power(region2, 2), 1).reshape(region2.shape[0], 1), (region2.shape[0], ways.shape[0])).transpose()
+	#
+	region_2_dist = np.sqrt(sqrA - 2*np.matmul(ways, region2.transpose()) + sqrB)
+	# diff_tan_list = [(2*np.pi + i) if i < -1.57 else i for i in diff_tan_list2]
+	# diff_tan_list= diff_tan_list2
+	# print("diff_tan_list",diff_tan_list)
+	phi_1l =  (np.array(diff_tan) + 0.3490)*1.0
+	phi_1u =  (0.3490 - np.array(diff_tan))*1.0
+
+	phi_2l =  (np.array(diff_tan) - 1.0472)*0.5
+	phi_2u =  (2.0944 - np.array(diff_tan))*0.5
+
+	phi_3l =  np.array(diff_tan) - 2.8798
+	phi_3u =  3.4034 - np.array(diff_tan)
+	# print("trajs_x",trajs_x.shape)
+	# print(trajs_y)
+	# print("phi_1u",max(phi_1u))
+	trajs_vel_diff = np.diff(ways, axis=0)
+	# print(trajs_vel_diff)
+	diff_vel = np.concatenate((trajs_vel_diff, trajs_vel_diff[-1:]),axis=0)
+	# print("diff_vel",diff_vel)
+	vels_x = diff_vel[:,0].tolist()
+	vels_y = diff_vel[:,1].tolist()
+	vels_z = diff_vel[:,2].tolist()
+
+
 	# user_details = [{'name' : x, 'rank' : trajs_x.index(x)} for x in trajs_x]
-	xl_r1 = list(enumerate(xl_r1))
-	xu_r1 = list(enumerate(xu_r1))
-	yl_r1 = list(enumerate(yl_r1))
-	yu_r1 = list(enumerate(yu_r1))
-	# zl_r1 = list(enumerate(zl_r1))
-	# zu_r1 = list(enumerate(zu_r1))
-	xl_r2 = list(enumerate(xl_r2))
-	xu_r2 = list(enumerate(xu_r2))
-	yl_r2 = list(enumerate(yl_r2))
-	yu_r2 = list(enumerate(yu_r2))
 	trajs_x = list(enumerate(trajs_x))
 	trajs_y = list(enumerate(trajs_y))
 	trajs_z = list(enumerate(trajs_z))
 
-	phi_1u = list(enumerate(phi_1u))
+	diff_tan_list = list(enumerate(diff_tan))
 	phi_1l = list(enumerate(phi_1l))
-	phi_2u = list(enumerate(phi_2u))
+	phi_1u = list(enumerate(phi_1u))
 	phi_2l = list(enumerate(phi_2l))
-	phi_3u = list(enumerate(phi_3u))
+	phi_2u = list(enumerate(phi_2u))
 	phi_3l = list(enumerate(phi_3l))
-	# print('phi_3l',phi_3l)
-
-
+	phi_3u = list(enumerate(phi_3u))
 	vel_x = list(enumerate(vels_x))
 	vel_y = list(enumerate(vels_y))
 	vel_z = list(enumerate(vels_z))
-	# print('vel_z',vel_z)
 
 	L2_runway = list(enumerate(L2_dist_runway))
+	L2_region1 = list(enumerate(region_1_dist))
+	L2_region2 = list(enumerate(region_2_dist))
 
-	# print('trajs_z',trajs_z)
+
 	# # stl
 	spec = rtamt.STLDenseTimeSpecification(semantics=rtamt.Semantics.STANDARD)
 	# spec = rtamt.STLSpecification(language=rtamt.Language.PYTHON)
 	spec.name = 'runway r2'
+	spec.declare_const('threshold_1', 'float', '3')
+
+	spec.declare_const('threshold_2', 'float', '5')
+	spec.declare_var('x', 'float')
 	spec.declare_var('iq', 'float')
 	spec.declare_var('up', 'float')
-	spec.declare_var('x', 'float')
-	spec.declare_var('xl_r1', 'float')
-	spec.declare_var('xu_r1', 'float')
-	spec.declare_var('yl_r1', 'float')
-	spec.declare_var('yu_r1', 'float')
-	spec.declare_var('zl_r1', 'float')
-	spec.declare_var('zu_r1', 'float')
-
-	spec.declare_var('xl_r2', 'float')
-	spec.declare_var('xu_r2', 'float')
-	spec.declare_var('yl_r2', 'float')
-	spec.declare_var('yu_r2', 'float')
+	# spec.declare_var('xl', 'float')
+	# spec.declare_var('xu', 'float')
 	spec.declare_var('y', 'float')
-	spec.declare_var('yl', 'float')
-	spec.declare_var('yu', 'float')
+	# spec.declare_var('yl', 'float')
+	# spec.declare_var('yu', 'float')
 	spec.declare_var('z', 'float')
+	# spec.declare_var('zl', 'float')
+	# spec.declare_var('zu', 'float')
 
-	spec.declare_var('zl', 'float')
-	spec.declare_var('zu', 'float')
-	spec.declare_var('final', 'float')
-
-	spec.declare_var('out', 'float')
-
+	spec.declare_var('diff_tan', 'float')
 	spec.declare_var('phi_1u_head', 'float')
 	spec.declare_var('phi_1l_head', 'float')
 
@@ -183,34 +153,14 @@ def monitor_R2(ways): # rtamt specs for runway R2
 
 	spec.declare_var('phi_3u_head', 'float')
 	spec.declare_var('phi_3l_head', 'float')
+	spec.declare_var('out', 'float')
 
-	# spec.set_var_io_type('xl', 'input')
-	# spec.set_var_io_type('xu', 'input')
-
-	spec.set_var_io_type('yl', 'input')
-	spec.set_var_io_type('yu', 'input')
-
-	spec.set_var_io_type('zl', 'input')
-	spec.set_var_io_type('zu', 'input')
-
+	spec.declare_var('final', 'float')
+	spec.declare_var('downwind', 'float')
+	spec.declare_var('base', 'float')
 	spec.declare_var('vel_x', 'float')
 	spec.declare_var('vel_y', 'float')
 	spec.declare_var('vel_z', 'float')
-	spec.declare_const('threshold_1', 'float', '3')
-
-	spec.declare_const('threshold_2', 'float', '5')
-	# spec.declare_var('x', 'float')
-	# spec.declare_var('iq', 'float')
-	# spec.declare_var('up', 'float')
-	# spec.declare_var('xl', 'float')
-	# spec.declare_var('xu', 'float')
-	# spec.declare_var('y', 'float')
-	# spec.declare_var('yl', 'float')
-	# spec.declare_var('yu', 'float')
-	# spec.declare_var('z', 'float')
-	# spec.declare_var('zl', 'float')
-	# spec.declare_var('zu', 'float')
-	# spec.declare_var('out', 'float')
 	# spec.declare_var('out', 'float')
 	# spec.set_var_io_type('xl', 'input')
 	# spec.set_var_io_type('xu', 'input')
@@ -236,14 +186,25 @@ def monitor_R2(ways): # rtamt specs for runway R2
 	# spec.spec ='eventually( (( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) )) and eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -0.08)) ))'
 
 	# spec.spec =eventually( (( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) )) and eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -0.08)) )) 
-	# spec.spec ='eventually( (( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) )) and eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -1.0)) and eventually( ((x > 1.5) and (x < 4.0) ) and ((y > -0.5) and (y < 0.2)) ) ))'
-	
-	
-	spec.spec = 'eventually( (( (x >-1.5) and (x < 1.5)) and ( (y > -2) and (y < -1) )  and ( (z > 0.72) and (z < 0.96) )  ) and eventually( ((x > 1.5) and (x < 3.0) ) and ((y > -2) and (y < 0.2))  and ((z > 0.5) and (y < 0.7)) and eventually(((x > 1.3) and (x < 1.5) ) and ((y > -0.2) and (y < 0.2)) and ((z > 0.5) and (y < 0.7)) )))'
+	# spec.spec ='eventually( (( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) )) and eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -0.5)) and eventually( ((x > 1.5) and (x < 4.0) ) and ((y > -0.5) and (y < 0.2)) ) ))'
+	# spec.spec ='eventually( (( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) ) and ( (diff_tan_list >-0.3490) and (diff_tan_list < 0.3490))) and eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -0.5)) and ( (diff_tan_list >1.0472) and (diff_tan_list < 2.0944)) and eventually( ((x > 1.5) and (x < 4.0) ) and ((y > -0.5) and (y < 0.2)) and ( (diff_tan_list >2.8798) and (diff_tan_list < -2.8798)) ) ))'
+	# spec.spec =eventually( (( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) ) and ( (phi_l) and (phi_u))) and eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -0.5)) and ( (phi_l2) and (phi_u2)) and eventually( ((x > 1.5) and (x < 4.0) ) and ((y > -0.5) and (y < 0.2)) and ( (phi_l3) and (phi_u3)) ) ))'
+	# spec.spec ='eventually( (( (x >-1.0) and (x < 1.5)) and ( (y > -2.5) and (y < -1.0) )) and eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -0.5)) and eventually( ((x > 1.5) and (x < 4.0) ) and ((y > -0.5) and (y < 0.2)) ) ))'
+	# spec.spec ='eventually( (( (x >-1.0) and (x < 1.5)) and ( (y > -3.0) and (y < -2.0) )) and eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -3.0) and (y < -2.0)) and eventually( ((x > 1.5) and (x < 4.0) ) and ((y > -0.5) and (y < 0.2)) ) ))'
+	# spec.spec ='eventually( (( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) ) and ( (phi_l) and (phi_u))) and eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -0.5)) and ( (phi_l2) and (phi_u2)) and eventually( ((x > 1.5) and (x < 4.0) ) and ((y > -0.5) and (y < 0.2)) and ( (phi_l3) and (phi_u3)) ) ))'
+	# spec.spec ='eventually( (( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) ) and ( (phi_l) and (phi_u)) and ( (vel_x) and (vel_y<0.5))) and eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -0.5)) and ( (phi_l2) and (phi_u2)) and ( (vel_x<0.5) and (vel_y)) and eventually( ((x > 1.5) and (x < 4.0) ) and ((y > -0.5) and (y < 0.2)) and ( (phi_l3) and (phi_u3)) and ( (vel_x<0) and (vel_y<0.5)) ) ))'
+	# spec.spec ='eventually( (( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) ) and ( (z > 0.6) and (z < 0.8) ) and ( (vel_x > 0) and (vel_y < 0.5) )  and ( (phi_1l_head) and (phi_1u_head) )) and eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -0.5)) and ( (z > 0.4) and (z< 0.6) ) and ( (vel_x < 0.5) and (vel_y >0) )  and ( (phi_2l_head) and (phi_2u_head) ) and eventually((final < 0.2)  and  ((y > -0.5) and (y < 0.2)) and ( (vel_x < 0) and (vel_y < 0.5) )  and ( (phi_3l_head) and (phi_3u_head) ) ) ))'
+	# spec.spec ='eventually( (( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) ) and ( (z > 0.6) and (z < 0.8) ) and ( (vel_x > 0) and (vel_y < 0.5) )  and ( (phi_1l_head) and (phi_1u_head) )) and eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -0.5)) and ( (z > 0.4) and (z< 0.6) ) and ( (vel_x < 0.5) and (vel_y >0) ) and ( (phi_2l_head) and (phi_2u_head) ) and eventually((final < 0.2)) ))'
+	# spec.spec ='eventually( (( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) ) and ( (z > 0.6) and (z < 0.8) ) and ( (vel_x > 0) and (vel_y < 0.2) )  and ( (phi_1l_head) and (phi_1u_head) )) and eventually( (final < 0.2) and ( (vel_x < 0) and (vel_y < 0.2) ) and ( (phi_3l_head) and (phi_3u_head) ) ))'
+	# spec.spec ='eventually( ( ((x >0.5) and (x < 2.5)) ) and eventually( ((x > 2.5) and (x < 4.0)) and eventually( (final < 0.2)  ) ))'
+	# spec.spec ='(eventually( ((x >0.5) and (x < 2.5)) and ( (phi_1l_head) and (phi_1u_head) )) ) until (eventually ((x > 2.5) and (x < 4.0)) and ((phi_2l_head) and (phi_2u_head)) ) until (eventually ((phi_3l_head) and (phi_3u_head)) ) '
+	# spec.spec ='(eventually(( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) ) ) )  until[0:-1] (eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -0.5)))) until[0:-1]   ( eventually ((final < 0.2)) )'
+	# spec.spec ='eventually( (( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) ) and ( (phi_l) and (phi_u))) and eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -0.5)) and ( (phi_l2) and (phi_u2)) and eventually( ((x > 1.5) and (x < 4.0) ) and ((y > -0.5) and (y < 0.2)) and ( (phi_l3) and (phi_u3)) ) ))'
+	spec.spec = 'eventually( (( (x >-1.5) and (x < 1.5)) and ( (y > -3) and (y < -1) )    ) and eventually( ((x > 1.5) and (x < 5.0) ) and ((y > -3) and (y < 0.2))   and eventually( (final < 0.2) )))'
+	# spec.spec = '(eventually(( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) ) and ( (z > 0.6) and (z < 0.8) ) and ( (vel_x > 0) and (vel_y < 0.5) )  and ( (phi_1l_head) and (phi_1u_head) ))) until[0:-1] ( eventually ( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -1.0)) and ( (z > 0.4) and (z< 0.6) ) and ( (vel_x < 0.5) and (vel_y >0) )  and ( (phi_2l_head) and (phi_2u_head) )) ) until[0:-1] ( eventually ((final < 0.2)  and ( (vel_x < 0) and (vel_y < 0.5) )  and ( (phi_3l_head) and (phi_3u_head) ) ))'
+	# spec.spec ='eventually( (( (downwind <0.2) ) ) and eventually( ((base < 0.2)) and eventually( (final < 0.02) )))'
+	# spec.spec ='eventually( always (final < 0.2)  and ( (vel_x < 0) and (vel_y < 0.5) )  and ( (phi_3l_head) and (phi_3u_head) ))'
 
-	# spec.spec = 'eventually((((x > 1.3) and (x < 1.5) ) and ((y > -0.2) and (y < 0.2)) and (z < 0.4)))'
-	# spec.spec = '(((x > 1.5) and (x < 4.0) ) and ((y > -0.5) and (y < 0.2))) until (((x >-1.5) and (x < 0.5)) and ( (y > -3) and (y < -2) ))'   
-	# spec.spec =  '(((x >-1.5) and (x < 0.5)) and ( (y > -3) and (y < -2) )) and not((((x > 1.5) and (x < 4.0) ) and ((y > -0.5) and (y < 0.2))))  until (((x > 1.5) and (x < 4.0) ) and ((y > -0.5) and (y < 0.2))) '   
 
 	# spec.spec ='eventually( (( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) ) and ( (z > 0.5) and (z < 0.7) )) and eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -0.08))  and ((z > 0.3) and (z < 0.5)) ))'
 	# spec.spec = '(eventually(always((( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) ) and ( (z > 0.5) and (z < 0.7) ))))) until 	(eventually(always(( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -0.08))  and ((z > 0.3) and (z < 0.5)) ))))'
@@ -261,9 +222,9 @@ def monitor_R2(ways): # rtamt specs for runway R2
 		print('STL Parse Exception: {}'.format(err))
 		sys.exit()
 
-	# out = spec.evaluate(['x', trajs_x],['y', trajs_y])
-	out = spec.evaluate(['xl_r1', xl_r1],['xu_r1', xu_r1],['yl_r1', yl_r1],['yu_r1', yu_r1],['zl_r1', zl_r1],['zu_r1', zu_r1],['xl_r2', xl_r2],['xu_r2', xu_r2],['yl_r2', yl_r2],['yu_r2', yu_r2],['xl', trajs_x],['xu',trajs_x],['yl', trajs_y],['yu',trajs_y],['zl', trajs_z],['zu',trajs_z],['x',trajs_x],['y',trajs_y],['z',trajs_z],['vel_x',vel_x],['vel_y',vel_y],['vel_z',vel_z],['final',L2_runway],['phi_1l_head',phi_1l],['phi_1u_head',phi_1u],['phi_2l_head',phi_2l],['phi_2u_head',phi_2u],['phi_3l_head',phi_3l],['phi_3u_head',phi_3u ])
+	out = spec.evaluate(['x',trajs_x],['y',trajs_y],['z',trajs_z],['vel_x',vel_x],['vel_y',vel_y],['vel_z',vel_z],['final',L2_runway],['downwind',L2_region1],['base',L2_region2],['phi_1l_head',phi_1l],['phi_1u_head',phi_1u],['phi_2l_head',phi_2l],['phi_2u_head',phi_2u],['phi_3l_head',phi_3l],['phi_3u_head',phi_3u ])
 
+	# out = spec.evaluate(['x', trajs_x],['y', trajs_y],['diff_tan',diff_tan] ,['phi_l',phi_l],['phi_u',phi_u],['phi_l2',phi_l2],['phi_u2',phi_u2],['phi_l3',phi_l3],['phi_u3',phi_u3],['vel_x',vel_x],['vel_y',vel_y],['vel_z',vel_z])
 	# out = spec.evaluate(['x', trajs_x],['y', trajs_y],['z', trajs_z],['xl', trajs_x],['xu',trajs_x],['yl', trajs_y],['yu',trajs_y],['zl', trajs_z],['zu',trajs_z])
 	# print('Robustness offline: {}'.format(out))
 	return out[0][1]

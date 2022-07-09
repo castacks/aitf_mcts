@@ -89,17 +89,17 @@ def run_episode(rank,gym,net,args):
 
         if r == 1:
             print("Goal Reached; Exiting")
-            gym.reset_plot()
-            return [(x[0], x[1], x[2], r) for x in trainExamples]
+            # gym.reset_plot()
+            return 1#[(x[0], x[1], x[2], r) for x in trainExamples]
         if r == -1:
             print("Other Goal Reached; Exiting",goal_enum(g))
-            gym.reset_plot()
+            # gym.reset_plot()
 
-            return [(x[0], x[1], x[2], r) for x in trainExamples]
+            return 0#[(x[0], x[1], x[2], r) for x in trainExamples]
         if episodeStep > args.numEpisodeSteps:
             print("Max Steps Reached")
-            if args.plot: gym.reset_plot()
-            return None
+            # if args.plot: gym.reset_plot()
+            return 0
             
 def save_episodes(checkpoint,iterationTrainExamples,ep):
     print("Saving Episode for: ",ep)

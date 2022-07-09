@@ -150,8 +150,13 @@ class TrajAirNet(nn.Module):
             H_yy =  torch.reshape(encoded_appended_trajectories_x[agent], (3, -1))
 
             recon_y_x = (self.linear_decoder(H_yy)) 
+            # print("recon_y_x",recon_y_x.shape)
+
             recon_y_x = torch.unsqueeze(recon_y_x,dim=0)
+            # print("recon_y_x",recon_y_x.shape)
+
             recon_y_x = acc_to_abs(recon_y_x,x[:,:,agent][:,:,None])    
+            # print("recon_y_x_acc",recon_y_x.shape)
 
             recon_y.append(recon_y_x.squeeze().detach())
      

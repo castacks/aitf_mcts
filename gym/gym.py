@@ -21,7 +21,7 @@ class Gym():
         self.datapath = datapath
         self.args = args
         self.load_action_space()
-        self.costpath = args.base_path + args.dataset_folder + '7days1' + "/processed_data/train/"
+        self.costpath = args.base_path + args.dataset_folder + '111_days' + "/processed_data/train/"
 
         self.costmap = CostMap(self.costpath)
         if self.args.use_trajair:
@@ -131,7 +131,7 @@ class Gym():
             second_pos = curr_position[i-1,:] #if i>3 else current_pos ##bug at zero
             dir_array = direction_goal_detect(current_pos,second_pos)
             if (dir_array == goal_position).all(): ##wanted goal
-                return 1,dir_array
+                return 10,dir_array
             if (dir_array.any()): ##unwanted goal
                 return 0, dir_array
             
@@ -197,11 +197,14 @@ class Gym():
         action_probs = np.linalg.norm(pred[None,:]-all_states[:,:,9::10],axis=1)
         # print("ha",action_probs.shape)
         action_probs = np.sum(action_probs,axis=1)
+        action_probs = np.power(action_probs,-1)
+        # print("action",action_probs)
         action_probs = action_probs/np.sum(action_probs)
-        action_probs = scipy.special.softmax(np.power(action_probs,-1))
+        # print("act2",action_probs)
+        # action_probs = scipy.special.softmax(np.power(action_probs,-1))
         return action_probs
     
-    def plot_env(self, curr_position,color='r',save=True,goal_position=None):
+    def plot_env(self, curr_position,color='r',save=False,goal_position=None):
         phi_1_x_r1 = [-1.2, 0.9]
         phi_1_y_r1 = [0.8, 2.5]
         phi_1_z_r1 = [0.5, 0.7]
@@ -215,13 +218,13 @@ class Gym():
 
 
         phi_1_x_r2 = [-1.5, 1.50]
-        phi_1_y_r2 = [-2.0, -1.0]
+        phi_1_y_r2 = [-3.0, -1.0]
         phi_1_z_r2 = [0.6, 0.8]
 
-        phi_2_x_r2 = [1.5, 3.0]
-        phi_2_y_r2 = [-2, 0.2]
+        phi_2_x_r2 = [1.5, 5.0]
+        phi_2_y_r2 = [-3, -0.2]
         phi_2_z_r2 = [0.4, 0.6]
-        phi_3_x_r2 = [1.3, 1.5]
+        phi_3_x_r2 = [1.3, 5.0]
         phi_3_y_r2 = [-0.2, 0.2]
         phi_3_z_r2 = [0.3, 0.5]
         self.sp.grid(True)
@@ -261,8 +264,8 @@ class Gym():
         self.hh.append(self.sp.plot([phi_3_x_r2[0],phi_3_x_r2[0],phi_3_x_r2[1],phi_3_x_r2[1],phi_3_x_r2[0]],[phi_3_y_r2[0],phi_3_y_r2[1],phi_3_y_r2[1],phi_3_y_r2[0],phi_3_y_r2[0]], c="orange", linewidth=1))
         # if color == 'r':
         #     self.hh.append(self.sp.plot(curr_position[:, 0], curr_position[:, 1], color=color))
-        # if color != 'r':
-        #     # self.reset_plot()
+        # if color == 'g':
+        #     self.reset_plot()
         #     for h in self.hh: 
         #         if len(h) != 0 :
         #             h.pop(0).remove() 
@@ -287,7 +290,7 @@ class Gym():
         plt.ylim([-12, 12])
 
         if save:
-            plt.savefig("images2_1/mcts_"+str(self.fig_count) + ".png")
+            plt.savefig("images/mcts_"+str(self.fig_count) + ".png")
             self.fig_count += 1
         else:
             self.fig.show()

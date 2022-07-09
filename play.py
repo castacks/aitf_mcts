@@ -11,10 +11,11 @@ from gym.utils import goal_enum
 import torch.multiprocessing as mp
 import time
 from mcts.play_utils import *
-# torch.manual_seed(5345)
-# import random
-# random.seed(5345)
-# np.random.seed(5345)
+seed = 3245
+torch.manual_seed(seed)
+import random
+random.seed(seed)
+np.random.seed(seed)
 
 class Play():
 
@@ -36,11 +37,13 @@ class Play():
         # net.nnet.eval()
         gym = Gym(self.datapath, self.args)
         print("Playing with Process", rank)
-
+        acc = 0
         for i in tqdm(range(self.args.numEps)):
             states = run_episode(i,gym,self.net,self.args)
-            if states is not None:
-                iterationTrainExamples += states   
+            acc += states
+            print(acc,i)
+            # if states is not None:
+            #     iterationTrainExamples += states   
         save_episodes(self.args.checkpoint,iterationTrainExamples,rank) 
 
 
@@ -131,16 +134,16 @@ if __name__ == '__main__':
     parser.add_argument('--mlp_layer',type=int,default=47)
 
 
-    parser.add_argument('--numMCTS', type=int, default=50)
-    parser.add_argument('--cpuct', type=int, default= 1)
+    parser.add_argument('--numMCTS', type=int, default=10)
+    parser.add_argument('--cpuct', type=int, default= 10)
     parser.add_argument('--huct', type=int, default= 400)
 
     parser.add_argument('--parallel', type=bool, default=False)
-    parser.add_argument('--num_process', type=int, default=10)
+    parser.add_argument('--num_process', type=int, default=1000)
 
     parser.add_argument('--numEpisodeSteps', type=int, default=30)
     parser.add_argument('--maxlenOfQueue', type=int, default=25600)
-    parser.add_argument('--numEps', type=int, default=50)
+    parser.add_argument('--numEps', type=int, default=100)
     parser.add_argument('--numEpsTest', type=int, default=100)
 
     parser.add_argument('--numIters', type=int, default=1)
