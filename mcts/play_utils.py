@@ -81,6 +81,10 @@ def run_episode(rank,gym,net,args):
             # args.huct = args.huct/10               
         # print(curr_position[-1,2]*3280.84,gym.get_cost(curr_position,curr_goal))
         # print("Step")
+        for value in mcts.Es.values():
+            if value == 10:
+                return 1
+                
         if args.plot: gym.plot_env(curr_position,'g',save=False)
 
         r,g = gym.getGameEnded(curr_position, curr_goal)

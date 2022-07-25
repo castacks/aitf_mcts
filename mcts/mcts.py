@@ -77,8 +77,8 @@ class MCTS():
     # @profile
     def search(self, curr_position, goal_position,h):
         # print("hah")
-        if self.stack:
-            print("stack len", len(self.stack))
+        # if self.stack:
+            # print("stack len", len(self.stack))
         s = self.gym.get_hash(curr_position)
         # print(s)
         if s not in self.Es:
@@ -106,12 +106,12 @@ class MCTS():
             pred = self.nnet.predict(curr_position, goal_position)
             # print(curr_position,pred)
             # print(pred.shape)
-            self.gym.plot_env(np.transpose(pred),'k')
+            # self.gym.plot_env(np.transpose(pred),'k')
             all_next_states = (self.gym.getAllNextStates(curr_position.cpu())) # added a copy to cpu since Allnextstates also performs numpy operations
             # print(curr_position,all_next_states[0],pred)
             # for i in range(30):
             #     self.gym.plot_env(np.transpose(all_next_states[i]),'k')
-            self.Ps[s] = torch.clamp(torch.from_numpy(self.gym.traj_to_action(pred[:,:2],all_next_states)), max=0.5)
+            self.Ps[s] = torch.clamp(torch.from_numpy(self.gym.traj_to_action(pred[:,:4],all_next_states)), max=0.5)
             # print(all_next_states.shape) 
             # print(np.argmax(self.Ps[s]))
             # motion = self.gym.getNextState(curr_position, np.argmax(self.Ps[s]))

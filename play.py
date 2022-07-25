@@ -95,16 +95,16 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Train MCTS model')
 
     parser.add_argument('--dataset_folder', type=str, default='/dataset/')
-    parser.add_argument('--dataset_name', type=str, default='7days1')
+    parser.add_argument('--dataset_name', type=str, default='111days')
     parser.add_argument('--models_folder', type=str, default='/saved_models/')
-    parser.add_argument('--model_weights', type=str, default='model_7days1_10.pt')
+    parser.add_argument('--model_weights', type=str, default='model_111_days_4.pt')
     parser.add_argument('--checkpoint', type=str, default='/episodes/')
     parser.add_argument('--load_episodes', type=bool, default=False)
     parser.add_argument('--base_path', type=str, default='/home/jay/AITF/aitf_mcts')
 
     parser.add_argument('--obs', type=int, default=11)
     parser.add_argument('--preds', type=int, default=120)
-    parser.add_argument('--preds_step', type=int, default=10)
+    parser.add_argument('--preds_step', type=int, default=5)
     parser.add_argument('--delim', type=str, default=' ')
     parser.add_argument('--use_trajair', type=bool, default=False)
 
@@ -116,7 +116,7 @@ if __name__ == '__main__':
     # parser.add_argument('--balance_data', type=bool, default=True)
 
     parser.add_argument('--input_channels',type=int,default=3)
-    parser.add_argument('--tcn_channel_size',type=int,default=256)
+    parser.add_argument('--tcn_channel_size',type=int,default=512)
     parser.add_argument('--tcn_layers',type=int,default=2)
     parser.add_argument('--tcn_kernels',type=int,default=4)
 
@@ -131,12 +131,12 @@ if __name__ == '__main__':
     parser.add_argument('--cvae_hidden',type=int,default=128)
     parser.add_argument('--cvae_channel_size',type=int,default=128)
     parser.add_argument('--cvae_layers',type=int,default=2)
-    parser.add_argument('--mlp_layer',type=int,default=47)
+    parser.add_argument('--mlp_layer',type=int,default=91)
 
 
     parser.add_argument('--numMCTS', type=int, default=10)
-    parser.add_argument('--cpuct', type=int, default= 10)
-    parser.add_argument('--huct', type=int, default= 400)
+    parser.add_argument('--cpuct', type=int, default= 1)
+    parser.add_argument('--huct', type=int, default= 4000)
 
     parser.add_argument('--parallel', type=bool, default=False)
     parser.add_argument('--num_process', type=int, default=1000)
@@ -150,7 +150,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--epochs', type=int, default=15)
 
-    parser.add_argument('--plot', type=bool, default=True)
+    parser.add_argument('--plot', type=bool, default=False)
 
 
 

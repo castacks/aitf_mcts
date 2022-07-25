@@ -194,7 +194,7 @@ class Gym():
 
     def traj_to_action(self,pred,all_states):
         # print(pred[None,:].shape,all_states[:,:,9::10].shape)
-        action_probs = np.linalg.norm(pred[None,:]-all_states[:,:,9::10],axis=1)
+        action_probs = np.linalg.norm(pred[None,:]-all_states[:,:,4::5],axis=1)
         # print("ha",action_probs.shape)
         action_probs = np.sum(action_probs,axis=1)
         action_probs = np.power(action_probs,-1)
@@ -218,16 +218,16 @@ class Gym():
 
 
         phi_1_x_r2 = [-1.5, 1.50]
-        phi_1_y_r2 = [-3.0, -1.0]
+        phi_1_y_r2 = [-3.0, -2.0]
         phi_1_z_r2 = [0.6, 0.8]
 
-        phi_2_x_r2 = [1.5, 5.0]
+        phi_2_x_r2 = [4.5, 5.0]
         phi_2_y_r2 = [-3, -0.2]
         phi_2_z_r2 = [0.4, 0.6]
         phi_3_x_r2 = [1.3, 5.0]
         phi_3_y_r2 = [-0.2, 0.2]
         phi_3_z_r2 = [0.3, 0.5]
-        self.sp.grid(True)
+        # self.sp.grid(True)
         if color == 'r':
             self.hh.append(self.sp.plot(curr_position[:, 0], curr_position[:, 1], color=color))
         if color == 'k':
