@@ -97,7 +97,7 @@ if __name__ == '__main__':
     parser.add_argument('--dataset_folder', type=str, default='/dataset/')
     parser.add_argument('--dataset_name', type=str, default='111days')
     parser.add_argument('--models_folder', type=str, default='/saved_models/')
-    parser.add_argument('--model_weights', type=str, default='model_111_days_4.pt')
+    parser.add_argument('--model_weights', type=str, default=None)
     parser.add_argument('--checkpoint', type=str, default='/episodes/')
     parser.add_argument('--load_episodes', type=bool, default=False)
     parser.add_argument('--base_path', type=str, default='/home/jay/AITF/aitf_mcts')

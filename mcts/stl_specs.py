@@ -45,7 +45,7 @@ def monitor_R2(ways): # rtamt specs for runway R2
 	trajs_x = ways[:,0].tolist()
 	trajs_y = (ways[:,1]*1.1).tolist()
 	trajs_z = (ways[:,2]*1.2).tolist()
-	r2 = np.array([[1.48,0.0,0.456]])
+	r2 = np.array([[1.48,0.0,0.256]])
 	region1 = np.array([[1.5,1.75,0.84]])
 	region2 = np.array([[3.25,1.75,0.6]])
 
@@ -201,6 +201,8 @@ def monitor_R2(ways): # rtamt specs for runway R2
 	# spec.spec ='(eventually(( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) ) ) )  until[0:-1] (eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -0.5)))) until[0:-1]   ( eventually ((final < 0.2)) )'
 	# spec.spec ='eventually( (( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) ) and ( (phi_l) and (phi_u))) and eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -0.5)) and ( (phi_l2) and (phi_u2)) and eventually( ((x > 1.5) and (x < 4.0) ) and ((y > -0.5) and (y < 0.2)) and ( (phi_l3) and (phi_u3)) ) ))'
 	spec.spec = 'eventually( (( (x >-1.5) and (x < 1.5)) and ( (y > -3) and (y < -2) )    ) and eventually( ((x > 4.5) and (x < 5.0) ) and ((y > -3) and (y < 0.2))   and eventually( (final < 0.2) )))'
+	# spec.spec = 'eventually((( (x >-1.5) and (x < 1.5)) and ( (y > -3) and (y < -2) )    ) and  eventually( (final < 0.2) ))'
+
 	# spec.spec = '(eventually(( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) ) and ( (z > 0.6) and (z < 0.8) ) and ( (vel_x > 0) and (vel_y < 0.5) )  and ( (phi_1l_head) and (phi_1u_head) ))) until[0:-1] ( eventually ( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -1.0)) and ( (z > 0.4) and (z< 0.6) ) and ( (vel_x < 0.5) and (vel_y >0) )  and ( (phi_2l_head) and (phi_2u_head) )) ) until[0:-1] ( eventually ((final < 0.2)  and ( (vel_x < 0) and (vel_y < 0.5) )  and ( (phi_3l_head) and (phi_3u_head) ) ))'
 	# spec.spec ='eventually( (( (downwind <0.2) ) ) and eventually( ((base < 0.2)) and eventually( (final < 0.02) )))'
 	# spec.spec ='eventually( always (final < 0.2)  and ( (vel_x < 0) and (vel_y < 0.5) )  and ( (phi_3l_head) and (phi_3u_head) ))'

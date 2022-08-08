@@ -12,7 +12,7 @@ import numpy as np
 from scipy.spatial.transform import Rotation as R
 import scipy
 
-THRESH = 5.0
+THRESH = 9.0
 
 class Gym():
 
