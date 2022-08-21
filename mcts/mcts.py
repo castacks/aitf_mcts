@@ -106,7 +106,7 @@ class MCTS():
             pred = self.nnet.predict(curr_position, goal_position)
             # print(curr_position,pred)
             # print(pred.shape)
-            # self.gym.plot_env(np.transpose(pred),'k')
+            if self.args.plot: self.gym.plot_env(np.transpose(pred),'k')
             all_next_states = (self.gym.getAllNextStates(curr_position.cpu())) # added a copy to cpu since Allnextstates also performs numpy operations
             # print(curr_position,all_next_states[0],pred)
             # for i in range(30):
