@@ -9,9 +9,9 @@ from model.utils_goal import acc_to_abs
 
 
 
-class TrajAirNet(nn.Module):
+class TrajAirNetGoalGAIL(nn.Module):
 	def __init__(self, args):
-		super(TrajAirNet, self).__init__()
+		super(TrajAirNetGoalGAIL, self).__init__()
 
 		input_size = args.input_channels
 		n_classes = int(args.preds/args.preds_step)

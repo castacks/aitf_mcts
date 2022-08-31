@@ -90,7 +90,8 @@ class MCTS():
 
         if s not in self.Ps:
             # leaf node
-            v =  self.gym.get_cost(curr_position,goal_position)
+            v =  self.gym.get_cost(curr_position,goal_position) 
+            # v = -1
             if self.stack:
                 temp_stack_plot = np.concatenate(self.stack, axis=0)
                 # print(temp_stack_plot.shape,temp_stack_plot[:,0:2])

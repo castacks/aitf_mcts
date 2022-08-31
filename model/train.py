@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 import os
 from model.trajairnet_tcn import TrajAirNet
+from model.trajairnet_tcn_goalgail import TrajAirNetGoalGAIL
 import numpy as np
 import torch
 import torch.optim as optim
@@ -14,7 +15,11 @@ class Net():
     def __init__(self,args):
         
         self.args = args
-        self.nnet = TrajAirNet(args)
+        if args.algo == "BC":
+            self.nnet = TrajAirNet(args)
+        elif args.algo == "GAIL":
+            self.nnet = TrajAirNetGoalGAIL(args)
+
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.nnet.to(self.device)
 

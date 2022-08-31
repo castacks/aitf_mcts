@@ -45,7 +45,6 @@ def run_episode(rank,gym,net,args):
         episodeStep += 1
         mcts = MCTS(gym, net, args)
 
-        # print(episodeStep,rank)
         if args.plot: gym.plot_env(curr_position,'g',goal_position = curr_goal)
 
         pi = mcts.getActionProbs(curr_position, curr_goal)

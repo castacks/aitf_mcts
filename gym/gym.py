@@ -152,7 +152,7 @@ class Gym():
     def get_hash(self, curr_position):
 
         # return str(curr_position[-1, 0]) + str(curr_position[-1, 1])
-        return "%s-%s" % (int(curr_position[-1, 0]*1000),int(curr_position[-1, 1]*1000))
+        return "%s-%s-%s" % (int(curr_position[-1, 0]*1000),int(curr_position[-1, 1]*1000),int(curr_position[-1, 2]*1000))
 
     def reset_plot(self):
         plt.close()
@@ -221,7 +221,7 @@ class Gym():
         phi_1_y_r2 = [-3.0, -2.0]
         phi_1_z_r2 = [0.6, 0.8]
 
-        phi_2_x_r2 = [4.5, 5.0]
+        phi_2_x_r2 = [2.5, 3.0]
         phi_2_y_r2 = [-3, -0.2]
         phi_2_z_r2 = [0.4, 0.6]
         phi_3_x_r2 = [1.3, 5.0]
