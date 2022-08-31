@@ -165,58 +165,11 @@ def monitor_R2(ways): # rtamt specs for runway R2
 	# spec.set_var_io_type('xl', 'input')
 	# spec.set_var_io_type('xu', 'input')
 
-	# spec.set_var_io_type('yl', 'input')
-	# spec.set_var_io_type('yu', 'input')
+	# spec.spec = 'eventually( (( (x >-1.5) and (x < 1.5)) and ( (y > -3) and (y < -2) )    ) and eventually( ((x > 4.5) and (x < 5.0) ) and ((y > -3) and (y < 0.2))   and eventually( ((x > 1.3) and (x < 1.5) ) and ((y > -0.2) and (y < 0.2)) )))'
 
-	# spec.set_var_io_type('zl', 'input')
-	# spec.set_var_io_type('zu', 'input')
-
-	# spec.declare_var('phi_1', 'float')
-	# spec.declare_var('phi_2', 'float')
-	# spec.declare_var('phi_3', 'float')
-	# # spec.set_var_io_type('out', 'output')
-	# # spec.spec = '(eventually[0:0] ((always[0:0] (xl > 0.5)) and (always[0:0] (xu < 3.0))) )'
-	# spec.add_sub_spec = ('phi_1 = (eventually[0:0] (always[0:0]( (xl > 0.5) and (xu < 2.5) ) and ( (yl > -2.5) and (yu < -1.0) ) and ( (zl > 0.5) and (zu < 0.7) ) ) )')
-	# spec.add_sub_spec = ('phi_2 = (eventually[0:0] (always[0:0]( (xl > 2.5) and (xu < 4.0) ) and ( (yl > -2.5) and (yu < -0.08) ) and ( (zl > 0.3) and (zu < 0.5) ) ) )')
-	# spec.add_sub_spec = ('phi_3 = (eventually[0:0] (always[0:0]( (xl > 1.5) and (xu < 4.0) ) and ( (yl > -0.08) and (yu < 0.08) ) and ( (zl > 0.3) and (zu < 0.5) ) ) )')
-
-	# spec.spec = '( ((phi_1) until[0:0] (phi_2)) until[0:0] (phi_3) )'
-
-	# spec.spec = 'eventually(( ( (xl > 0.5) and (xu < 2.5) ) and ( (yl > -2.5) and (yu < -1.0) )  ) and eventually( ( (xl > 2.5) and (xu < 4.0) ) and ( (yl > -2.5) and (yu < -0.08) ) ) )'
-	# spec.spec ='eventually( (( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) )) and eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -0.08)) ))'
-
-	# spec.spec =eventually( (( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) )) and eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -0.08)) )) 
-	# spec.spec ='eventually( (( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) )) and eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -0.5)) and eventually( ((x > 1.5) and (x < 4.0) ) and ((y > -0.5) and (y < 0.2)) ) ))'
-	# spec.spec ='eventually( (( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) ) and ( (diff_tan_list >-0.3490) and (diff_tan_list < 0.3490))) and eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -0.5)) and ( (diff_tan_list >1.0472) and (diff_tan_list < 2.0944)) and eventually( ((x > 1.5) and (x < 4.0) ) and ((y > -0.5) and (y < 0.2)) and ( (diff_tan_list >2.8798) and (diff_tan_list < -2.8798)) ) ))'
-	# spec.spec =eventually( (( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) ) and ( (phi_l) and (phi_u))) and eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -0.5)) and ( (phi_l2) and (phi_u2)) and eventually( ((x > 1.5) and (x < 4.0) ) and ((y > -0.5) and (y < 0.2)) and ( (phi_l3) and (phi_u3)) ) ))'
-	# spec.spec ='eventually( (( (x >-1.0) and (x < 1.5)) and ( (y > -2.5) and (y < -1.0) )) and eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -0.5)) and eventually( ((x > 1.5) and (x < 4.0) ) and ((y > -0.5) and (y < 0.2)) ) ))'
-	# spec.spec ='eventually( (( (x >-1.0) and (x < 1.5)) and ( (y > -3.0) and (y < -2.0) )) and eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -3.0) and (y < -2.0)) and eventually( ((x > 1.5) and (x < 4.0) ) and ((y > -0.5) and (y < 0.2)) ) ))'
-	# spec.spec ='eventually( (( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) ) and ( (phi_l) and (phi_u))) and eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -0.5)) and ( (phi_l2) and (phi_u2)) and eventually( ((x > 1.5) and (x < 4.0) ) and ((y > -0.5) and (y < 0.2)) and ( (phi_l3) and (phi_u3)) ) ))'
-	# spec.spec ='eventually( (( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) ) and ( (phi_l) and (phi_u)) and ( (vel_x) and (vel_y<0.5))) and eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -0.5)) and ( (phi_l2) and (phi_u2)) and ( (vel_x<0.5) and (vel_y)) and eventually( ((x > 1.5) and (x < 4.0) ) and ((y > -0.5) and (y < 0.2)) and ( (phi_l3) and (phi_u3)) and ( (vel_x<0) and (vel_y<0.5)) ) ))'
-	# spec.spec ='eventually( (( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) ) and ( (z > 0.6) and (z < 0.8) ) and ( (vel_x > 0) and (vel_y < 0.5) )  and ( (phi_1l_head) and (phi_1u_head) )) and eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -0.5)) and ( (z > 0.4) and (z< 0.6) ) and ( (vel_x < 0.5) and (vel_y >0) )  and ( (phi_2l_head) and (phi_2u_head) ) and eventually((final < 0.2)  and  ((y > -0.5) and (y < 0.2)) and ( (vel_x < 0) and (vel_y < 0.5) )  and ( (phi_3l_head) and (phi_3u_head) ) ) ))'
-	# spec.spec ='eventually( (( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) ) and ( (z > 0.6) and (z < 0.8) ) and ( (vel_x > 0) and (vel_y < 0.5) )  and ( (phi_1l_head) and (phi_1u_head) )) and eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -0.5)) and ( (z > 0.4) and (z< 0.6) ) and ( (vel_x < 0.5) and (vel_y >0) ) and ( (phi_2l_head) and (phi_2u_head) ) and eventually((final < 0.2)) ))'
-	# spec.spec ='eventually( (( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) ) and ( (z > 0.6) and (z < 0.8) ) and ( (vel_x > 0) and (vel_y < 0.2) )  and ( (phi_1l_head) and (phi_1u_head) )) and eventually( (final < 0.2) and ( (vel_x < 0) and (vel_y < 0.2) ) and ( (phi_3l_head) and (phi_3u_head) ) ))'
-	# spec.spec ='eventually( ( ((x >0.5) and (x < 2.5)) ) and eventually( ((x > 2.5) and (x < 4.0)) and eventually( (final < 0.2)  ) ))'
-	# spec.spec ='(eventually( ((x >0.5) and (x < 2.5)) and ( (phi_1l_head) and (phi_1u_head) )) ) until (eventually ((x > 2.5) and (x < 4.0)) and ((phi_2l_head) and (phi_2u_head)) ) until (eventually ((phi_3l_head) and (phi_3u_head)) ) '
-	# spec.spec ='(eventually(( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) ) ) )  until[0:-1] (eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -0.5)))) until[0:-1]   ( eventually ((final < 0.2)) )'
-	# spec.spec ='eventually( (( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) ) and ( (phi_l) and (phi_u))) and eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -0.5)) and ( (phi_l2) and (phi_u2)) and eventually( ((x > 1.5) and (x < 4.0) ) and ((y > -0.5) and (y < 0.2)) and ( (phi_l3) and (phi_u3)) ) ))'
-	spec.spec = 'eventually( (( (x >-1.5) and (x < 1.5)) and ( (y > -3) and (y < -2) )    ) and eventually( ((x > 4.5) and (x < 5.0) ) and ((y > -3) and (y < 0.2))   and eventually( (final < 0.2) )))'
-	# spec.spec = 'eventually((( (x >-1.5) and (x < 1.5)) and ( (y > -3) and (y < -2) )    ) and  eventually( (final < 0.2) ))'
-
-	# spec.spec = '(eventually(( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) ) and ( (z > 0.6) and (z < 0.8) ) and ( (vel_x > 0) and (vel_y < 0.5) )  and ( (phi_1l_head) and (phi_1u_head) ))) until[0:-1] ( eventually ( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -1.0)) and ( (z > 0.4) and (z< 0.6) ) and ( (vel_x < 0.5) and (vel_y >0) )  and ( (phi_2l_head) and (phi_2u_head) )) ) until[0:-1] ( eventually ((final < 0.2)  and ( (vel_x < 0) and (vel_y < 0.5) )  and ( (phi_3l_head) and (phi_3u_head) ) ))'
-	# spec.spec ='eventually( (( (downwind <0.2) ) ) and eventually( ((base < 0.2)) and eventually( (final < 0.02) )))'
-	# spec.spec ='eventually( always (final < 0.2)  and ( (vel_x < 0) and (vel_y < 0.5) )  and ( (phi_3l_head) and (phi_3u_head) ))'
+	spec.spec = 'eventually( ((x > 4.5) and (x < 5.0) ) and ((y > -3) and (y < 0.2))   and eventually( ((x > 1.3) and (x < 1.5) ) and ((y > -0.2) and (y < 0.2)) ))'
 
 
-	# spec.spec ='eventually( (( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) ) and ( (z > 0.5) and (z < 0.7) )) and eventually( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -0.08))  and ((z > 0.3) and (z < 0.5)) ))'
-	# spec.spec = '(eventually(always((( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) ) and ( (z > 0.5) and (z < 0.7) ))))) until 	(eventually(always(( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -0.08))  and ((z > 0.3) and (z < 0.5)) ))))'
-	# spec.spec = '(eventually(always((( (x >0.5) and (x < 2.5)) and ( (y > -2.5) and (y < -1.0) ) )))) until 	(eventually(always(( ((x > 2.5) and (x < 4.0) ) and ((y > -2.5) and (y < -0.08))  ))))'
-
-	# spec.add_sub_spec('iq = x>0.5')
-	# spec.add_sub_spec('up = x<2.5')
-	# spec.spec = 'out = ((iq) until 	 (up) )'
-
-	# spec.spec = 'eventually(( ( (x > 0.5) and (x < 2.5) ) and ( (y > -2.5) and (y < -1.0) ) and ( (z > 0.5) and (z < 0.7) ) ) and eventually( ( (x > 2.5) and (x < 4.0) ) and ( (y > -2.5) and (y < -0.08) ) and ( (z > 0.3) and (z < 0.5) ) ) )'
 	try:
 		spec.parse()
 		# spec.pastify()

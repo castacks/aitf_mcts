@@ -136,7 +136,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--numMCTS', type=int, default=10)
     parser.add_argument('--cpuct', type=int, default= 1)
-    parser.add_argument('--huct', type=int, default= 4000)
+    parser.add_argument('--huct', type=int, default= 150)
 
     parser.add_argument('--parallel', type=bool, default=False)
     parser.add_argument('--num_process', type=int, default=1000)
@@ -150,7 +150,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--epochs', type=int, default=15)
 
-    parser.add_argument('--plot', type=bool, default=False)
+    parser.add_argument('--plot', type=bool, default=True)
 
 
 
