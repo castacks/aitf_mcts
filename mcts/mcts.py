@@ -36,7 +36,7 @@ class MCTS():
 
         self.stack = deque()
 
-    def getActionProbs(self, curr_position, goal_postion, temp=1, max_time = None, history=None):
+    def getActionProbs(self, curr_position, goal_postion, STL, temp=1, max_time = None, history=None):
         self.history = history
 
         # return np.eye(self.gym.getActionSize())[np.random.choice(self.gym.getActionSize(), 1)]
@@ -46,10 +46,10 @@ class MCTS():
         if max_time is None:
             for i in (range(self.args.numMCTS)):
                 # print("MCTS Tree #" + str(i))
-                self.search(curr_position, goal_postion,0)
+                self.search(curr_position, goal_postion,0, STL)
         else:
             while (time.time()-start_time) < max_time:
-                self.search(curr_position, goal_postion,0)
+                self.search(curr_position, goal_postion,0, STL)
 
 
         s = self.gym.get_hash(curr_position)
@@ -75,12 +75,8 @@ class MCTS():
         return probs
 
     # @profile
-    def search(self, curr_position, goal_position,h):
-        # print("hah")
-        # if self.stack:
-            # print("stack len", len(self.stack))
+    def search(self, curr_position, goal_position,h, STL):
         s = self.gym.get_hash(curr_position)
-        # print(s)
         if s not in self.Es:
             self.Es[s],_ = self.gym.getGameEnded(curr_position, goal_position)
         if self.Es[s] != 0:
@@ -94,30 +90,15 @@ class MCTS():
             # v = -1
             if self.stack:
                 temp_stack_plot = np.concatenate(self.stack, axis=0)
-                # print(temp_stack_plot.shape,temp_stack_plot[:,0:2])
-            # v = 0.5
-            # if self.args.changeh:
             if self.args.plot: self.gym.plot_env(curr_position, 'r')
-            # plt.plot(curr_position[:, 0], curr_position[:, 1], color='b')
 
-            # print(curr_position[-1,2]*3280.84,v)
             curr_position = curr_position.to(self.device) ##km to m
             goal_position = goal_position.to(self.device)
 
             pred = self.nnet.predict(curr_position, goal_position)
-            # print(curr_position,pred)
-            # print(pred.shape)
             if self.args.plot: self.gym.plot_env(np.transpose(pred),'k')
             all_next_states = (self.gym.getAllNextStates(curr_position.cpu())) # added a copy to cpu since Allnextstates also performs numpy operations
-            # print(curr_position,all_next_states[0],pred)
-            # for i in range(30):
-            #     self.gym.plot_env(np.transpose(all_next_states[i]),'k')
             self.Ps[s] = torch.clamp(torch.from_numpy(self.gym.traj_to_action(pred[:,:4],all_next_states)), max=0.5)
-            # print(all_next_states.shape) 
-            # print(np.argmax(self.Ps[s]))
-            # motion = self.gym.getNextState(curr_position, np.argmax(self.Ps[s]))
-            # print(self.Ps[s])
-            # self.gym.plot_env((motion),'c')
 
             self.Ns[s] = 0
             # print("Leaf")
@@ -132,90 +113,58 @@ class MCTS():
         for a in range(self.gym.getActionSize()):
 
             next_state = self.gym.getNextState(curr_position,a)
-            # print("next_state",next_state.shape,heu.shape)
-            R1 =  torch.tensor([[0., 0., 0., 0., 0., 0., 0., 0., 1., 0.]],dtype=torch.uint8)
-            R2 =  torch.tensor([[0., 0., 0., 0., 0., 0., 0., 0., 0., 1.]],dtype=torch.uint8)
-            goal_position = goal_position.type(torch.uint8)
-            # print(type(goal_position),type(R1))
-            # if torch.equal(goal_position, R1):
-            # 	# print("goals r1",goal_position)
-            # 	# heurist = MCTS_STL_spec_R1.evaluate(next_state,0,0)
-            # 	heurist = monitor_R1(next_state)
 
-            if torch.equal(goal_position, R2):
-                # print("goals r2",goal_position)
-                if self.history:
-                    temp_old_state = np.concatenate(self.history, axis=0)
-                    if self.stack:
-                        temp_stack_state = np.concatenate(self.stack, axis=0)
-                        stack_added_state = np.concatenate((temp_old_state,temp_stack_state))
+            if self.history:
+                temp_old_state = np.concatenate(self.history, axis=0)
+                if self.stack:
+                    temp_stack_state = np.concatenate(self.stack, axis=0)
+                    stack_added_state = np.concatenate((temp_old_state,temp_stack_state))
 
-                        # print(a,"temp_old_state",temp_old_state.shape, "temp_stack_state",temp_stack_state.shape,"history",len(self.history))
-                        temp_state = np.concatenate((stack_added_state,next_state))
-                    else:
-                        temp_state = np.concatenate((temp_old_state,next_state))
-                    # print(a,"temp_state",temp_state.shape, "this temp state")
-                    # heurist = MCTS_STL_spec_R2.evaluate(temp_state,0,0)
-                    temp_state = temp_state[::5,:]
-                    # self.gym.plot_env((temp_state),'k')
-                    heurist = monitor_R2(temp_state)
+                    temp_state = np.concatenate((stack_added_state,next_state))
                 else:
-                    # heurist = MCTS_STL_spec_R2.evaluate(next_state,0,0)
-                    # print("no his")
-                    if self.stack:
-                        temp_stack_state = np.concatenate(self.stack, axis=0)
-                        # print(a,"temp_stack_state",temp_stack_state.shape)
-                        # print(temp_stack_state[0:3,0:2])
-                        # print(temp_stack_state[-4:-1,0:2])
-                        # print(next_state[0:3,0:2])
-                        temp_state = np.concatenate((temp_stack_state,next_state))
-                        # print(a, "temp_state",temp_state.shape, "this temp state")
-                        # self.gym.plot_env((temp_state),'k')
-                        # print(temp_state.shape)
-                        temp_state = temp_state[::5,:]
+                    temp_state = np.concatenate((temp_old_state,next_state))
+                temp_state = temp_state[::5,:]
+                heu[a] =  STL(temp_state)
 
-                        heurist = monitor_R2(temp_state)
-                    else:
+            else:
 
-                        heurist = monitor_R2(next_state)
+                if self.stack:
+                    temp_stack_state = np.concatenate(self.stack, axis=0)
+
+                    temp_state = np.concatenate((temp_stack_state,next_state))
+
+                    temp_state = temp_state[::5,:]
+
+                    heu[a] =  STL(temp_state)
+
+                else:
+                    heu[a] =  STL(next_state)
+
+
+
                 
-            heu[a] = heurist
-            # print("len",len(self.old_state))
-            # print("temp state",temp_state.shape,"temp_old_state",temp_old_state.shape)
-            goal_position = goal_position.type(torch.float)
-            # print("heu",a, heu[a])
-            # if heu[a]>-0.1:
-                # print("heu pos",a, heurist)
-            # print(heur)          
-        # print(np.linalg.norm(heu))
+
+
         heu = heu / np.linalg.norm(heu)
         heu = scipy.special.softmax(heu)
         # pick the action with the highest upper confidence bound
         for a in range(self.gym.getActionSize()):
             if (s, a) in self.Qsa:
                 u = self.Qsa[(s, a)]  + self.args.cpuct * self.Ps[s][a] * (math.sqrt(self.Ns[s]) / (1 + self.Nsa[(s, a)])) + self.args.huct*self.Hsa[(s, a)] 
-                # print(u,a)
             else:
                 u =  self.args.cpuct * self.Ps[s][a] * math.sqrt(self.Ns[s] + EPS)  + self.args.huct*heu[a] 
-                # print(u,a)
 
-                # print(0.1*h[a])
-            # print(u)
             if u > cur_best:
                 cur_best = u
                 best_act = a
 
         a = best_act
-        # u = scipy.special.softmax(u)
-        # print(u.shape)
-        # a = np.random.choice(self.gym.getActionSize(), p=u)
 
         next_position = self.gym.getNextState(curr_position, a)
 
         self.stack.append(next_position)
 
-        v , h = self.search(next_position, goal_position,heu[a])
-        # print("test")
+        v , h = self.search(next_position, goal_position,heu[a], STL)
         if (s, a) in self.Qsa:
             self.Qsa[(s, a)] = (self.Nsa[(s, a)] * self.Qsa[(s, a)] + v) / (self.Nsa[(s, a)] + 1)
             self.Nsa[(s, a)] += 1

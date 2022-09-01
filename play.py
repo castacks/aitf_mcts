@@ -38,10 +38,22 @@ class Play():
         gym = Gym(self.datapath, self.args)
         print("Playing with Process", rank)
         acc = 0
+        matrix = {}
+        total = {}
+        res = {}
         for i in tqdm(range(self.args.numEps)):
-            states = run_episode(i,gym,self.net,self.args)
-            acc += states
-            print(acc,i)
+            result, epi = run_episode(i,gym,self.net,self.args)
+            if epi in matrix:
+                matrix[epi] += result
+                total[epi] += 1
+
+            else:
+                matrix[epi] = 1
+                total[epi] = 1
+
+            for key in matrix:
+                res[key] = matrix[key]/total[key]
+            print(res)
             # if states is not None:
             #     iterationTrainExamples += states   
         save_episodes(self.args.checkpoint,iterationTrainExamples,rank) 
@@ -151,7 +163,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--epochs', type=int, default=15)
 
-    parser.add_argument('--plot', type=bool, default=False)
+    parser.add_argument('--plot', type=bool, default=True)
 
 
 

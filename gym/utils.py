@@ -7,7 +7,7 @@ import torch
 from torch.utils.data import Dataset
 import numpy as np
 import random
-THRESH = 8 #KM
+THRESH = 9 #KM
 
 
 def populate_traj_lib(path):
@@ -52,10 +52,9 @@ def direction_goal_detect(pos,second_pos):
     yaw_diff = pos-second_pos
 
     if np.linalg.norm(pos) > THRESH  :
-        # print("diff",difference,'pos',pos, "input_pos",input_pos)
             planar_slope = torch.atan2(pos[1],pos[0])
             degrees_slope = planar_slope*180.0/np.pi
-          
+            print(np.linalg.norm(pos),degrees_slope)
 
             if degrees_slope <22.5 and degrees_slope >-22.5: #east
                 dir_array[2] = 1.0
@@ -79,7 +78,7 @@ def direction_goal_detect(pos,second_pos):
             yaw_diff_slope = torch.atan2(yaw_diff[1],yaw_diff[0])
             yaw_diff_slope_degrees = yaw_diff_slope*180.0/np.pi
             # print(yaw_diff_slope_degrees)
-            if pos[0]<0.2 and pos[0]> -0.2 and abs(pos[1])<0.20 and pos[2] <0.3: #1
+            if pos[0]<0.2 and pos[0]> -0.2 and abs(pos[1])<0.20 and pos[2] <0.7: #1
                 if abs(yaw_diff_slope_degrees) <20.0:
                     dir_array[8] = 1.0
                     return dir_array
@@ -90,7 +89,7 @@ def direction_goal_detect(pos,second_pos):
                 # print("bad head",abs(yaw_diff_slope_degrees))
                 if 180-abs(yaw_diff_slope_degrees) <20.0:
                     dir_array[9] = 1.0
-                    print("good head")
+                    # print("good head")
 
                     return dir_array
                     # print("Runway reached",goal_enum(dir_array))

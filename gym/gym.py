@@ -12,7 +12,7 @@ import numpy as np
 from scipy.spatial.transform import Rotation as R
 import scipy
 
-THRESH = 9.0
+THRESH = 8.5
 
 class Gym():
 
@@ -83,40 +83,68 @@ class Gym():
         self.loader_train = DataLoader(
             dataset_train,  batch_size=1, num_workers=1, shuffle=True, collate_fn=seq_collate_old)
 
-    def get_random_start_position(self):
+    def get_random_start_position(self,num_goals=10,p=None):
 
-        if self.args.use_trajair:
-            obs_traj, pred_traj, obs_traj_rel, pred_traj_rel, context, seq_start = next(iter(self.loader_train))
-            return obs_traj[:, 0, :]  ##select one agent
+        start = torch.from_numpy(np.eye(num_goals)[np.random.choice(num_goals, 1, p = [0,0,0,0,0,0,0,0,1,0])]).float()
+        
+        start_loc = goal_enum(start)[0]
 
-        angle = np.deg2rad(np.random.randint(-180,180))
-        # angle = np.deg2rad(-120)
-        x, y = -THRESH*np.cos(angle),-THRESH*np.sin(angle)
-        z = 0.67
+        ang = np.array([90,45,0,-45,-90,-135,180,135]) + 180
+        
+        if start_loc !=  "R1" and start_loc != "R2":
+
+            angle = ang[np.argmax(start)]
+            angle = np.deg2rad(angle)
+
+            z = 0.67
+            x, y = -THRESH*np.cos(angle),-THRESH*np.sin(angle)
+
+
+        elif start_loc == "R1":
+            
+            angle = 0
+            z = 0.365
+            angle = np.deg2rad(angle)
+
+            x , y = 0 , 0
+
+        elif start_loc == "R2":
+
+            angle = 180
+            z = 0.365
+            angle = np.deg2rad(angle)
+
+            x, y = 1.45, 0
+
         r = R.from_euler('z', angle)
         direction_matrx_rep = np.squeeze(r.as_matrix())
         trajs = (np.dot(direction_matrx_rep,self.traj_lib[2]) + (np.array([x,y,z])[:,None])).T
-        return torch.from_numpy(trajs).float()
+        return torch.from_numpy(trajs).float(), start
 
-    def get_random_goal_location(self, num_goals=10,p = None):
+    def get_random_goal_location(self, start, num_goals=10,p = None):
 
-        return torch.from_numpy(np.eye(num_goals)[np.random.choice(num_goals, 1, p = p)]).float()
+        start_loc = goal_enum(start)[0]
+
+        if start_loc ==  "R1" or start_loc == "R2":
+            return torch.from_numpy(np.eye(num_goals)[np.random.choice(num_goals, 1, p = [0.125,0.125,0.125,0.125,0.125,0.125,0.125,0.125,0,0])]).float()
+        else:
+            return torch.from_numpy(np.eye(num_goals)[np.random.choice(num_goals, 1, p = [0,0,0,0,0,0,0,0,0.5,0.5])]).float()
 
     def get_valid_start_goal(self):
             
         while True:
 
-            start_position = self.get_random_start_position()
+            start_position, start = self.get_random_start_position()
             # self.gym.plot_env(curr_position)
             # start_position = copy.deepcopy(curr_position)
-            curr_goal = self.get_random_goal_location(p = [0,0,0,0,0,0,0,0,0,1])
+            curr_goal = self.get_random_goal_location(start)
 
             r,g = self.getGameEnded(start_position, curr_goal)
-            if r == 0 :
+            if r == 0  and torch.any(start != curr_goal):
                 break ##make sure start is not goal
             # else:
                 # print("No viable start")
-        return start_position, curr_goal
+        return start_position, start, curr_goal
 
     def getActionSize(self):
 
@@ -204,7 +232,7 @@ class Gym():
         # action_probs = scipy.special.softmax(np.power(action_probs,-1))
         return action_probs
     
-    def plot_env(self, curr_position,color='r',save=True,goal_position=None):
+    def plot_env(self, curr_position,color='r',save=False,goal_position=None):
         phi_1_x_r1 = [-1.2, 0.9]
         phi_1_y_r1 = [0.8, 2.5]
         phi_1_z_r1 = [0.5, 0.7]
@@ -295,6 +323,12 @@ class Gym():
         else:
             self.fig.show()
             plt.pause(0.01)
+
+
+def goal_enum(goal):
+    msk = goal.squeeze().numpy().astype(bool)
+    g = ["N","NE","E","SE","S","SW","W","NW","R1","R2"]
+    return [g[i] for i in range(len(g)) if msk[i]]
 
 
 if __name__ == '__main__':

@@ -3,43 +3,19 @@ import os
 from pickle import Pickler, Unpickler
 from glob import glob
 from collections import deque
+from mcts.all_dir_monitors import goal_to_spec
 from mcts.mcts import MCTS
 from gym.utils import goal_enum
 import numpy as np
 
 def run_episode(rank,gym,net,args):
 
-    curr_position , curr_goal = gym.get_valid_start_goal()
-
-    # print("curr goal",goal_enum(curr_goal))
-    # print(curr_position,curr_goal)
-    # curr_position = torch.Tensor([[ 0.1519,  0.3398,  0.2845],
-    # [ 0.1379,  0.2875,  0.2859],
-    # [ 0.1238,  0.2352,  0.2872],
-    # [ 0.1098,  0.1829,  0.2885],
-    # [ 0.0958,  0.1306,  0.2899],
-    # [ 0.0818,  0.0783,  0.2912],
-    # [ 0.0677,  0.0260,  0.2925],
-    # [ 0.0537, -0.0263,  0.2939],
-    # [ 0.0397, -0.0785,  0.2952],
-    # [ 0.0257, -0.1308,  0.2965],
-    # [ 0.0116, -0.1831,  0.2979],
-    # [-0.0024, -0.2354,  0.2992],
-    # [-0.0164, -0.2877,  0.3005],
-    # [-0.0304, -0.3400,  0.3019],
-    # [-0.0445, -0.3923,  0.3032],
-    # [-0.0585, -0.4446,  0.3046],
-    # [-0.0725, -0.4968,  0.3059],
-    # [-0.0866, -0.5491,  0.3072],
-    # [-0.1006, -0.6014,  0.3086],
-    # [-0.1146, -0.6537,  0.3099]])
-    # curr_goal = torch.Tensor([[0., 0., 1., 0., 0., 0., 0., 0., 0., 0.]])
-    # print(self.gym.getGameEnded(curr_position, curr_goal))
+    curr_position , curr_start , curr_goal = gym.get_valid_start_goal()
+    print("Start=", goal_enum(curr_start), " Goal=", goal_enum(curr_goal))
+    STL = goal_to_spec(goal_enum(curr_goal))
+    epi = goal_enum(curr_start)[0] + "-" + goal_enum(curr_goal)[0]
     trainExamples = []
     episodeStep = 0
-    cond_number = 0
-    args.changeh = True
-    # args.huct = 100
 
     while True:
         episodeStep += 1
@@ -47,10 +23,8 @@ def run_episode(rank,gym,net,args):
 
         if args.plot: gym.plot_env(curr_position,'g',goal_position = curr_goal)
 
-        pi = mcts.getActionProbs(curr_position, curr_goal)
-        # if pi == None:
-            # print(curr_position,curr_goal,start_position)
-            # pi = np.ones_like(counts)/self.gym.getActionSize()
+        pi = mcts.getActionProbs(curr_position, curr_goal, STL)
+
 
         pi = np.squeeze(pi)
         trainExamples.append([curr_position, curr_goal, pi])
@@ -59,30 +33,10 @@ def run_episode(rank,gym,net,args):
 
         action = np.argmax(pi)
         curr_position = gym.getNextState(curr_position, action)
-        # print(gym.get_heuristic(curr_position,curr_goal))
-        if gym.get_heuristic(curr_position,curr_goal) < 0.5 and cond_number==0:
-            print("Changing H")
-            cond_number += 1
-            args.changeh = True
-            # args.huct = args.huct/5000
 
-        #     gym.goal_list[9] = np.array([2.5,-2.0,0.4])
-            # args.huct = args.huct/10
-        # if gym.get_heuristic(curr_position,curr_goal) < 0.3 and cond_number==1:
-        #     print("Changing H")
-        #     cond_number += 1
-        #     gym.goal_list[9] = np.array([2.5,0.0,0.3])
-        #     # args.huct = args.huct/10
-        # if gym.get_heuristic(curr_position,curr_goal) < 0.3 and cond_number==2:
-        #     print("Changing H")
-        #     cond_number += 1
-        #     gym.goal_list[9] = np.array([1.45,0.0,0.2])
-            # args.huct = args.huct/10               
-        # print(curr_position[-1,2]*3280.84,gym.get_cost(curr_position,curr_goal))
-        # print("Step")
         for value in mcts.Es.values():
             if value == 10:
-                return 1
+                return 1, epi
                 
         if args.plot: gym.plot_env(curr_position,'g',save=False)
 
@@ -90,19 +44,10 @@ def run_episode(rank,gym,net,args):
         if r != 0 and args.plot:
             gym.reset_plot()
 
-        if r == 1:
-            print("Goal Reached; Exiting")
-            # gym.reset_plot()
-            return 1#[(x[0], x[1], x[2], r) for x in trainExamples]
-        if r == -1:
-            print("Other Goal Reached; Exiting",goal_enum(g))
-            # gym.reset_plot()
-
-            return 0#[(x[0], x[1], x[2], r) for x in trainExamples]
         if episodeStep > args.numEpisodeSteps:
             print("Max Steps Reached")
             # if args.plot: gym.reset_plot()
-            return 0
+            return 0, epi
             
 def save_episodes(checkpoint,iterationTrainExamples,ep):
     print("Saving Episode for: ",ep)
