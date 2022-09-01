@@ -85,7 +85,7 @@ class Gym():
 
     def get_random_start_position(self,num_goals=10,p=None):
 
-        start = torch.from_numpy(np.eye(num_goals)[np.random.choice(num_goals, 1, p = [0,0,0,0,0,0,0,0,1,0])]).float()
+        start = torch.from_numpy(np.eye(num_goals)[np.random.choice(num_goals, 1, p = p)]).float()
         
         start_loc = goal_enum(start)[0]
 
