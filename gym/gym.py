@@ -204,7 +204,7 @@ class Gym():
         # action_probs = scipy.special.softmax(np.power(action_probs,-1))
         return action_probs
     
-    def plot_env(self, curr_position,color='r',save=False,goal_position=None):
+    def plot_env(self, curr_position,color='r',save=True,goal_position=None):
         phi_1_x_r1 = [-1.2, 0.9]
         phi_1_y_r1 = [0.8, 2.5]
         phi_1_z_r1 = [0.5, 0.7]
@@ -221,7 +221,7 @@ class Gym():
         phi_1_y_r2 = [-3.0, -2.0]
         phi_1_z_r2 = [0.6, 0.8]
 
-        phi_2_x_r2 = [2.5, 3.0]
+        phi_2_x_r2 = [4.5, 5.0]
         phi_2_y_r2 = [-3, -0.2]
         phi_2_z_r2 = [0.4, 0.6]
         phi_3_x_r2 = [1.3, 5.0]

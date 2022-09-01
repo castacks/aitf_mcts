@@ -165,7 +165,7 @@ def monitor_R2(ways): # rtamt specs for runway R2
 	# spec.set_var_io_type('xl', 'input')
 	# spec.set_var_io_type('xu', 'input')
 
-	spec.spec = 'eventually( (( (x >-1.5) and (x < 1.5)) and ( (y > -3) and (y < -2) )   and (z<0.5) ) and (eventually( (((x > 2.5) and (x < 3.0) ) and ((y > -3) and (y < 0.2) and (z<0.5))  ) and (eventually( ((x > 1.3) and (x < 1.5) ) and ((y > -0.2) and (y < 0.2) and z<0.5 ) )))))'
+	spec.spec = 'eventually( (( (x >-1.5) and (x < 1.5)) and ( (y > -3) and (y < -2) )   and (z<0.5) ) and (eventually( (((x > 4.5) and (x < 5.0) ) and ((y > -3) and (y < 0.2) and (z<0.5))  ) and (eventually( ((x > 1.3) and (x < 1.5) ) and ((y > -0.2) and (y < 0.2) and z<0.5 ) )))))'
 	# spec.spec = 'eventually( (( (x >-1.5) and (x < 1.5)) and ( (y > -3) and (y < -2) )    ) and eventually( ((x > 4.5) and (x < 5.0) ) and ((y > -3) and (y < 0.2)) ))'
 
 
