@@ -54,7 +54,6 @@ def direction_goal_detect(pos,second_pos):
     if np.linalg.norm(pos) > THRESH  :
             planar_slope = torch.atan2(pos[1],pos[0])
             degrees_slope = planar_slope*180.0/np.pi
-            print(np.linalg.norm(pos),degrees_slope)
 
             if degrees_slope <22.5 and degrees_slope >-22.5: #east
                 dir_array[2] = 1.0

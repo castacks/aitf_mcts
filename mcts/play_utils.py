@@ -14,6 +14,9 @@ def run_episode(rank,gym,net,args):
     print("Start=", goal_enum(curr_start), " Goal=", goal_enum(curr_goal))
     STL = goal_to_spec(goal_enum(curr_goal))
     epi = goal_enum(curr_start)[0] + "-" + goal_enum(curr_goal)[0]
+    epi = epi.replace('R2','R')
+    epi = epi.replace('R1','R')
+
     trainExamples = []
     episodeStep = 0
 
@@ -29,9 +32,9 @@ def run_episode(rank,gym,net,args):
         pi = np.squeeze(pi)
         trainExamples.append([curr_position, curr_goal, pi])
 
-        # action = np.random.choice(len(pi), p=pi)
+        action = np.random.choice(len(pi), p=pi)
 
-        action = np.argmax(pi)
+        # action = np.argmax(pi)
         curr_position = gym.getNextState(curr_position, action)
 
         for value in mcts.Es.values():

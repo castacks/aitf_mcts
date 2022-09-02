@@ -11,7 +11,7 @@ from gym.utils import goal_enum
 import torch.multiprocessing as mp
 import time
 from mcts.play_utils import *
-seed = 3245
+seed = 5765
 torch.manual_seed(seed)
 import random
 random.seed(seed)
@@ -48,12 +48,12 @@ class Play():
                 total[epi] += 1
 
             else:
-                matrix[epi] = 1
+                matrix[epi] = result
                 total[epi] = 1
 
             for key in matrix:
                 res[key] = matrix[key]/total[key]
-            print(res)
+            print(matrix,total,res)
             # if states is not None:
             #     iterationTrainExamples += states   
         save_episodes(self.args.checkpoint,iterationTrainExamples,rank) 
@@ -149,7 +149,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--numMCTS', type=int, default=50)
     parser.add_argument('--cpuct', type=int, default= 1)
-    parser.add_argument('--huct', type=int, default= 4000)
+    parser.add_argument('--huct', type=int, default= 0)
 
     parser.add_argument('--parallel', type=bool, default=False)
     parser.add_argument('--num_process', type=int, default=1000)
@@ -163,7 +163,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--epochs', type=int, default=15)
 
-    parser.add_argument('--plot', type=bool, default=True)
+    parser.add_argument('--plot', type=bool, default=False)
 
 
 
@@ -171,6 +171,7 @@ if __name__ == '__main__':
 
 
     args = parser.parse_args()
-
+    for arg in vars(args):
+        print(arg, getattr(args, arg))
     
     Play(args)

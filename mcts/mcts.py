@@ -81,7 +81,7 @@ class MCTS():
             self.Es[s],_ = self.gym.getGameEnded(curr_position, goal_position)
         if self.Es[s] != 0:
             # terminal node
-            print("Terminal Node")
+            # print("Terminal Node")
             return self.Es[s],h
 
         if s not in self.Ps:
