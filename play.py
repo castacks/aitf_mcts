@@ -109,11 +109,13 @@ if __name__ == '__main__':
     parser.add_argument('--dataset_folder', type=str, default='/dataset/')
     parser.add_argument('--dataset_name', type=str, default='111days')
     parser.add_argument('--models_folder', type=str, default='/saved_models/')
-    parser.add_argument('--model_weights', type=str, default='model_154_days_2.pt')
+    # parser.add_argument('--model_weights', type=str, default='model_154_days_2.pt')
+    parser.add_argument('--model_weights', type=str, default='goalGAIL.pt')
+
     parser.add_argument('--checkpoint', type=str, default='/episodes/')
     parser.add_argument('--load_episodes', type=bool, default=False)
     parser.add_argument('--base_path', type=str, default='/home/jay/AITF/aitf_mcts')
-    parser.add_argument('--algo', type=str, default='BC')
+    parser.add_argument('--algo', type=str, default='GAIL')
 
     parser.add_argument('--obs', type=int, default=11)
     parser.add_argument('--preds', type=int, default=120)

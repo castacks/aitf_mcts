@@ -92,7 +92,12 @@ class Net():
         # self.nnet.eval()
         context = torch.zeros((11,2,1), device = self.device)
         # self.nnet.to('cpu')
-        pred = self.nnet.inference(torch.unsqueeze(curr_position[9:,:],2), context)[0]
+        
+        if self.args.algo == "BC":
+            pred = self.nnet.inference(torch.unsqueeze(curr_position[9:,:],2), context)[0]
+        elif self.args.algo == "GAIL":
+            pred = self.nnet.inference(torch.unsqueeze(curr_position[9:,:],2), goal_position)[0]
+
         # print("he",np.linalg.norm(curr_position[-1,:]-pred[:,0]))
         # print("he",np.linalg.norm(pred[:,0]-pred[:,1]))
 
