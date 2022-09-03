@@ -79,6 +79,7 @@ class MCTS():
         s = self.gym.get_hash(curr_position)
         if s not in self.Es:
             self.Es[s],_ = self.gym.getGameEnded(curr_position, goal_position)
+
         if self.Es[s] != 0:
             # terminal node
             # print("Terminal Node")
@@ -89,7 +90,7 @@ class MCTS():
             v =  self.gym.get_cost(curr_position,goal_position) 
             # v = -1
             if self.stack:
-                temp_stack_plot = np.concatenate(self.stack, axis=0)
+                self.temp_stack_plot = np.concatenate(self.stack, axis=0)
             if self.args.plot: self.gym.plot_env(curr_position, 'r')
 
             curr_position = curr_position.to(self.device) ##km to m

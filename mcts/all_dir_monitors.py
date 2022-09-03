@@ -9,6 +9,7 @@ import rtamt
 def goal_to_spec(goal):
 
 	stl_func = "monitor_" + goal[0]
+	print("STL Func: " , stl_func)
 	STL = globals()[stl_func]
 
 	return STL

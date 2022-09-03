@@ -16,6 +16,7 @@ def run_episode(rank,gym,net,args):
     epi = goal_enum(curr_start)[0] + "-" + goal_enum(curr_goal)[0]
     epi = epi.replace('R2','R')
     epi = epi.replace('R1','R')
+    old_state = []
 
     trainExamples = []
     episodeStep = 0
@@ -27,6 +28,7 @@ def run_episode(rank,gym,net,args):
         if args.plot: gym.plot_env(curr_position,'g',goal_position = curr_goal)
 
         pi = mcts.getActionProbs(curr_position, curr_goal, STL)
+        old_state.append(curr_position)
 
 
         pi = np.squeeze(pi)
@@ -39,7 +41,9 @@ def run_episode(rank,gym,net,args):
 
         for value in mcts.Es.values():
             if value == 10:
-                return 1, epi
+                # print(mcts.temp_stack_plot)
+
+                return 1,STL(mcts.temp_stack_plot), epi
                 
         if args.plot: gym.plot_env(curr_position,'g',save=False)
 
@@ -50,7 +54,7 @@ def run_episode(rank,gym,net,args):
         if episodeStep > args.numEpisodeSteps:
             print("Max Steps Reached")
             # if args.plot: gym.reset_plot()
-            return 0, epi
+            return 0,0, epi
             
 def save_episodes(checkpoint,iterationTrainExamples,ep):
     print("Saving Episode for: ",ep)
