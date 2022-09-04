@@ -58,9 +58,9 @@ class Play():
 
             for key in matrix:
                 res[key] = matrix[key]/total[key]
-                res_stl[key] = stl_matrix[key]/matrix[key]
+                res_stl[key] = stl_matrix[key]
 
-            print(res, res_stl)
+            print(total,  res, res_stl)
             # if states is not None:
             #     iterationTrainExamples += states   
         save_episodes(self.args.checkpoint,iterationTrainExamples,rank) 
@@ -116,13 +116,13 @@ if __name__ == '__main__':
     parser.add_argument('--dataset_folder', type=str, default='/dataset/')
     parser.add_argument('--dataset_name', type=str, default='111days')
     parser.add_argument('--models_folder', type=str, default='/saved_models/')
-    parser.add_argument('--model_weights', type=str, default='model_154_days_2.pt')
-    # parser.add_argument('--model_weights', type=str, default='goalGAIL.pt')
+    # parser.add_argument('--model_weights', type=str, default='model_154_days_2.pt')
+    parser.add_argument('--model_weights', type=str, default='model_goalGAILtest111_days_50.pt')
 
     parser.add_argument('--checkpoint', type=str, default='/episodes/')
     parser.add_argument('--load_episodes', type=bool, default=False)
     parser.add_argument('--base_path', type=str, default='/home/jay/AITF/aitf_mcts')
-    parser.add_argument('--algo', type=str, default='BC')
+    parser.add_argument('--algo', type=str, default='GAIL')
 
     parser.add_argument('--obs', type=int, default=11)
     parser.add_argument('--preds', type=int, default=120)
@@ -138,7 +138,7 @@ if __name__ == '__main__':
     # parser.add_argument('--balance_data', type=bool, default=True)
 
     parser.add_argument('--input_channels',type=int,default=3)
-    parser.add_argument('--tcn_channel_size',type=int,default=512)
+    parser.add_argument('--tcn_channel_size',type=int,default=256)
     parser.add_argument('--tcn_layers',type=int,default=2)
     parser.add_argument('--tcn_kernels',type=int,default=4)
 
@@ -158,7 +158,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--numMCTS', type=int, default=50)
     parser.add_argument('--cpuct', type=int, default= 1)
-    parser.add_argument('--huct', type=int, default= 4000)
+    parser.add_argument('--huct', type=int, default= 0)
 
     parser.add_argument('--parallel', type=bool, default=False)
     parser.add_argument('--num_process', type=int, default=1000)

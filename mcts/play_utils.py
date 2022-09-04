@@ -27,7 +27,7 @@ def run_episode(rank,gym,net,args):
 
         if args.plot: gym.plot_env(curr_position,'g',goal_position = curr_goal)
 
-        pi = mcts.getActionProbs(curr_position, curr_goal, STL)
+        pi = mcts.getActionProbs(curr_position, curr_goal, STL, history=old_state)
         old_state.append(curr_position)
 
 
