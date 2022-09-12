@@ -37,7 +37,7 @@ def monitor_R2(ways): # rtamt specs for runway R2
 	spec.declare_var('z', 'float')
 
 
-	spec.spec = 'eventually( (( (x >-1.5) and (x < 1.5)) and ( (y > -3) and (y < -2) )   and (z<0.5) ) and (eventually( (((x > 4.5) and (x < 5.0) ) and ((y > -3) and (y < 0.2) and (z<0.5))  ) and (eventually( ((x > 1.3) and (x < 1.5) ) and ((y > -0.2) and (y < 0.2) and z<0.5 ) )))))'
+	spec.spec = 'eventually( (( (x >0) and (x < 3.0)) and ( (y > -2) and (y < -1) )   and (z<0.5) ) and (eventually( (((x > 2.0) and (x < 3.0) ) and ((y > -2) and (y < 0.2) and (z<0.5))  ) and (eventually( always(((x > 1.3) and (x < 3.0) ) and ((y > -0.2) and (y < 0.2) and z<0.5 ) ))))))'
 
 
 
@@ -80,7 +80,7 @@ def monitor_R1(ways): # rtamt specs for runway R2
 	spec.declare_var('z', 'float')
 
 
-	spec.spec = 'eventually( (( (x >-1.5) and (x < 1.5)) and ( (y < 3) and (y > 2) )   and (z<0.5) ) and (eventually( (((x < -4.5) and (x > -5.0) ) and ((y > -3) and (y < 0.2) and (z<0.5))  ) and (eventually( ((x < 0.2) and (x > -0.2) ) and ((y > -0.2) and (y < 0.2) and z<0.5 ) )))))'
+	spec.spec = 'eventually( (( (x >-1.5) and (x < 1.5)) and ( (y < 3) and (y > 2) )   and (z<0.5) ) and (eventually( (((x < -4.5) and (x > -5.0) ) and ((y > -3) and (y < 0.2) and (z<0.5))  ) and (eventually( always( ((x < 0.2) and (x > -0.2) ) and ((y > -0.2) and (y < 0.2) and z<0.5 ) ))))))'
 
 
 

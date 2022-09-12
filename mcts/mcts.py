@@ -82,7 +82,7 @@ class MCTS():
 
         if self.Es[s] != 0:
             # terminal node
-            # print("Terminal Node")
+            print("Terminal Node")
             return self.Es[s],h
 
         if s not in self.Ps:
@@ -97,7 +97,7 @@ class MCTS():
             goal_position = goal_position.to(self.device)
 
             pred = self.nnet.predict(curr_position, goal_position)
-            if self.args.plot: self.gym.plot_env(np.transpose(pred),'k')
+            # if self.args.plot: self.gym.plot_env(np.transpose(pred),'k')
             all_next_states = (self.gym.getAllNextStates(curr_position.cpu())) # added a copy to cpu since Allnextstates also performs numpy operations
             self.Ps[s] = torch.clamp(torch.from_numpy(self.gym.traj_to_action(pred[:,:4],all_next_states)), max=0.5)
 

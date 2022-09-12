@@ -11,6 +11,7 @@ import torch
 import numpy as np
 from scipy.spatial.transform import Rotation as R
 import scipy
+from matplotlib.patches import Rectangle
 
 THRESH = 8.5
 
@@ -35,6 +36,34 @@ class Gym():
             self.fig = plt.figure()
             print("Plotting")
             self.sp = self.fig.add_subplot(111)
+            # self.sp.set_facecolor("k")
+            self.sp.set_facecolor('xkcd:black')
+            self.sp.plot(3.7*np.sin(np.linspace(0, 2*np.pi, 100)), 3.7*np.cos(np.linspace(0, 2*np.pi, 100)), color='#00ff00', linestyle='--')
+            self.sp.text(2.7,2.7,'2 NM', color = '#00ff00')
+
+            self.sp.plot(7.4*np.sin(np.linspace(0, 2*np.pi, 100)), 7.4*np.cos(np.linspace(0, 2*np.pi, 100)), color='#00ff00', linestyle='--')
+            self.sp.text(5.2,5.2,'4 NM', color = '#00ff00')
+
+            # self.sp.plot(11.26*np.sin(np.linspace(0, 2*np.pi, 100)), 11.26*np.cos(np.linspace(0, 2*np.pi, 100)), color='#00ff00', linestyle='--')
+            # self.sp.text(8,8,'6 NM', color = '#00ff00')
+            phi_1_x_r2 = [0.0, 3.0]
+            phi_1_y_r2 = [-2.0, -1.0]
+            phi_1_z_r2 = [0.6, 0.8]
+
+            phi_2_x_r2 = [2.0, 3.0]
+            phi_2_y_r2 = [-2, 0.2]
+            phi_2_z_r2 = [0.4, 0.6]
+            phi_3_x_r2 = [1.3, 3.0]
+            phi_3_y_r2 = [-0.2, 0.2]
+            phi_3_z_r2 = [0.3, 0.5]
+
+            self.sp.add_patch(Rectangle((phi_1_x_r2[0], phi_1_y_r2[0]), phi_1_x_r2[1]-phi_1_x_r2[0], phi_1_y_r2[1]-phi_1_y_r2[0], facecolor = '#a4c2f4'))
+            self.sp.add_patch(Rectangle((phi_2_x_r2[0], phi_2_y_r2[0]), phi_2_x_r2[1]-phi_2_x_r2[0], phi_2_y_r2[1]-phi_2_y_r2[0], facecolor = '#b6d7a8'))
+            self.sp.add_patch(Rectangle((phi_3_x_r2[0], phi_3_y_r2[0]), phi_3_x_r2[1]-phi_3_x_r2[0], phi_3_y_r2[1]-phi_3_y_r2[0], facecolor = '#ffe599'))
+
+
+            plt.xlabel("X (in Km)")
+            plt.ylabel("Y (in Km)")
             plt.ion()
             self.fig.show()
             self.fig_count = 0
@@ -85,8 +114,8 @@ class Gym():
 
     def get_random_start_position(self,num_goals=10,p=None):
 
-        start = torch.from_numpy(np.eye(num_goals)[np.random.choice(num_goals, 1, p = [0.16,0,0.16,0,0.16,0,0.16,0,0.18,0.18])]).float()
-        # start = torch.from_numpy(np.eye(num_goals)[np.random.choice(num_goals, 1, p = [0.0,0,0.0,0,0.0,1.0,0.0,0.0,0.0,0.0])]).float()
+        # start = torch.from_numpy(np.eye(num_goals)[np.random.choice(num_goals, 1, p = [0.16,0,0.16,0,0.16,0,0.16,0,0.18,0.18])]).float()
+        start = torch.from_numpy(np.eye(num_goals)[np.random.choice(num_goals, 1, p = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 ,0.0, 0.0, 0.0])]).float()
 
         start_loc = goal_enum(start)[0]
 
@@ -129,7 +158,7 @@ class Gym():
         if start_loc ==  "R1" or start_loc == "R2":
             return torch.from_numpy(np.eye(num_goals)[np.random.choice(num_goals, 1, p = [0.25,0,0.25,0,0.25,0,0.25,0,0,0])]).float()
         else:
-            return torch.from_numpy(np.eye(num_goals)[np.random.choice(num_goals, 1, p = [0,0,0,0,0,0,0,0,0.5,0.5])]).float()
+            return torch.from_numpy(np.eye(num_goals)[np.random.choice(num_goals, 1, p = [0,0,0,0,0,0,0,0,0.0,1.0])]).float()
 
     def get_valid_start_goal(self):
             
@@ -181,7 +210,7 @@ class Gym():
     def get_hash(self, curr_position):
 
         # return str(curr_position[-1, 0]) + str(curr_position[-1, 1])
-        return "%s-%s-%s" % (int(curr_position[-1, 0]*1000),int(curr_position[-1, 1]*1000),int(curr_position[-1, 2]*1000))
+        return "%s-%s" % (int(curr_position[-1, 0]*1000),int(curr_position[-1, 1]*1000),)
 
     def reset_plot(self):
         plt.close()
@@ -233,32 +262,11 @@ class Gym():
         # action_probs = scipy.special.softmax(np.power(action_probs,-1))
         return action_probs
     
-    def plot_env(self, curr_position,color='r',save=False,goal_position=None):
-        phi_1_x_r1 = [-1.2, 0.9]
-        phi_1_y_r1 = [0.8, 2.5]
-        phi_1_z_r1 = [0.5, 0.7]
+    def plot_env(self, curr_position,color='r',save=True,goal_position=None):
 
-        phi_2_x_r1 = [-3, -1.2]
-        phi_2_y_r1 = [0.08, 2.5]
-        phi_2_z_r1 = [0.3, 0.5]
-        phi_3_x_r1 = [-3.0, 0.0]
-        phi_3_y_r1 = [-0.08,0.08]
-        phi_3_z_r1 = [0.3, 0.5]
-
-
-        phi_1_x_r2 = [-1.5, 1.50]
-        phi_1_y_r2 = [-3.0, -2.0]
-        phi_1_z_r2 = [0.6, 0.8]
-
-        phi_2_x_r2 = [4.5, 5.0]
-        phi_2_y_r2 = [-3, -0.2]
-        phi_2_z_r2 = [0.4, 0.6]
-        phi_3_x_r2 = [1.3, 5.0]
-        phi_3_y_r2 = [-0.2, 0.2]
-        phi_3_z_r2 = [0.3, 0.5]
         # self.sp.grid(True)
         if color == 'r':
-            self.hh.append(self.sp.plot(curr_position[:, 0], curr_position[:, 1], color=color))
+            self.hh.append(self.sp.plot(curr_position[:, 0], curr_position[:, 1], color='magenta', alpha=0.2))
         if color == 'k':
             self.hh.append(self.sp.plot(curr_position[:, 0], curr_position[:, 1], '--',color=color, linewidth=1, zorder=0))
         if color == 'c':
@@ -271,14 +279,15 @@ class Gym():
 
             # for h in self.hh:
             #     
-            self.sp.plot(curr_position[:, 0], curr_position[:, 1], color=color)
-            if curr_position[-1,2] < 0.45:
-                alt = 'r'
-            elif curr_position[-1,2] > 0.7:
-                alt = 'b'
-            else:
-                alt = 'g'    
-            self.sp.scatter(curr_position[-1, 0], curr_position[-1, 1], color=alt)
+            self.sp.plot(curr_position[:, 0], curr_position[:, 1], color='white')
+            alt = 'white'
+            # if curr_position[-1,2] < 0.45:
+            #     alt = 'r'
+            # elif curr_position[-1,2] > 0.7:
+            #     alt = 'b'
+            # else:
+            #     alt = 'g'    
+            self.sp.scatter(curr_position[-1, 0], curr_position[-1, 1], marker= '^',color=alt,zorder=20)
         self.sp.scatter(0, 0, color='k')
         self.sp.scatter(1.45, 0, color='k')
         # if int(goal_traj[0,0,0,:,0].size) >350:
@@ -288,9 +297,9 @@ class Gym():
 
 
 
-        self.hh.append(self.sp.plot([phi_1_x_r2[0],phi_1_x_r2[0],phi_1_x_r2[1],phi_1_x_r2[1],phi_1_x_r2[0]],[phi_1_y_r2[0],phi_1_y_r2[1],phi_1_y_r2[1],phi_1_y_r2[0],phi_1_y_r2[0]], c="blue", linewidth=1))
-        self.hh.append(self.sp.plot([phi_2_x_r2[0],phi_2_x_r2[0],phi_2_x_r2[1],phi_2_x_r2[1],phi_2_x_r2[0]],[phi_2_y_r2[0],phi_2_y_r2[1],phi_2_y_r2[1],phi_2_y_r2[0],phi_2_y_r2[0]], c="green", linewidth=1))
-        self.hh.append(self.sp.plot([phi_3_x_r2[0],phi_3_x_r2[0],phi_3_x_r2[1],phi_3_x_r2[1],phi_3_x_r2[0]],[phi_3_y_r2[0],phi_3_y_r2[1],phi_3_y_r2[1],phi_3_y_r2[0],phi_3_y_r2[0]], c="orange", linewidth=1))
+        # self.hh.append(self.sp.plot([phi_1_x_r2[0],phi_1_x_r2[0],phi_1_x_r2[1],phi_1_x_r2[1],phi_1_x_r2[0]],[phi_1_y_r2[0],phi_1_y_r2[1],phi_1_y_r2[1],phi_1_y_r2[0],phi_1_y_r2[0]], c="blue", linewidth=1))
+        # self.hh.append(self.sp.plot([phi_2_x_r2[0],phi_2_x_r2[0],phi_2_x_r2[1],phi_2_x_r2[1],phi_2_x_r2[0]],[phi_2_y_r2[0],phi_2_y_r2[1],phi_2_y_r2[1],phi_2_y_r2[0],phi_2_y_r2[0]], c="green", linewidth=1))
+        # self.hh.append(self.sp.plot([phi_3_x_r2[0],phi_3_x_r2[0],phi_3_x_r2[1],phi_3_x_r2[1],phi_3_x_r2[0]],[phi_3_y_r2[0],phi_3_y_r2[1],phi_3_y_r2[1],phi_3_y_r2[0],phi_3_y_r2[0]], c="orange", linewidth=1))
         # if color == 'r':
         #     self.hh.append(self.sp.plot(curr_position[:, 0], curr_position[:, 1], color=color))
         # if color == 'g':
@@ -309,17 +318,18 @@ class Gym():
         #     else:
         #         alt = 'g'    
         #     self.sp.scatter(curr_position[-1, 0], curr_position[-1, 1], color=alt)
-        # self.sp.scatter(0, 0, color='k')
-        # self.sp.scatter(1.45, 0, color='k')
+        self.sp.scatter(0, 0, color='white')
+        self.sp.scatter(1.45, 0, color='white')
 
-        plt.plot([0, 1.450], [0, 0], '--', color='k')
+        plt.plot([0, 1.450], [0, 0], '--', color='white')
         plt.axis("equal")
+        self.sp.axis("equal")
         plt.grid(True)
-        plt.xlim([-12, 12])
-        plt.ylim([-12, 12])
+        plt.xlim([-8, 8])
+        plt.ylim([-8, 8])
 
         if save:
-            plt.savefig("images/mcts_"+str(self.fig_count) + ".png")
+            plt.savefig("images/mcts_"+str(self.fig_count) + ".png", dpi=1200)
             self.fig_count += 1
         else:
             self.fig.show()
