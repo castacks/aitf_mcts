@@ -34,16 +34,16 @@ def run_episode(rank,gym,net,args):
         pi = np.squeeze(pi)
         trainExamples.append([curr_position, curr_goal, pi])
 
-        action = np.random.choice(len(pi), p=pi)
+        # action = np.random.choice(len(pi), p=pi)
 
-        # action = np.argmax(pi)
+        action = np.argmax(pi)
         curr_position = gym.getNextState(curr_position, action)
 
-        # for value in mcts.Es.values():
-        #     if value == 10:
-        #         # print(mcts.temp_stack_plot)
+        for value in mcts.Es.values():
+            if value == 10:
+                # print(mcts.temp_stack_plot)
 
-        #         return 1,STL(mcts.temp_stack_plot), epi
+                return 1,STL(mcts.temp_stack_plot), epi
                 
         if args.plot: gym.plot_env(curr_position,'g',save=False)
 

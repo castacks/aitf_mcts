@@ -13,12 +13,12 @@ THRESH = 9 #KM
 def populate_traj_lib(path):
 	
     # note position of motion prim library text files
-    lib_path = path + '/gym/traj_lib_0SI.txt'
-    index_path = path + '/gym/traj_index_0SI.txt'
+    lib_path = path + '/gym/traj_lib_0SI_new.txt'
+    index_path = path + '/gym/traj_index_0SI_new.txt'
     print("Loading traj lib from", lib_path)
     ## obtain a 3d matrix of each trajectory's (x, y, z) positions into an array
     file1 = open(lib_path, 'r',newline='\r\n')
-    traj_no = 252 # note the number
+    traj_no = 30 # note the number
     count, j = 0,0
     traj_lib = np.zeros([traj_no,3,20])
 

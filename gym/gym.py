@@ -114,8 +114,8 @@ class Gym():
 
     def get_random_start_position(self,num_goals=10,p=None):
 
-        # start = torch.from_numpy(np.eye(num_goals)[np.random.choice(num_goals, 1, p = [0.16,0,0.16,0,0.16,0,0.16,0,0.18,0.18])]).float()
-        start = torch.from_numpy(np.eye(num_goals)[np.random.choice(num_goals, 1, p = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 ,0.0, 0.0, 0.0])]).float()
+        start = torch.from_numpy(np.eye(num_goals)[np.random.choice(num_goals, 1, p = [0.16,0,0.16,0,0.16,0,0.16,0,0.18,0.18])]).float()
+        # start = torch.from_numpy(np.eye(num_goals)[np.random.choice(num_goals, 1, p = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ,0.0, 1.0, 0.0])]).float()
 
         start_loc = goal_enum(start)[0]
 
@@ -202,7 +202,9 @@ class Gym():
         angle = np.arctan2(difference[1], difference[0])
         r = R.from_euler('z', angle)
         direction_matrx_rep = np.squeeze(r.as_matrix())
-        trajs = (np.dot(direction_matrx_rep,self.traj_lib[action_choice]) + (np.array(curr_position[-1,:])[:,None])).T
+        action = self.traj_lib[action_choice]
+        # action[1,:] = -action[1,:]
+        trajs = (np.dot(direction_matrx_rep,action) + (np.array(curr_position[-1,:])[:,None])).T
 
     
         return torch.from_numpy(trajs).float()
@@ -217,7 +219,7 @@ class Gym():
         self.fig = plt.figure()
         self.sp = self.fig.add_subplot(111)
         self.fig.show()
-        plt.plot(self.traj[:,0],self.traj[:,1],'y',linewidth=10, alpha=0.2)
+        # plt.plot(self.traj[:,0],self.traj[:,1],'y',linewidth=10, alpha=0.2)
 
 
     def get_heuristic(self, curr_position, curr_goal):
@@ -262,7 +264,7 @@ class Gym():
         # action_probs = scipy.special.softmax(np.power(action_probs,-1))
         return action_probs
     
-    def plot_env(self, curr_position,color='r',save=True,goal_position=None):
+    def plot_env(self, curr_position,color='r',save=False,goal_position=None):
 
         # self.sp.grid(True)
         if color == 'r':
